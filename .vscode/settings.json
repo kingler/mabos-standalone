@@ -1,0 +1,13 @@
+{
+    "jira-plugin.workingProject": "",
+    "cSpell.words": [
+        "dotenv",
+        "networkx",
+        "openai",
+        "owlready",
+        "pydantic",
+        "rdflib",
+        "subgoals",
+        "uvicorn"
+    ]
+}
