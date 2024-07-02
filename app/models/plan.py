@@ -30,7 +30,4 @@ class Plan(BaseModel):
         self.is_completed = all(step.is_completed for step in self.steps)
 
     def get_next_step(self):
-        for step in self.steps:
-            if not step.is_completed:
-                return step
-        return None
+        return next((step for step in self.steps if not step.is_completed), None)

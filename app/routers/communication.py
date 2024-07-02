@@ -32,7 +32,7 @@ async def send_agent_message(
         await service.send_message(sender_id, recipient_id, content, performative)
         return {"message": "Message sent successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 @router.post("/agent/broadcast")
 async def broadcast_agent_message(

@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
-from rdflib import Graph
+from rdflib import OWL, RDF, RDFS, Graph
 from owlready2 import World
 from .ontology_loader import OntologyLoader
 from app.core.domain_ontology_generator import DomainOntologyGenerator
@@ -23,60 +23,164 @@ class Ontology(BaseModel):
     def load_ontology(self, ontology_path: Optional[str] = None) -> None:
         """
         Load the ontology from the given path.
-
+        
         Args:
             ontology_path (Optional[str]): The path to the ontology file.
         """
-        self.loader.load_ontology(ontology_path or self.ontology_path)
+        if ontology_path:
+            self.ontology_path = ontology_path
+        
+        if self.ontology_path:
+            self.loader.load_ontology(self.ontology_path)
+        else:
+            raise ValueError("No ontology path provided.")
 
     def get_classes(self) -> List[str]:
-        """
-        Get a list of classes in the ontology.
-
-        Returns:
-            List[str]: A list of class names.
-        """
-        return self.loader.get_classes()
+        return [cls.name for cls in self.world.classes()]
 
     def get_properties(self) -> List[str]:
-        """
-        Get a list of properties in the ontology.
-
-        Returns:
-            List[str]: A list of property names.
-        """
-        return self.loader.get_properties()
+        return [prop.name for prop in self.world.properties()]
 
     def query_ontology(self, query: str) -> List[Dict[str, Any]]:
-        """
-        Query the ontology using SPARQL.
-
-        Args:
-            query (str): The SPARQL query string.
-
-        Returns:
-            List[Dict[str, Any]]: A list of query results.
-        """
+        results = self.graph.query(query)
+        return [dict(zip(row.labels, row)) for row in results]
+        
+        
     def generate_domain_ontology(self, user_data: Dict[str, Any]) -> None:
         """
         Generate a domain ontology based on user data.
-
+        
         Args:
             user_data (Dict[str, Any]): The user data to generate the ontology.
         """
-        self.generator.generate_domain_ontology(user_data)
+        # Extract relevant information from user data
+        classes = user_data.get("classes", [])
+        properties = user_data.get("properties", [])
+        relationships = user_data.get("relationships", [])
+        
+        # Create classes in the ontology
+        for class_name in classes:
+            self.world.create_class(class_name)
+        
+        # Create properties in the ontology
+        for property_name, domain, range in properties:
+            self.world.create_property(property_name, domain, range)
+        
+        # Create relationships between classes
+        for class1, relationship, class2 in relationships:
+            self.world.create_relationship(class1, relationship, class2)
+        
+        # Apply any additional domain-specific rules or constraints
+        self.apply_domain_rules(user_data)
 
     def apply_custom_inference_rules(self) -> None:
         """
         Apply custom inference rules to the ontology.
         """
-        self.inference.apply_custom_inference_rules()
+        # Define custom inference rules
+        rules = [
+            """
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            
+            INSERT {
+                ?subClass rdfs:subClassOf ?superClass .
+            }
+            WHERE {
+                ?subClass rdfs:subClassOf ?intermediateClass .
+                ?intermediateClass rdfs:subClassOf ?superClass .
+            }
+            """,
+            # Add more custom inference rules here
+        ]
+        
+        # Apply each custom inference rule
+        for rule in rules:
+            self.graph.update(rule)
 
     def visualize_ontology(self) -> Any:
         """
         Visualize the ontology as a directed graph.
-
+        
         Returns:
             Any: The directed graph representation of the ontology.
         """
-        return self.world.as_digraph()    
+        import networkx as nx
+
+        graph = nx.DiGraph()
+
+        # Add nodes for classes
+        for class_name in self.get_classes():
+            graph.add_node(class_name, type='class')
+
+        # Add nodes and edges for properties
+        for property_name in self.get_properties():
+            domain, range = self.loader.get_property_domain_range(property_name)
+            graph.add_node(property_name, type='property')
+            graph.add_edge(domain, property_name)
+            graph.add_edge(property_name, range)
+
+        return graph
+    
+    def align_with(self, other_ontology: 'Ontology'):
+        """
+        Align this ontology with another ontology.
+        
+        Args:
+            other_ontology (Ontology): The ontology to align with.
+        """
+        # Get the classes and properties from both ontologies
+        self_classes = set(self.get_classes())
+        other_classes = set(other_ontology.get_classes())
+        self_properties = set(self.get_properties())
+        other_properties = set(other_ontology.get_properties())
+        
+        # Find the common classes and properties
+        common_classes = self_classes.intersection(other_classes)
+        common_properties = self_properties.intersection(other_properties)
+        
+        # Create alignment mappings
+        class_mappings = {c: c for c in common_classes}
+        property_mappings = {p: p for p in common_properties}
+        
+        # TODO: Implement more advanced alignment techniques, such as:
+        # - Lexical matching of class and property names
+        # - Structural matching based on class hierarchies and property domains/ranges
+        # - Semantic matching using external knowledge sources
+        
+        # Apply the alignment mappings to the current ontology
+        for self_class, other_class in class_mappings.items():
+            self.graph.add((self.loader.get_class_uri(self_class), OWL.equivalentClass, other_ontology.loader.get_class_uri(other_class)))
+        
+        for self_prop, other_prop in property_mappings.items():
+            self.graph.add((self.loader.get_property_uri(self_prop), OWL.equivalentProperty, other_ontology.loader.get_property_uri(other_prop)))
+
+    def merge_with(self, other_ontology: 'Ontology'):
+        """
+        Merge this ontology with another ontology.
+        
+        Args:
+            other_ontology (Ontology): The ontology to merge with.
+        """
+        # Align the ontologies before merging
+        self.align_with(other_ontology)
+        
+        # Add classes from the other ontology
+        for class_name in other_ontology.get_classes():
+            if class_name not in self.get_classes():
+                self.graph.add((other_ontology.loader.get_class_uri(class_name), RDF.type, OWL.Class))
+        
+        # Add properties from the other ontology
+        for property_name in other_ontology.get_properties():
+            if property_name not in self.get_properties():
+                domain, range = other_ontology.loader.get_property_domain_range(property_name)
+                self.graph.add((other_ontology.loader.get_property_uri(property_name), RDF.type, OWL.ObjectProperty))
+                self.graph.add((other_ontology.loader.get_property_uri(property_name), RDFS.domain, self.loader.get_class_uri(domain)))
+                self.graph.add((other_ontology.loader.get_property_uri(property_name), RDFS.range, self.loader.get_class_uri(range)))
+        
+        # TODO: Handle merging of individuals and other ontology elements
+        
+        # Update the ontology loader to include the merged elements
+        self.loader = OntologyLoader(self.graph)

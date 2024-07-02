@@ -2,8 +2,6 @@ from pydantic import BaseModel, Field, UUID4
 from typing import Optional, List, Any, Dict
 from datetime import datetime
 import uuid
-from .action import Action
-from .agent import Agent
 
 class TaskOutput(BaseModel):
     description: str = Field(description="Description of the task")
@@ -18,9 +16,8 @@ class Task(BaseModel):
     id: UUID4 = Field(default_factory=uuid.uuid4, description="Unique identifier for the task")
     description: str = Field(description="Description of the actual task")
     expected_output: str = Field(description="Clear definition of expected output for the task")
-    action: Action = Field(description="Action associated with this task")
-    agent: Optional[Agent] = Field(description="Agent responsible for executing the task", default=None)
-    context: Optional[List["Task"]] = Field(description="Other tasks that will have their output used as context for this task", default=None)
+    action_id: str = Field(description="ID of the action associated with this task")
+    context: Optional[List[UUID4]] = Field(description="IDs of other tasks that will have their output used as context for this task", default=None)
     config: Optional[Dict[str, Any]] = Field(description="Configuration for the task", default=None)
     status: str = Field(default="pending", description="Current status of the task")
     output: Optional[TaskOutput] = Field(description="Task output, its final result after being executed", default=None)
@@ -28,15 +25,9 @@ class Task(BaseModel):
     priority: int = Field(default=0, description="Priority of the task")
     dependencies: List[UUID4] = Field(default_factory=list, description="List of task IDs that this task depends on")
 
-    def execute(self, agent: Optional[Agent] = None) -> Optional[str]:
-        agent = agent or self.agent
-        if not agent:
-            raise ValueError("No agent assigned to execute this task")
-        
+    def execute(self, execute_action) -> Optional[str]:
         self.status = "in_progress"
-        result = self.action.execute(agent)
-        
-        if result:
+        if result := execute_action(self.action_id):
             self.status = "completed"
             self.output = TaskOutput(
                 description=self.description,
@@ -52,9 +43,9 @@ class Task(BaseModel):
         return self.status == "completed"
 
     def is_deadline_reached(self) -> bool:
-        if self.deadline:
-            return datetime.now() > self.deadline
-        return False
+        return self.deadline and datetime.now() > self.deadline
 
     def update_status(self, new_status: str):
         self.status = new_status
+
+Task.model_rebuild()

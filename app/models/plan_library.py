@@ -20,10 +20,9 @@ class PlanLibrary(BaseModel):
         return self.plans.get(goal_id, [])
 
     def select_plan(self, goal_id: str, current_state: List[str]) -> Plan:
-        suitable_plans = [plan for plan in self.get_plans_for_goal(goal_id) if plan.check_preconditions(current_state)]
-        if not suitable_plans:
-            raise ValueError(f"No suitable plan found for the goal: {goal_id}")
-        return max(suitable_plans, key=lambda p: p.priority)
+        if suitable_plans := [plan for plan in self.get_plans_for_goal(goal_id) if plan.check_preconditions(current_state)]:
+            return max(suitable_plans, key=lambda p: p.priority)
+        raise ValueError(f"No suitable plan found for the goal: {goal_id}")
 
     def update_plan(self, updated_plan: Plan):
         self.remove_plan(updated_plan.id, updated_plan.goal_id)

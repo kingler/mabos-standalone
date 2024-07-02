@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Union, List, Optional
 from rdflib import Graph, Literal, URIRef
-from sentence_transformers import SentenceTransformer
+from ..core.sentence_transformer import SentenceTransformerWrapper
 
 class KnowledgeItem(BaseModel):
     id: str
@@ -14,7 +14,7 @@ class KnowledgeBase(BaseModel):
     symbolic_kb: Dict[str, KnowledgeItem] = Field(default_factory=dict)
     neural_kb: Dict[str, KnowledgeItem] = Field(default_factory=dict)
     graph: Graph = Field(default_factory=Graph, exclude=True)
-    sentence_transformer: SentenceTransformer = Field(default_factory=lambda: SentenceTransformer('all-MiniLM-L6-v2'), exclude=True)
+    sentence_transformer: SentenceTransformerWrapper = Field(default_factory=lambda: SentenceTransformerWrapper('all-MiniLM-L6-v2'), exclude=True)
     
     model_config = {
         "arbitrary_types_allowed": True,
@@ -76,12 +76,11 @@ class KnowledgeBase(BaseModel):
         return results
 
     def _integrate_results(self, symbolic_results: Dict[str, Any], neural_results: Dict[str, Any]) -> Dict[str, Any]:
-        integrated_results = {
+        return {
             'symbolic': symbolic_results,
             'neural': neural_results,
-            'combined': {**symbolic_results, **neural_results}
+            'combined': symbolic_results | neural_results
         }
-        return integrated_results
 
     def _add_to_graph(self, item: KnowledgeItem):
         subject = URIRef(item.id)

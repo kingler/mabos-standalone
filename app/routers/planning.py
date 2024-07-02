@@ -16,7 +16,7 @@ async def generate_plan(goal: Goal, current_state: Dict[str, str], planning_serv
     try:
         return planning_service.generate_plan(goal, current_state)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 @router.post("/execute", response_model=bool)
 async def execute_plan(plan: Plan, current_state: Dict[str, str], planning_service: PlanningService = Depends(get_planning_service)):

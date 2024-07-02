@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from rdflib import Graph, Literal, URIRef
-from .ontology import Ontology
+from app.core.ontology import Ontology
 
 class KnowledgeRepresentation:
     def __init__(self, ontology: Ontology):

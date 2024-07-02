@@ -12,15 +12,13 @@ plan_service = PlanService(agent_service, goal_service)
 
 @router.post("/plans/", response_model=Plan)
 async def create_plan(goal_id: str):
-    plan = plan_service.create_plan(goal_id)
-    if not plan:
+    if not (plan := plan_service.create_plan(goal_id)):
         raise HTTPException(status_code=404, detail="Goal not found")
     return plan
 
 @router.get("/plans/{plan_id}", response_model=Plan)
 async def get_plan(plan_id: str):
-    plan = plan_service.get_plan(plan_id)
-    if not plan:
+    if not (plan := plan_service.get_plan(plan_id)):
         raise HTTPException(status_code=404, detail="Plan not found")
     return plan
 
@@ -30,21 +28,18 @@ async def list_plans():
 
 @router.post("/plans/{plan_id}/steps", response_model=Plan)
 async def add_plan_step(plan_id: str, step: PlanStep):
-    plan = plan_service.add_plan_step(plan_id, step)
-    if not plan:
+    if not (plan := plan_service.add_plan_step(plan_id, step)):
         raise HTTPException(status_code=404, detail="Plan not found")
     return plan
 
 @router.put("/plans/{plan_id}/steps/{step_id}", response_model=Plan)
 async def update_step_status(plan_id: str, step_id: str, is_completed: bool):
-    plan = plan_service.update_step_status(plan_id, step_id, is_completed)
-    if not plan:
-        raise HTTPException(status_code=404, detail="Plan or step not found")
-    return plan
+    if plan := plan_service.update_step_status(plan_id, step_id, is_completed):
+        return plan
+    raise HTTPException(status_code=404, detail="Plan or step not found")
 
 @router.post("/plans/{plan_id}/execute")
 async def execute_plan(plan_id: str, agent_id: str):
-    result = plan_service.execute_plan(plan_id, agent_id)
-    if not result:
-        raise HTTPException(status_code=404, detail="Plan or Agent not found")
-    return result
+    if result := plan_service.execute_plan(plan_id, agent_id):
+        return result
+    raise HTTPException(status_code=404, detail="Plan or Agent not found")

@@ -26,8 +26,7 @@ class AgentCommunicationService:
         await self._deliver_message(message)
 
     async def _deliver_message(self, message: ACLMessage):
-        receiver = self.agent_service.get_agent(message.receiver_id)
-        if receiver:
+        if receiver := self.agent_service.get_agent(message.receiver_id):
             await self._process_message(receiver, message)
 
     async def _process_message(self, receiver: 'Agent', message: ACLMessage):
@@ -72,17 +71,100 @@ class AgentCommunicationService:
 
     # Implement handlers for different performatives
     async def _handle_request(self, receiver: 'Agent', message: ACLMessage):
-        # Handle request messages
-        pass
+        # Extract the request from the message content
+        request = message.content
+
+        # Check if the receiver agent can handle the request
+        if receiver.can_handle_request(request):
+            # Execute the requested action or task
+            response = await receiver.execute_request(request)
+
+            # Send the response back to the sender
+            await self.send_message(
+                receiver.id,
+                message.sender_id,
+                Performative.INFORM,
+                response
+            )
+        else:
+            # If the receiver cannot handle the request, send a failure response
+            await self.send_message(
+                receiver.id,
+                message.sender_id,
+                Performative.FAILURE,
+                f"Agent {receiver.id} cannot handle the request: {request}"
+            )
 
     async def _handle_inform(self, receiver: 'Agent', message: ACLMessage):
-        # Handle inform messages
-        pass
+        # Extract the information from the message content
+        information = message.content
+
+        # Process the received information
+        await receiver.process_information(information)
+
+        # Optionally, send an acknowledgement back to the sender
+        await self.send_message(
+            receiver.id,
+            message.sender_id,
+            Performative.CONFIRM,
+            f"Information received and processed by {receiver.id}"
+        )
 
     async def _handle_query(self, receiver: 'Agent', message: ACLMessage):
-        # Handle query messages
-        pass
+        # Extract the query from the message content
+        query = message.content
+
+        # Check if the receiver agent can handle the query
+        if receiver.can_handle_query(query):
+            # Execute the query and get the result
+            result = await receiver.execute_query(query)
+
+            # Send the query result back to the sender
+            await self.send_message(
+                receiver.id,
+                message.sender_id,
+                Performative.INFORM,
+                result
+            )
+        else:
+            # If the receiver cannot handle the query, send a failure response
+            await self.send_message(
+                receiver.id,
+                message.sender_id,
+                Performative.FAILURE,
+                f"Agent {receiver.id} cannot handle the query: {query}"
+            )
 
     async def _handle_proposal(self, receiver: 'Agent', message: ACLMessage):
-        # Handle proposal messages
-        pass
+        # Extract the proposal from the message content
+        proposal = message.content
+
+        # Check if the receiver agent can handle the proposal
+        if receiver.can_handle_proposal(proposal):
+            # Evaluate the proposal and make a decision
+            decision = await receiver.evaluate_proposal(proposal)
+
+            if decision.accepted:
+                # If the proposal is accepted, send an accept-proposal message back to the sender
+                await self.send_message(
+                    receiver.id,
+                    message.sender_id,
+                    Performative.ACCEPT_PROPOSAL,
+                    decision.content
+                )
+            else:
+                # If the proposal is rejected, send a reject-proposal message back to the sender
+                await self.send_message(
+                    receiver.id,
+                    message.sender_id,
+                    Performative.REJECT_PROPOSAL,
+                    decision.content
+                )
+        else:
+            # If the receiver cannot handle the proposal, send a failure response
+            await self.send_message(
+                receiver.id,
+                message.sender_id,
+                Performative.FAILURE,
+                f"Agent {receiver.id} cannot handle the proposal: {proposal}"
+            )

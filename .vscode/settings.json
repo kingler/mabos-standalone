@@ -2,12 +2,18 @@
     "jira-plugin.workingProject": "",
     "cSpell.words": [
         "dotenv",
+        "multiagent",
         "networkx",
         "openai",
         "owlready",
+        "postconditions",
         "pydantic",
         "rdflib",
+        "RDFS",
+        "subgoal",
         "subgoals",
+        "subplan",
+        "textblob",
         "uvicorn"
     ]
 }

@@ -12,8 +12,7 @@ async def create_knowledge_base():
 
 @router.get("/knowledge_bases/{kb_id}", response_model=KnowledgeBase)
 async def get_knowledge_base(kb_id: str):
-    kb = knowledge_service.get_knowledge_base(kb_id)
-    if not kb:
+    if not (kb := knowledge_service.get_knowledge_base(kb_id)):
         raise HTTPException(status_code=404, detail="Knowledge base not found")
     return kb
 

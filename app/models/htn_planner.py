@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
 from .goal import Goal
-from .plan import Plan
 from .task import Task
 from .action import Action
+
 
 class GoalPlanTree(BaseModel):
     root: Task
@@ -79,14 +79,12 @@ class HTNPlanner(BaseModel):
                 for subtask in method.get('subtasks', [])]
 
     def execute_plan(self, goal_plan_tree: GoalPlanTree) -> bool:
-        for action in goal_plan_tree.get_actions():
-            if not self._execute_action(action):
-                return False
-        return True
+        return all(self._execute_action(action) for action in goal_plan_tree.get_actions())
 
     def _execute_action(self, action: Action) -> bool:
         # In a real system, this would interact with the environment or other systems
         # For now, we'll just return True to simulate successful execution
+        print(f"Executing action: {action.description}")
         return True
 
     def plan_and_execute(self, goal: Goal, current_state: Dict[str, Any]) -> bool:
