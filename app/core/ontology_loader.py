@@ -1,8 +1,9 @@
 from typing import List, Dict, Any, Optional
+from pydantic import BaseModel
 from rdflib import Graph
 from owlready2 import World
 
-class OntologyLoader:
+class OntologyLoader(BaseModel):
     def __init__(self, world: Optional[World] = None, graph: Optional[Graph] = None):
         self.world = world or World()
         self.graph = graph or Graph()

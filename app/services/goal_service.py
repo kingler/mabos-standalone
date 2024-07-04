@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import uuid
 from typing import List, Dict
-from app.models.goal import Goal
+from app.models.goal import Goal, SoftGoal
 from app.core.llm_decomposer import LLMDecomposer
 
 # Load environment variables
@@ -44,3 +44,18 @@ class GoalService:
         if goal:
             goal.is_achieved = is_achieved
         return goal
+
+    def add_soft_goal_to_goal(self, goal_id: str, soft_goal: SoftGoal):
+        goal = self.get_goal(goal_id)
+        if goal:
+            goal.add_soft_goal(soft_goal)
+
+    def update_goal_contribution(self, goal_id: str, parent_goal_id: str, contribution: float):
+        goal = self.get_goal(goal_id)
+        if goal:
+            goal.update_contribution(parent_goal_id, contribution)
+
+    def propagate_goal_changes(self, goal_id: str):
+        goal = self.get_goal(goal_id)
+        if goal:
+            goal.propagate_changes()

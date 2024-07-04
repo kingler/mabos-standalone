@@ -6,6 +6,7 @@ from app.routers import knowledge_bases as knowledge_base_router
 from app.routers import actions, tasks, planning, communication
 from app.routers import mas_router
 from app.routers import version_control
+from app.routers import ontology as ontology_router
 
 app = FastAPI()
 
@@ -19,6 +20,7 @@ app.include_router(planning.router, prefix="/api/v1/planning", tags=["planning"]
 app.include_router(communication.router, prefix="/api/v1/communication", tags=["communication"])
 app.include_router(mas_router.router, prefix="/api/v1", tags=["MAS"])
 app.include_router(version_control.router, prefix="/api/v1/vc", tags=["Version Control"])
+app.include_router(ontology_router.router, prefix="/ontology", tags=["ontology"])
 
 
 if __name__ == "__main__":

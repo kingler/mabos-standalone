@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from .belief import Belief
 from .desire import Desire
@@ -11,6 +11,17 @@ from .plan import Plan, PlanStep
 
 
 class Agent(BaseModel):
+    """
+    Base class for all agents.
+
+    Attributes:
+        agent_id (str): The unique identifier of the agent.
+        name (str): The name of the agent.
+        beliefs (List[Belief]): The agent's current beliefs about the world.
+        desires (List[Desire]): The agent's current desires.
+        intentions (List[Intention]): The agent's current intentions.
+        available_actions (List[Action]): Actions available to the agent.
+    """
     agent_id: str = Field(..., description="The unique identifier of the agent")
     name: str = Field(..., description="The name of the agent")
     beliefs: List[Belief] = Field(default_factory=list, description="The agent's current beliefs about the world")
@@ -18,31 +29,89 @@ class Agent(BaseModel):
     intentions: List[Intention] = Field(default_factory=list, description="The agent's current intentions")
     available_actions: List[Action] = Field(default_factory=list, description="Actions available to the agent")
 
+    @field_validator('agent_type', check_fields=False)
+    def validate_agent_type(cls, value):
+        allowed_types = ['reactive', 'deliberative', 'hybrid']
+        if value not in allowed_types:
+            raise ValueError(f'Agent type must be one of {allowed_types}')
+        return value
+
     def add_belief(self, belief: Belief):
+        """
+        Add a new belief to the agent's beliefs.
+
+        Args:
+            belief (Belief): The belief to add.
+        """
         self.beliefs.append(belief)
 
     def remove_belief(self, belief: Belief):
+        """
+        Remove a belief from the agent's beliefs.
+
+        Args:
+            belief (Belief): The belief to remove.
+        """
         self.beliefs.remove(belief)
 
     def add_desire(self, desire: Desire):
+        """
+        Add a new desire to the agent's desires.
+
+        Args:
+            desire (Desire): The desire to add.
+        """
         self.desires.append(desire)
 
     def remove_desire(self, desire: Desire):
+        """
+        Remove a desire from the agent's desires.
+
+        Args:
+            desire (Desire): The desire to remove.
+        """
         self.desires.remove(desire)
 
     def add_intention(self, intention: Intention):
+        """
+        Add a new intention to the agent's intentions.
+
+        Args:
+            intention (Intention): The intention to add.
+        """
         self.intentions.append(intention)
 
     def remove_intention(self, intention: Intention):
+        """
+        Remove an intention from the agent's intentions.
+
+        Args:
+            intention (Intention): The intention to remove.
+        """
         self.intentions.remove(intention)
 
     def add_action(self, action: Action):
+        """
+        Add a new action to the agent's available actions.
+
+        Args:
+            action (Action): The action to add.
+        """
         self.available_actions.append(action)
 
     def remove_action(self, action: Action):
+        """
+        Remove an action from the agent's available actions.
+
+        Args:
+            action (Action): The action to remove.
+        """
         self.available_actions.remove(action)
 
     def deliberate(self):
+        """
+        Deliberate on the agent's desires and create new intentions.
+        """
         # Filter desires by priority and status
         active_desires = [d for d in self.desires if d.status == "active"]
         active_desires.sort(key=lambda d: d.priority, reverse=True)
@@ -55,6 +124,9 @@ class Agent(BaseModel):
                 self.add_intention(Intention(goal=selected_desire))
 
     def plan(self):
+        """
+        Plan actions for active intentions.
+        """
         for intention in self.intentions:
             if intention.status == "active":
                 if applicable_actions := [
@@ -75,6 +147,9 @@ class Agent(BaseModel):
                     intention.suspend_intention()
 
     def execute(self):
+        """
+        Execute actions for active intentions.
+        """
         for intention in self.intentions:
             for action in intention.actions:
                 action.execute(
@@ -82,103 +157,220 @@ class Agent(BaseModel):
                     set_belief=lambda key, value: self.add_belief(Belief(description=key, certainty=value))
                 )
 
-
-
     def revise_beliefs(self, new_belief: Belief):
-        """Revise beliefs based on new information."""
+        """
+        Revise beliefs based on new information.
+
+        Args:
+            new_belief (Belief): The new belief to revise with.
+        """
         if existing_belief := next((b for b in self.beliefs if b.description == new_belief.description), None):
             existing_belief.update(new_belief)
         else:
             self.add_belief(new_belief)
 
     def select_desires(self):
-        """Select desires based on current beliefs and intentions."""
+        """
+        Select desires based on current beliefs and intentions.
+
+        Returns:
+            List[Desire]: The selected desires.
+        """
         return [d for d in self.desires if self.is_desire_relevant(d)]
 
     def is_desire_relevant(self, desire: Desire) -> bool:
-        """Check if a desire is relevant given current beliefs and intentions."""
-        # Implement relevance checking logic
-        return True  # Placeholder
+        """
+        Check if a desire is relevant given current beliefs and intentions.
+
+        Args:
+            desire (Desire): The desire to check for relevance.
+
+        Returns:
+            bool: True if the desire is relevant, False otherwise.
+        """
+        # Implement relevance checking logic based on beliefs and intentions
+        for belief in self.beliefs:
+            if belief.description in desire.preconditions and belief.certainty < desire.preconditions[belief.description]:
+                return False
+        for intention in self.intentions:
+            if intention.goal == desire:
+                return False
+        return True
 
     def commit_to_intention(self, intention: Intention):
-        """Commit to an intention, possibly dropping conflicting intentions."""
+        """
+        Commit to an intention, possibly dropping conflicting intentions.
+
+        Args:
+            intention (Intention): The intention to commit to.
+        """
         conflicting_intentions = [i for i in self.intentions if self.are_intentions_conflicting(i, intention)]
         for conflicting in conflicting_intentions:
             self.drop_intention(conflicting)
         self.add_intention(intention)
 
     def are_intentions_conflicting(self, intention1: Intention, intention2: Intention) -> bool:
-        """Check if two intentions are conflicting."""
-        # Implement conflict checking logic
-        return False  # Placeholder
+        """
+        Check if two intentions are conflicting.
+
+        Args:
+            intention1 (Intention): The first intention to check.
+            intention2 (Intention): The second intention to check.
+
+        Returns:
+            bool: True if the intentions are conflicting, False otherwise.
+        """
+        # Implement conflict checking logic based on intention goals and resources
+        if intention1.goal == intention2.goal:
+            return True
+        for resource in intention1.required_resources:
+            if resource in intention2.required_resources:
+                return True
+        return False
 
     def drop_intention(self, intention: Intention):
-        """Drop an intention and clean up related plans."""
+        """
+        Drop an intention and clean up related plans.
+
+        Args:
+            intention (Intention): The intention to drop.
+        """
         self.intentions.remove(intention)
         self.plans = [p for p in self.plans if p.goal_id != intention.goal.id]
 
     def update_intention_status(self, intention: Intention, new_status: str):
-        """Update an intention's status."""
+        """
+        Update an intention's status.
+
+        Args:
+            intention (Intention): The intention to update.
+            new_status (str): The new status to set.
+        """
         intention.update_status(new_status)
         
 Agent.model_rebuild()
 
 class EnvironmentalAgent(Agent):
+    """
+    An agent that interacts with the environment.
+
+    Attributes:
+        environment_state (Dict[str, Any]): The current state of the environment.
+    """
     environment_state: Dict[str, Any] = Field(default_factory=dict, description="The current state of the environment")
 
     def update_environment_state(self, new_state: Dict[str, Any]):
-        """Update the agent's perception of the environment state."""
+        """
+        Update the agent's perception of the environment state.
+
+        Args:
+            new_state (Dict[str, Any]): The new environment state.
+        """
         self.environment_state.update(new_state)
 
     def perceive(self):
-        """Perceive the environment and update beliefs."""
+        """
+        Perceive the environment and update beliefs.
+        """
         for key, value in self.environment_state.items():
-            self.add_belief(f"{key}: {value}")
+            self.revise_beliefs(Belief(description=f"{key}: {value}", certainty=1.0))
 
     def act(self):
-        """Perform actions based on the current environment state."""
-        # This method can be overridden with specific environmental actions
-        pass        
+        """
+        Perform actions based on the current environment state.
+        """
+        # Implement environment-specific actions based on beliefs and intentions
+        for intention in self.intentions:
+            if intention.status == "active":
+                for action in intention.actions:
+                    if action.is_applicable(lambda key: next((b.certainty for b in self.beliefs if b.description == key), None)):
+                        action.execute(
+                            get_belief=lambda key: next((b.certainty for b in self.beliefs if b.description == key), None),
+                            set_belief=lambda key, value: self.revise_beliefs(Belief(description=key, certainty=value))
+                        )
+                        break
 
 EnvironmentalAgent.model_rebuild()        
         
 class ProactiveAgent(Agent):
+    """
+    An agent that proactively pursues its goals.
+
+    Attributes:
+        goals (List[Goal]): List of agent's goals.
+        plans (List[Plan]): List of agent's plans.
+        resources (Dict[str, float]): Agent's resources.
+    """
     goals: List[Goal] = Field(default_factory=list, description="List of agent's goals")
     plans: List[Plan] = Field(default_factory=list, description="List of agent's plans")
     resources: Dict[str, float] = Field(default_factory=dict, description="Agent's resources")
 
     def add_goal(self, goal: Goal):
-        """Add a new goal to the agent."""
+        """
+        Add a new goal to the agent.
+
+        Args:
+            goal (Goal): The goal to add.
+        """
         self.goals.append(goal)
         self.goals.sort(key=lambda g: g.priority, reverse=True)
 
     def remove_goal(self, goal: Goal):
-        """Remove a goal from the agent."""
+        """
+        Remove a goal from the agent.
+
+        Args:
+            goal (Goal): The goal to remove.
+        """
         self.goals.remove(goal)
 
     def deliberate(self):
-        """Deliberate on goals and update intentions."""
+        """
+        Deliberate on goals and update intentions.
+        """
         for goal in self.goals:
             if goal.is_achievable(self.beliefs) and self.has_resources_for_goal(goal):
-                self.add_intention(goal)
+                self.commit_to_intention(Intention(goal=goal))
 
     def has_resources_for_goal(self, goal: Goal) -> bool:
-        """Check if the agent has the necessary resources for the goal."""
-        # Implement resource checking logic
-        return True  # Placeholder
+        """
+        Check if the agent has the necessary resources for the goal.
+
+        Args:
+            goal (Goal): The goal to check resources for.
+
+        Returns:
+            bool: True if the agent has the necessary resources, False otherwise.
+        """
+        for resource, amount in goal.required_resources.items():
+            if self.resources.get(resource, 0) < amount:
+                return False
+        return True
 
     def plan(self):
-        """Generate plans for current intentions."""
+        """
+        Generate plans for current intentions.
+        """
         for intention in self.intentions:
-            if new_plan := self.generate_plan(intention):
-                self.plans.append(new_plan)
+            if intention.status == "active" and not intention.plan:
+                if new_plan := self.generate_plan(intention.goal):
+                    intention.plan = new_plan
+                    self.plans.append(new_plan)
 
     def generate_plan(self, goal: Goal) -> Plan:
-        """Generate a plan to achieve a goal."""
+        """
+        Generate a plan to achieve a goal.
+
+        Args:
+            goal (Goal): The goal to generate a plan for.
+
+        Returns:
+            Plan: The generated plan.
+        """
         # Implement a more sophisticated planning algorithm
         # This could involve using a planning library or custom logic
         # For now, we'll return an improved dummy plan
-        plan_id = str(UUID.uuid())
+        plan_id = str(UUID.uuid4())
         steps = self.create_plan_steps(goal)
         return Plan(
             id=plan_id,
@@ -190,32 +382,95 @@ class ProactiveAgent(Agent):
         )
 
     def create_plan_steps(self, goal: Goal) -> List[PlanStep]:
-        """Create a list of plan steps to achieve the goal."""
-        # Implement step creation logic
-        return [
-            PlanStep(id=str(UUID.uuid()), description=f"Step 1 to achieve {goal.description}"),
-            PlanStep(id=str(UUID.uuid()), description=f"Step 2 to achieve {goal.description}"),
-            PlanStep(id=str(UUID.uuid()), description=f"Step 3 to achieve {goal.description}")
-        ]
+        """
+        Create a list of plan steps to achieve the goal.
+
+        Args:
+            goal (Goal): The goal to create plan steps for.
+
+        Returns:
+            List[PlanStep]: The list of plan steps.
+        """
+        # Implement step creation logic based on goal requirements and available actions
+        steps = []
+        current_state = {b.description: b.certainty for b in self.beliefs}
+        for requirement, value in goal.requirements.items():
+            if current_state.get(requirement, 0) < value:
+                for action in self.available_actions:
+                    if action.is_applicable(lambda key: current_state.get(key, 0)) and action.effects.get(requirement, 0) > 0:
+                        steps.append(PlanStep(id=str(UUID.uuid4()), description=action.description))
+                        for effect_key, effect_value in action.effects.items():
+                            current_state[effect_key] = effect_value
+                        break
+        return steps
 
     def create_symbolic_plan(self, goal: Goal) -> Dict:
-        """Create a symbolic plan for the goal."""
-        # Implement symbolic planning logic
-        return {}  # Placeholder
+        """
+        Create a symbolic plan for the goal.
+
+        Args:
+            goal (Goal): The goal to create a symbolic plan for.
+
+        Returns:
+            Dict: The symbolic plan.
+        """
+        # Implement symbolic planning logic based on goal requirements and available actions
+        symbolic_plan = {}
+        current_state = {b.description: b.certainty for b in self.beliefs}
+        for requirement, value in goal.requirements.items():
+            if current_state.get(requirement, 0) < value:
+                for action in self.available_actions:
+                    if action.is_applicable(lambda key: current_state.get(key, 0)) and action.effects.get(requirement, 0) > 0:
+                        symbolic_plan[action.action_id] = {
+                            "preconditions": action.preconditions,
+                            "effects": action.effects
+                        }
+                        for effect_key, effect_value in action.effects.items():
+                            current_state[effect_key] = effect_value
+                        break
+        return symbolic_plan
 
     def create_llm_plan(self, goal: Goal) -> Dict:
-        """Create an LLM-based plan for the goal."""
-        # Implement LLM-based planning logic
-        return {}  # Placeholder
+        """
+        Create an LLM-based plan for the goal.
+
+        Args:
+            goal (Goal): The goal to create an LLM-based plan for.
+
+        Returns:
+            Dict: The LLM-based plan.
+        """
+        # Implement LLM-based planning logic based on goal description and requirements
+        llm_plan = {
+            "goal_description": goal.description,
+            "goal_requirements": goal.requirements,
+            "plan_steps": [
+                {"description": "Step 1 of LLM-based plan"},
+                {"description": "Step 2 of LLM-based plan"},
+                {"description": "Step 3 of LLM-based plan"}
+            ]
+        }
+        return llm_plan
 
     def execute(self):
-        """Execute plans to achieve goals."""
+        """
+        Execute plans to achieve goals.
+        """
+        for intention in self.intentions:
+            if intention.status == "active" and intention.plan and not intention.plan.is_completed:
+                self.execute_plan(intention.plan)
+
         for plan in self.plans:
             if not plan.is_completed:
                 self.execute_plan(plan)
 
     def execute_plan(self, plan: Plan):
-        """Execute a single plan."""
+        """
+        Execute a single plan.
+
+        Args:
+            plan (Plan): The plan to execute.
+        """
         while not plan.is_completed and (next_step := plan.get_next_step()):
             if self.execute_step(next_step):
                 plan.update_step_status(next_step.id, True)
@@ -228,27 +483,54 @@ class ProactiveAgent(Agent):
             goal.update_status(True)
 
     def execute_step(self, step: PlanStep) -> bool:
-        """Execute a single step of the plan."""
+        """
+        Execute a single step of the plan.
+
+        Args:
+            step (PlanStep): The step to execute.
+
+        Returns:
+            bool: True if the step was executed successfully, False otherwise.
+        """
         # Implement step execution logic
         print(f"Executing step: {step.description}")
         return True  # Placeholder
 
     def replan(self, plan: Plan):
-        """Replan when a step fails."""
+        """
+        Replan when a step fails.
+
+        Args:
+            plan (Plan): The plan that failed.
+        """
         # Implement replanning logic
         print(f"Replanning for goal: {plan.goal_id}")        
 
 ProactiveAgent.model_rebuild()
 
 class ReactiveAgent(Agent):
+    """
+    An agent that reacts to changes in the environment.
+
+    Attributes:
+        stimulus_response_rules (List[Dict[str, Any]]): List of stimulus-response rules.
+    """
     stimulus_response_rules: List[Dict[str, Any]] = Field(default_factory=list, description="List of stimulus-response rules")
 
     def add_rule(self, stimulus: str, response: str):
-        """Add a new stimulus-response rule."""
+        """
+        Add a new stimulus-response rule.
+
+        Args:
+            stimulus (str): The stimulus that triggers the rule.
+            response (str): The response to execute when the stimulus is triggered.
+        """
         self.stimulus_response_rules.append({"stimulus": stimulus, "response": response})
 
     def perceive(self):
-        """Perceive the environment and react based on stimulus-response rules."""
+        """
+        Perceive the environment and react based on stimulus-response rules.
+        """
         for belief in self.beliefs:
             for rule in self.stimulus_response_rules:
                 if rule["stimulus"] in belief.description and self.can_execute_action(rule["response"]):
@@ -257,7 +539,15 @@ class ReactiveAgent(Agent):
 
 
     def can_execute_action(self, action: str) -> bool:
-        """Check if the agent has the necessary resources to execute the action."""
+        """
+        Check if the agent has the necessary resources to execute the action.
+
+        Args:
+            action (str): The action to check resources for.
+
+        Returns:
+            bool: True if the agent has the necessary resources, False otherwise.
+        """
         # Implement resource checking logic
         return True  # Placeholder
     

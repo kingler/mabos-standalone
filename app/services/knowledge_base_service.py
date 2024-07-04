@@ -1,6 +1,7 @@
 from typing import Dict, List, Any
 import re
 import uuid
+from app.core.reasoner import Reasoner
 import numpy as np
 from app.core.sentence_transformer import SentenceTransformer
 from app.models.knowledge_base import KnowledgeBase, KnowledgeItem
@@ -9,8 +10,9 @@ from app.core.reasoning_engine import ReasoningEngine
 
 class KnowledgeBaseService:
     def __init__(self):
-        self.knowledge_bases: Dict[str, KnowledgeBase] = {}
-        self.reasoning_engine = ReasoningEngine()
+        self.knowledge_base = KnowledgeBase(id=str(uuid.uuid4()))  # Ensure this is correctly initialized
+        api_key = "your_api_key"  # Replace with your actual API key
+        self.reasoning_engine = Reasoner(knowledge_base=self.knowledge_base, api_key=api_key)
 
     def create_knowledge_base(self) -> KnowledgeBase:
         kb_id = str(uuid.uuid4())

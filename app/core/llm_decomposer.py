@@ -2,13 +2,13 @@ import os
 import openai
 from typing import List
 import uuid
+
+from pydantic import BaseModel
 from app.models.goal import Goal
 
 class LLMDecomposer:
-    def __init__(self, api_key: str, model: str = "gpt-3.5-turbo"):
-        openai.api_key = os.getenv('OPENAI_API_KEY')
+    def __init__(self, api_key: str):
         self.api_key = api_key
-        self.model = model
 
     def decompose(self, goal: Goal) -> List[Goal]:
         # Prepare the prompt for the LLM
@@ -42,7 +42,7 @@ class LLMDecomposer:
     def _get_llm_response(self, prompt: str) -> str:
         try:
             response = openai.ChatCompletion.create(
-                model=self.model,
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are an AI assistant tasked with decomposing high-level goals into specific, actionable subgoals."},
                     {"role": "user", "content": prompt}

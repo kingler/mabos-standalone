@@ -14,11 +14,11 @@ load_dotenv()
 class AgentService:
     def __init__(self):
         self.agents: dict[str, Agent] = {}
-        self.knowledge_base = KnowledgeBase(id=str(uuid.uuid4()))
+        self.knowledge_base = KnowledgeBase(id=str(uuid.uuid4()))  # Correct UUID generation
         api_key = os.getenv('OPENAI_API_KEY')  # Get API key from environment variable
         if not api_key:
             raise ValueError("OPENAI_API_KEY not found in environment variables")
-        self.reasoner = Reasoner(self.knowledge_base, api_key)
+        self.reasoner = Reasoner(knowledge_base=self.knowledge_base, api_key=api_key)
 
     def create_agent(self, name: str) -> Agent:
         agent_id = str(uuid.UUID())

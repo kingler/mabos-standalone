@@ -90,3 +90,7 @@ class HTNPlanner(BaseModel):
     def plan_and_execute(self, goal: Goal, current_state: Dict[str, Any]) -> bool:
         goal_plan_tree = self.plan(goal, current_state)
         return self.execute_plan(goal_plan_tree)
+
+    def retrieve_links(self, impacted_classes: List[str]) -> List[str]:
+        # Implement probabilistic retrieval algorithm to return links between impacted classes and SIG elements
+        return [link for link in self.domain_knowledge if link in impacted_classes]

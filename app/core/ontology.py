@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 from pydantic import BaseModel, Field
 from rdflib import OWL, RDF, RDFS, Graph
 from owlready2 import World
@@ -6,9 +6,19 @@ from .ontology_loader import OntologyLoader
 from app.core.domain_ontology_generator import DomainOntologyGenerator
 from app.core.custom_inference import CustomInference
 
+class Concept(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class Relationship(BaseModel):
+    name: str
+    domain: str
+    range: str
+    description: Optional[str] = None
+
 class Ontology(BaseModel):
-    concepts: List[str] = Field(description="Domain concepts")
-    relationships: List[str] = Field(description="Relationships between concepts")
+    concepts: List[Concept] = Field(description="Domain concepts")
+    relationships: List[Relationship] = Field(description="Relationships between concepts")
     ontology_path: Optional[str] = None
 
     def __init__(self, ontology_path: Optional[str] = None, world: Optional[World] = None, graph: Optional[Graph] = None):
@@ -54,21 +64,18 @@ class Ontology(BaseModel):
             user_data (Dict[str, Any]): The user data to generate the ontology.
         """
         # Extract relevant information from user data
-        classes = user_data.get("classes", [])
-        properties = user_data.get("properties", [])
+        concepts = user_data.get("concepts", [])
         relationships = user_data.get("relationships", [])
         
-        # Create classes in the ontology
-        for class_name in classes:
-            self.world.create_class(class_name)
+        # Create concepts in the ontology
+        for concept_data in concepts:
+            concept = Concept(**concept_data)
+            self.world.create_class(concept.name)
         
-        # Create properties in the ontology
-        for property_name, domain, range in properties:
-            self.world.create_property(property_name, domain, range)
-        
-        # Create relationships between classes
-        for class1, relationship, class2 in relationships:
-            self.world.create_relationship(class1, relationship, class2)
+        # Create relationships between concepts
+        for relationship_data in relationships:
+            relationship = Relationship(**relationship_data)
+            self.world.create_property(relationship.name, relationship.domain, relationship.range)
         
         # Apply any additional domain-specific rules or constraints
         self.apply_domain_rules(user_data)
@@ -167,18 +174,19 @@ class Ontology(BaseModel):
         # Align the ontologies before merging
         self.align_with(other_ontology)
         
-        # Add classes from the other ontology
-        for class_name in other_ontology.get_classes():
-            if class_name not in self.get_classes():
-                self.graph.add((other_ontology.loader.get_class_uri(class_name), RDF.type, OWL.Class))
+        # Add concepts from the other ontology
+        for concept in other_ontology.concepts:
+            if concept.name not in [c.name for c in self.concepts]:
+                self.concepts.append(concept)
+                self.graph.add((self.loader.get_class_uri(concept.name), RDF.type, OWL.Class))
         
-        # Add properties from the other ontology
-        for property_name in other_ontology.get_properties():
-            if property_name not in self.get_properties():
-                domain, range = other_ontology.loader.get_property_domain_range(property_name)
-                self.graph.add((other_ontology.loader.get_property_uri(property_name), RDF.type, OWL.ObjectProperty))
-                self.graph.add((other_ontology.loader.get_property_uri(property_name), RDFS.domain, self.loader.get_class_uri(domain)))
-                self.graph.add((other_ontology.loader.get_property_uri(property_name), RDFS.range, self.loader.get_class_uri(range)))
+        # Add relationships from the other ontology
+        for relationship in other_ontology.relationships:
+            if relationship.name not in [r.name for r in self.relationships]:
+                self.relationships.append(relationship)
+                self.graph.add((self.loader.get_property_uri(relationship.name), RDF.type, OWL.ObjectProperty))
+                self.graph.add((self.loader.get_property_uri(relationship.name), RDFS.domain, self.loader.get_class_uri(relationship.domain)))
+                self.graph.add((self.loader.get_property_uri(relationship.name), RDFS.range, self.loader.get_class_uri(relationship.range)))
         
         # TODO: Handle merging of individuals and other ontology elements
         

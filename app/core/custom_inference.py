@@ -1,6 +1,7 @@
 from owlready2 import World, FunctionalProperty, InverseFunctionalProperty
+from pydantic import BaseModel
 
-class CustomInference:
+class CustomInference(BaseModel):
     def __init__(self, world: World):
         self.world = world
 

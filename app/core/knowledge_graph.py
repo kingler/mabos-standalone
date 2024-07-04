@@ -1,13 +1,14 @@
 from __future__ import annotations
 from typing import List, Dict, Any, TYPE_CHECKING
 import networkx as nx
+from pydantic import BaseModel
 from rdflib import Literal, URIRef
 from rdflib.namespace import RDF
 
 if TYPE_CHECKING:
     from app.models.knowledge_base import KnowledgeBase
 
-class KnowledgeGraph:
+class KnowledgeGraph(BaseModel):
     def __init__(self, knowledge_base: KnowledgeBase):
         self.knowledge_base = knowledge_base
         self.graph = nx.MultiDiGraph()

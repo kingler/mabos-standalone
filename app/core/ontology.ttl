@@ -28,6 +28,9 @@
 :ProductDescription rdf:type owl:Class ;
                     rdfs:label "Product Description" .
 
+:Stakeholder rdf:type owl:Class ;
+             rdfs:label "Stakeholder" .
+
 :hasOnboardingStep rdf:type owl:ObjectProperty ;
                    rdfs:domain :User ;
                    rdfs:range :OnboardingStep .
@@ -51,6 +54,10 @@
 :belongsTo rdf:type owl:ObjectProperty ;
            rdfs:domain :ProductDescription ;
            rdfs:range :BusinessModel .
+
+:hasStakeholder rdf:type owl:ObjectProperty ;  # New property for stakeholders
+                rdfs:domain :BusinessModel ;
+                rdfs:range :Stakeholder .
 
 :userID rdf:type owl:DatatypeProperty ;
          rdfs:domain :User ;
@@ -171,3 +178,4 @@
 :productDescription rdf:type owl:DatatypeProperty ;
                     rdfs:domain :ProductDescription ;
                     rdfs:range xsd:string .
+
