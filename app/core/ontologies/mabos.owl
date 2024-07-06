@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.com/mabos-ontology#"
+     xml:base="http://example.com/mabos-ontology"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://example.com/mabos-ontology"/>
+    
+    <!-- Classes -->
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Agent"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#EnvironmentalAgent">
+        <rdfs:subClassOf rdf:resource="http://example.com/mabos-ontology#Agent"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#ProactiveAgent">
+        <rdfs:subClassOf rdf:resource="http://example.com/mabos-ontology#Agent"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#ReactiveAgent">
+        <rdfs:subClassOf rdf:resource="http://example.com/mabos-ontology#Agent"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Environment"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Action"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Goal"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Belief"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Intention"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Message"/>
+    <owl:Class rdf:about="http://example.com/mabos-ontology#Performative"/>
+    
+    <!-- Object Properties -->
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#hasAgent">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Environment"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Agent"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#performsAction">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Action"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#hasGoal">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Goal"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#hasBelief">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Belief"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#hasIntention">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Intention"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#sendsMessage">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Message"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#receivesMessage">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Message"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://example.com/mabos-ontology#hasPerformative">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Message"/>
+        <rdfs:range rdf:resource="http://example.com/mabos-ontology#Performative"/>
+    </owl:ObjectProperty>
+    
+    <!-- Data Properties -->
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#agentID">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#agentName">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Agent"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#goalID">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Goal"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#goalName">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Goal"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#beliefID">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Belief"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#beliefContent">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Belief"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#intentionID">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Intention"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#intentionContent">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Intention"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#messageID">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Message"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#messageContent">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Message"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://example.com/mabos-ontology#performativeType">
+        <rdfs:domain rdf:resource="http://example.com/mabos-ontology#Performative"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+</rdf:RDF>

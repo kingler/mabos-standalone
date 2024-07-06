@@ -1,5 +1,5 @@
 from typing import List, Any, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from .belief import Belief
 from .plan import Plan
 from .goal import Goal
@@ -103,3 +103,12 @@ class Intention(BaseModel):
         return self.status == "failed"
 
 Intention.model_rebuild()
+
+class IntentionCreate(BaseModel):
+    goal_id: str
+    plan_id: Optional[str] = None
+
+class IntentionUpdate(BaseModel):
+    status: Optional[str] = None
+    goal_id: Optional[str] = None
+    plan_id: Optional[str] = None

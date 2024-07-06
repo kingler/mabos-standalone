@@ -22,7 +22,7 @@ class Ontology(BaseModel):
     ontology_path: Optional[str] = None
 
     def __init__(self, ontology_path: Optional[str] = None, world: Optional[World] = None, graph: Optional[Graph] = None):
-        super().__init__()
+        super().__init__(ontology_path=ontology_path, **data)
         self.ontology_path = ontology_path
         self.world = world or World()
         self.graph = graph or Graph()

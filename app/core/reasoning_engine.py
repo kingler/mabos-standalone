@@ -38,6 +38,28 @@ class ReasoningEngine(BaseModel):
         combined_results = {**rule_based_results, **probabilistic_results}
         return combined_results
 
+    def _rule_based_reasoning(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Perform rule-based reasoning using the rules engine.
+        
+        Args:
+            context (Dict[str, Any]): The context for reasoning.
+        
+        Returns:
+            Dict[str, Any]: The results of rule-based reasoning.
+        """
+        def post(category: str, fact: Dict[str, Any]):
+            # Placeholder for the actual implementation of the post function
+            print(f"Posting to {category}: {fact}")
+            
+        results = {}
+        for fact in context.get('facts', []):
+            post('business', fact)
+            # Collect results from the rules engine
+            # This is a placeholder for actual implementation
+            results[fact['subject']] = 'processed'
+        return results
+
     def simulate_action(self, action: str, state: Dict[str, Any]) -> Dict[str, Any]:
         """
         Simulate the outcome of performing an action in a given state using the knowledge base.
@@ -175,76 +197,6 @@ class ReasoningEngine(BaseModel):
         output = self._safe_eval(response)
         return output
         
-    def _rule_based_reasoning(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Perform rule-based reasoning using the knowledge base and context.
-        
-        Args:
-            context (Dict[str, Any]): The context for reasoning.
-        
-        Returns:
-            Dict[str, Any]: The results of rule-based reasoning.
-        """
-        # Extract relevant facts from the context
-        facts = [fact for fact in context.keys() if not isinstance(context[fact], float)]
-        
-        # Construct a prompt for rule-based reasoning
-        prompt = f"""
-        Given the following facts:
-        {facts}
-        
-        Perform rule-based reasoning using the knowledge base to infer new knowledge or derive conclusions.
-        Provide the output as a dictionary with 'inferred_knowledge' and 'conclusions' as keys.
-        """
-        
-        # Query the LLM with the rule-based reasoning prompt
-        response = self._query_llm(prompt)
-        
-        # Evaluate the LLM response and extract the results
-        output = self._safe_eval(response)
-        inferred_knowledge = output.get("inferred_knowledge", {})
-        conclusions = output.get("conclusions", {})
-        
-        return {
-            "inferred_knowledge": inferred_knowledge,
-            "conclusions": conclusions
-        }
-    
-    def _probabilistic_reasoning(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Perform probabilistic reasoning using the knowledge base and context.
-        
-        Args:
-            context (Dict[str, Any]): The context for reasoning.
-        
-        Returns:
-            Dict[str, Any]: The results of probabilistic reasoning.
-        """
-        # Extract relevant facts and their probabilities from the context
-        facts_with_probs = [(fact, prob) for fact, prob in context.items() if isinstance(prob, float)]
-        
-        # Construct a prompt for probabilistic reasoning
-        prompt = f"""
-        Given the following facts with their probabilities:
-        {facts_with_probs}
-        
-        Perform probabilistic reasoning to infer new knowledge or update existing beliefs.
-        Provide the output as a dictionary with 'inferred_knowledge' and 'updated_beliefs' as keys.
-        """
-        
-        # Query the LLM with the probabilistic reasoning prompt
-        response = self._query_llm(prompt)
-        
-        # Evaluate the LLM response and extract the results
-        output = self._safe_eval(response)
-        inferred_knowledge = output.get("inferred_knowledge", {})
-        updated_beliefs = output.get("updated_beliefs", {})
-        
-        return {
-            "inferred_knowledge": inferred_knowledge,
-            "updated_beliefs": updated_beliefs
-        }
-
     def _query_llm(self, prompt: str) -> str:
         """
         Query the LLM with a given prompt.

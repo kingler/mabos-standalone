@@ -1,24 +1,52 @@
 from typing import Dict, Any
 from uuid import UUID
 from app.services.agent_service import AgentService
-from app.models.agent import EnvironmentalAgent
+from typing import List
+from uuid import UUID
+from app.models.environment import Environment, EnvironmentCreate, EnvironmentUpdate
+from app.models.environmental_agent import EnvironmentalAgent
 
 class EnvironmentService:
-    def __init__(self, agent_service: AgentService):
-        self.agent_service = agent_service
+    def __init__(self):
+        self.environments: List[Environment] = []
 
-    def update_environment_state(self, agent_id: UUID, new_state: Dict[str, Any]) -> EnvironmentalAgent:
-        agent = self.agent_service.get_agent(agent_id)
-        if isinstance(agent, EnvironmentalAgent):
-            agent.update_environment_state(new_state)
-            # Notify other agents about the environment change
-            self._notify_agents_of_change(new_state)
-            return agent
+    def create_environment(self, environment_data: EnvironmentCreate) -> Environment:
+        environment = Environment(**environment_data.dict())
+        self.environments.append(environment)
+        return environment
+
+    def get_environment(self, environment_id: UUID) -> Environment:
+        for environment in self.environments:
+            if environment.id == environment_id:
+                return environment
         return None
 
-    def _notify_agents_of_change(self, new_state: Dict[str, Any]):
-        all_agents = self.agent_service.get_all_agents()
-        for agent in all_agents:
-            if not isinstance(agent, EnvironmentalAgent):
-                # Update beliefs of non-environmental agents
-                self.agent_service.update_agent_beliefs(agent.id, new_state)
+    def update_environment(self, environment_id: UUID, environment_data: EnvironmentUpdate) -> Environment:
+        environment = self.get_environment(environment_id)
+        if environment:
+            for field, value in environment_data.dict(exclude_unset=True).items():
+                setattr(environment, field, value)
+        return environment
+
+    def delete_environment(self, environment_id: UUID) -> bool:
+        environment = self.get_environment(environment_id)
+        if environment:
+            self.environments.remove(environment)
+            return True
+        return False
+
+    def get_environment_agents(self, environment_id: UUID) -> List[EnvironmentalAgent]:
+        environment = self.get_environment(environment_id)
+        if environment:
+            return environment.agents
+        return []
+
+    def update_environment_agent_state(self, environment_id: UUID, agent_id: UUID, new_state: Dict[str, Any]) -> EnvironmentalAgent:
+        environment = self.get_environment(environment_id)
+        if environment:
+            for agent in environment.agents:
+                if agent.id == agent_id:
+                    agent.update_environment_state(new_state)
+                    agent.perceive()
+                    return agent
+        return None

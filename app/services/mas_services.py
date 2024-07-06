@@ -1,11 +1,11 @@
+from app.models.multiagent_system import MultiAgentSystem
+from app.models.agent import Agent
 from typing import List, Optional
 from uuid import UUID
-from app.models.agent import Agent
-from app.models.multiagent_system import MultiAgentSystem
 
 class MASService:
-    def __init__(self):
-        self.mas = MultiAgentSystem()
+    def __init__(self, num_agents: int, num_states: int, state_size: int, action_size: int, ontology_path: str):
+        self.mas = MultiAgentSystem(num_agents, num_states, state_size, action_size, ontology_path)
 
     def add_agent(self, agent: Agent) -> Agent:
         return self.mas.add_agent(agent)

@@ -1,45 +1,58 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from app.models.plan import Plan, PlanStep
 from app.services.plan_service import PlanService
 from app.services.agent_service import AgentService
 from app.services.goal_service import GoalService
+from app.core.world_model_provider import get_world_model
+from app.core.world_model import WorldModel
 
 router = APIRouter()
-agent_service = AgentService()
-goal_service = GoalService()
-plan_service = PlanService(agent_service, goal_service)
 
-@router.post("/plans/", response_model=Plan)
-async def create_plan(goal_id: str):
-    if not (plan := plan_service.create_plan(goal_id)):
+def get_agent_service(world_model: WorldModel = Depends(get_world_model)):
+    return AgentService(world_model)
+
+def get_goal_service():
+    return GoalService()
+
+def get_plan_service(agent_service: AgentService = Depends(get_agent_service), goal_service: GoalService = Depends(get_goal_service)):
+    return PlanService(agent_service, goal_service)
+
+@router.post("/", response_model=Plan)
+async def create_plan(goal_id: str, plan_service: PlanService = Depends(get_plan_service)):
+    plan = plan_service.create_plan(goal_id)
+    if not plan:
         raise HTTPException(status_code=404, detail="Goal not found")
     return plan
 
-@router.get("/plans/{plan_id}", response_model=Plan)
-async def get_plan(plan_id: str):
-    if not (plan := plan_service.get_plan(plan_id)):
+@router.get("/{plan_id}", response_model=Plan)
+async def get_plan(plan_id: str, plan_service: PlanService = Depends(get_plan_service)):
+    plan = plan_service.get_plan(plan_id)
+    if not plan:
         raise HTTPException(status_code=404, detail="Plan not found")
     return plan
 
-@router.get("/plans/", response_model=List[Plan])
-async def list_plans():
+@router.get("/", response_model=List[Plan])
+async def list_plans(plan_service: PlanService = Depends(get_plan_service)):
     return plan_service.list_plans()
 
-@router.post("/plans/{plan_id}/steps", response_model=Plan)
-async def add_plan_step(plan_id: str, step: PlanStep):
-    if not (plan := plan_service.add_plan_step(plan_id, step)):
+@router.post("/{plan_id}/steps", response_model=Plan)
+async def add_plan_step(plan_id: str, step: PlanStep, plan_service: PlanService = Depends(get_plan_service)):
+    plan = plan_service.add_plan_step(plan_id, step)
+    if not plan:
         raise HTTPException(status_code=404, detail="Plan not found")
     return plan
 
-@router.put("/plans/{plan_id}/steps/{step_id}", response_model=Plan)
-async def update_step_status(plan_id: str, step_id: str, is_completed: bool):
-    if plan := plan_service.update_step_status(plan_id, step_id, is_completed):
-        return plan
-    raise HTTPException(status_code=404, detail="Plan or step not found")
+@router.put("/{plan_id}/steps/{step_id}", response_model=Plan)
+async def update_step_status(plan_id: str, step_id: str, is_completed: bool, plan_service: PlanService = Depends(get_plan_service)):
+    plan = plan_service.update_step_status(plan_id, step_id, is_completed)
+    if not plan:
+        raise HTTPException(status_code=404, detail="Plan or step not found")
+    return plan
 
-@router.post("/plans/{plan_id}/execute")
-async def execute_plan(plan_id: str, agent_id: str):
-    if result := plan_service.execute_plan(plan_id, agent_id):
-        return result
-    raise HTTPException(status_code=404, detail="Plan or Agent not found")
+@router.post("/{plan_id}/execute")
+async def execute_plan(plan_id: str, agent_id: str, plan_service: PlanService = Depends(get_plan_service)):
+    result = plan_service.execute_plan(plan_id, agent_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Plan or Agent not found")
+    return result

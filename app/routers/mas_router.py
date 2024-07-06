@@ -3,10 +3,20 @@ from typing import List
 from uuid import UUID
 from app.models.agent import Agent
 from app.services.mas_services import MASService
+from app.core.config import get_settings
+
 router = APIRouter()
 
+settings = get_settings()
+
 def get_mas_service():
-    return MASService()
+    return MASService(
+        num_agents=settings.num_agents,
+        num_states=settings.num_states,
+        state_size=settings.state_size,
+        action_size=settings.action_size,
+        ontology_path=settings.ontology_path
+    )
 
 @router.post("/mas/agents/", response_model=Agent)
 async def add_agent(agent: Agent, mas_service: MASService = Depends(get_mas_service)):
@@ -21,7 +31,7 @@ async def get_agent(agent_id: UUID, mas_service: MASService = Depends(get_mas_se
 
 @router.delete("/mas/agents/{agent_id}")
 async def remove_agent(agent_id: UUID, mas_service: MASService = Depends(get_mas_service)):
-    if not (success := mas_service.remove_agent(agent_id)):
+    if not mas_service.remove_agent(agent_id):
         raise HTTPException(status_code=404, detail="Agent not found")
     return {"message": "Agent removed successfully"}
 
