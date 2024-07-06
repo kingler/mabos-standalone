@@ -4,6 +4,9 @@ from app.core.world_model_provider import get_world_model
 from app.core.world_model import WorldModel
 from app.services.agent_service import AgentService
 from app.services.world_model_service import WorldModelService
+from app.routers.mdd_mas import router as mdd_router
+from app.routers.togaf_mdd import router as togaf_router
+from app.routers.tropos_mdd import router as tropos_router
 
 app = FastAPI()
 
@@ -26,7 +29,12 @@ app.include_router(communication.router, prefix="/api/v1/communication", tags=["
 app.include_router(mas_router.router, prefix="/api/v1", tags=["multi-agent system"])
 app.include_router(version_control.router, prefix="/api/v1/vc", tags=["version control"])
 app.include_router(world_model_router.router, prefix="/api/v1/world", tags=["world model"])
-
+# MDD router
+app.include_router(mdd_router, prefix="/api/v1/mdd", tags=["MDD"])
+# TOGAF router
+app.include_router(togaf_router, prefix="/api/v1/togaf", tags=["TOGAF"])
+# Tropos router
+app.include_router(tropos_router, prefix="/api/v1/tropos", tags=["Tropos"])
 # Dependency to get the WorldModel
 def get_world_model_dependency():
     return get_world_model()
