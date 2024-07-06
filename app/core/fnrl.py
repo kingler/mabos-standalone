@@ -1,23 +1,27 @@
 # app/core/fnrl.py -- Federated Neural Reinforcement Learning model 
-
 import numpy as np
-import tensorflow as tf
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import torch
 
 class FNRL:
-    def __init__(self, num_agents, state_size, action_size):
+    def __init__(self, num_agents, model_name="distilbert-base-uncased"):
         self.num_agents = num_agents
-        self.models = [self.create_model(state_size, action_size) for _ in range(num_agents)]
-
-    def create_model(self, state_size, action_size):
-        model = tf.keras.Sequential([
-            tf.keras.layers.LSTM(64, input_shape=(None, state_size)),
-            tf.keras.layers.Dense(action_size, activation='softmax')
-        ])
-        model.compile(optimizer='adam', loss='categorical_crossentropy')
-        return model
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.models = [AutoModelForSequenceClassification.from_pretrained(model_name) for _ in range(num_agents)]
 
     def train(self, agent_id, states, actions):
-        self.models[agent_id].fit(np.array(states), np.array(actions), epochs=1, verbose=0)
+        model = self.models[agent_id]
+        inputs = self.tokenizer(states, return_tensors="pt", padding=True, truncation=True)
+        labels = torch.tensor(actions)
+        
+        optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5)
+        loss = model(**inputs, labels=labels).loss
+        loss.backward()
+        optimizer.step()
 
     def predict(self, agent_id, state):
-        return self.models[agent_id].predict(np.array([state]))
+        model = self.models[agent_id]
+        inputs = self.tokenizer(state, return_tensors="pt")
+        with torch.no_grad():
+            logits = model(**inputs).logits
+        return torch.softmax(logits, dim=-1).numpy()

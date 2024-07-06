@@ -1,17 +1,17 @@
 import numpy as np
-from typing import List, Union
-from sentence_transformers import SentenceTransformer as STModel
+from typing import List, Union, Any
+from sentence_transformers import SentenceTransformer
 from pydantic import BaseModel, Field
 
 class SentenceTransformerWrapper(BaseModel):
-    model: STModel = Field(default_factory=lambda: STModel('all-MiniLM-L6-v2'))
+    model: Any = Field(default_factory=lambda: SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2"))
     
     class Config:
         arbitrary_types_allowed = True
     
-    def __init__(self, model_name: str = 'all-MiniLM-L6-v2'):
+    def __init__(self, model_name: str = 'sentence-transformers/all-MiniLM-L6-v2'):
         super().__init__()
-        self.model = STModel(model_name)
+        self.model = SentenceTransformer(model_name)
     
     def encode(self, sentences: Union[str, List[str]], batch_size: int = 32) -> np.ndarray:
         return self.model.encode(sentences, batch_size=batch_size)
@@ -28,6 +28,3 @@ class SentenceTransformerWrapper(BaseModel):
 
     def get_embedding_dimension(self) -> int:
         return self.model.get_sentence_embedding_dimension()
-
-class SentenceTransformer(SentenceTransformerWrapper):
-    pass

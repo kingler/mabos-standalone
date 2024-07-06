@@ -39,8 +39,9 @@ class WorldModel(BaseModel):
         state_size = 10  # Adjust based on your state representation
         action_size = 5  # Adjust based on your action space
         
+        self.agents = {}
         self.stochastic_kinetic_model = StochasticKineticModel(num_agents, num_states)
-        self.fnrl_model = FNRL(num_agents, state_size, action_size)
+        self.fnrl_model = FNRL(num_agents=1)
 
     def update_state(self, updates: Dict[str, Any]):
         self.state.update(updates)
