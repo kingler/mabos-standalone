@@ -1,5 +1,16 @@
 from meta_agents.strategic_meta_agent import StrategicMetaAgent
 from meta_agents.tactical_meta_agent import TacticalMetaAgent
 from meta_agents.operational_meta_agent import OperationalMetaAgent
+from meta_agents.requirements_analysis_agent import RequirementsAnalysisAgent
+from meta_agents.domain_modeling_agent import DomainModelingAgent
+from meta_agents.architecture_design_agent import ArchitectureDesignAgent
+from meta_agents.agent_design_agent import AgentDesignAgent
+from meta_agents.ontology_engineering_agent import OntologyEngineeringAgent
+from meta_agents.code_generation_agent import CodeGenerationAgent
+from meta_agents.testing_and_verification_agent import TestingAndVerificationAgent
+from meta_agents.integration_agent import IntegrationAgent
+from meta_agents.deployment_agent import DeploymentAgent
+from meta_agents.monitoring_agent import MonitoringAgent
+from meta_agents.optimization_agent import OptimizationAgent
 
 # You can add any additional shared functionality or initialization here if needed
