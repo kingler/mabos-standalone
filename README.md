@@ -601,6 +601,346 @@ To extend the framework for your specific use case:
 8. Implement custom model transformations for your specific domain
 
 ___
+## System Architecture Diagrams
+System architecture diagrams to represent the MABOS architecture based on TOGAF, state machines, data class models, activity diagrams, sequence diagrams, and use case diagrams. I'll also highlight the knowledge management, reasoning, and inference capabilities of the MAS, illustrating the use of ontologies and knowledge graphs for knowledge representation in MAS agents.
+
+Here's an updated section for the README with these diagrams:
+
+## System Architecture Diagrams
+
+### TOGAF-based Enterprise Architecture
+
+```plantuml
+@startuml MABOS Enterprise Architecture
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title MABOS Enterprise Architecture (TOGAF-based)
+
+Enterprise_Boundary(eb, "MABOS Enterprise") {
+    System_Boundary(sb, "MABOS Platform") {
+        System(mas, "Multi-Agent System", "Core system for goal-oriented agents")
+        System(kb, "Knowledge Base", "Ontology and knowledge graph storage")
+        System(re, "Reasoning Engine", "Inference and decision-making component")
+        System(mdd, "Model-Driven Development", "Automated code generation and model transformation")
+        System(togaf, "TOGAF Integration", "Enterprise architecture alignment")
+        System(tropos, "Tropos Framework", "Goal-oriented requirement analysis")
+    }
+    
+    System_Ext(ext_sys, "External Systems", "Business systems and data sources")
+    Person(business_user, "Business User", "Defines goals and interacts with the system")
+    
+    Rel(business_user, mas, "Interacts with")
+    Rel(mas, kb, "Utilizes")
+    Rel(mas, re, "Uses for decision-making")
+    Rel(mas, mdd, "Generates code and models")
+    Rel(mas, togaf, "Aligns with")
+    Rel(mas, tropos, "Defines goals using")
+    Rel(mas, ext_sys, "Integrates with")
+}
+@enduml
+```
+---
+
+### MAS State Machine
+
+```plantuml
+@startuml MAS State Machine
+[*] --> Initializing
+Initializing --> Ready : System initialized
+Ready --> ProcessingGoal : New goal received
+ProcessingGoal --> PlanningAction : Goal analyzed
+PlanningAction --> ExecutingAction : Plan created
+ExecutingAction --> EvaluatingResult : Action completed
+EvaluatingResult --> Ready : Goal achieved
+EvaluatingResult --> ProcessingGoal : Goal not achieved
+Ready --> [*] : System shutdown
+@enduml
+```
+---
+
+### Data Class Model
+
+```plantuml
+@startuml Data Class Model
+class Agent {
+  +id: UUID
+  +name: String
+  +type: AgentType
+  +beliefs: List<Belief>
+  +desires: List<Desire>
+  +intentions: List<Intention>
+}
+
+class Belief {
+  +id: UUID
+  +content: String
+  +confidence: Float
+}
+
+class Desire {
+  +id: UUID
+  +description: String
+  +priority: Int
+}
+
+class Intention {
+  +id: UUID
+  +goal: Goal
+  +plan: Plan
+}
+
+class Goal {
+  +id: UUID
+  +description: String
+  +status: GoalStatus
+}
+
+class Plan {
+  +id: UUID
+  +steps: List<Action>
+}
+
+class Action {
+  +id: UUID
+  +description: String
+  +preconditions: List<Condition>
+  +effects: List<Effect>
+}
+
+class KnowledgeBase {
+  +id: UUID
+  +ontology: Ontology
+  +knowledgeGraph: Graph
+}
+
+Agent "1" *-- "many" Belief
+Agent "1" *-- "many" Desire
+Agent "1" *-- "many" Intention
+Intention "1" *-- "1" Goal
+Intention "1" *-- "1" Plan
+Plan "1" *-- "many" Action
+Agent "1" -- "1" KnowledgeBase
+@enduml
+```
+---
+
+### Activity Diagram: Goal Processing
+
+```plantuml
+@startuml Goal Processing Activity
+start
+:Receive new goal;
+:Analyze goal;
+if (Goal already exists?) then (yes)
+  :Update existing goal;
+else (no)
+  :Create new goal;
+endif
+:Determine required actions;
+:Create plan;
+while (Actions remaining?)
+  :Execute next action;
+  :Update world state;
+endwhile
+:Evaluate goal achievement;
+if (Goal achieved?) then (yes)
+  :Mark goal as completed;
+else (no)
+  :Replan or adjust goal;
+endif
+stop
+@enduml
+```
+---
+
+### Sequence Diagram: Inter-Agent Communication
+
+```plantuml
+@startuml Inter-Agent Communication
+actor User
+participant "Agent A" as AgentA
+participant "Agent B" as AgentB
+participant "Knowledge Base" as KB
+
+User -> AgentA: Submit task
+activate AgentA
+AgentA -> KB: Query knowledge
+activate KB
+KB --> AgentA: Return relevant information
+deactivate KB
+AgentA -> AgentA: Process information
+AgentA -> AgentB: Request assistance
+activate AgentB
+AgentB -> KB: Query knowledge
+activate KB
+KB --> AgentB: Return relevant information
+deactivate KB
+AgentB -> AgentB: Process information
+AgentB --> AgentA: Provide assistance
+deactivate AgentB
+AgentA -> AgentA: Complete task
+AgentA --> User: Return result
+deactivate AgentA
+@enduml
+```
+---
+
+### Use Case Diagram
+
+```plantuml
+@startuml MABOS Use Cases
+left to right direction
+actor "Business User" as BU
+actor "Developer" as Dev
+actor "System Administrator" as Admin
+
+rectangle MABOS {
+  usecase "Define Business Goals" as UC1
+  usecase "Create Agents" as UC2
+  usecase "Monitor System Performance" as UC3
+  usecase "Manage Knowledge Base" as UC4
+  usecase "Generate Code" as UC5
+  usecase "Deploy Agents" as UC6
+  usecase "Configure System" as UC7
+}
+
+BU --> UC1
+BU --> UC3
+Dev --> UC2
+Dev --> UC4
+Dev --> UC5
+Admin --> UC6
+Admin --> UC7
+@enduml
+```
+---
+
+### Knowledge Management and Reasoning
+
+MABOS employs sophisticated knowledge management and reasoning capabilities, leveraging ontologies and knowledge graphs for effective knowledge representation and inference. This approach allows agents to maintain a rich, interconnected understanding of their domain and make informed decisions based on this knowledge.
+
+#### Ontology and Knowledge Graph
+
+```plantuml
+@startuml Knowledge Representation
+package "Knowledge Base" {
+  [Ontology]
+  [Knowledge Graph]
+}
+
+package "Reasoning Engine" {
+  [Inference Engine]
+  [Rule-Based System]
+}
+
+[Agent] --> [Knowledge Base] : queries
+[Agent] --> [Reasoning Engine] : uses
+[Knowledge Base] --> [Reasoning Engine] : provides data
+[Reasoning Engine] --> [Agent] : informs decisions
+@enduml
+```
+
+The ontology defines the structure and relationships of concepts in the business domain, while the knowledge graph stores specific instances and their relationships. This combination allows for flexible and powerful knowledge representation.
+
+#### Reasoning and Inference Process
+
+1. **Knowledge Acquisition**: Agents continuously update their knowledge base through interactions with the environment, other agents, and external data sources.
+
+2. **Ontology Mapping**: New information is mapped to the existing ontology, ensuring consistent interpretation across the system.
+
+3. **Inference**: The reasoning engine applies logical rules and statistical inference to derive new knowledge from existing facts.
+
+4. **Decision Making**: Agents use the inferred knowledge to make decisions, plan actions, and achieve goals.
+
+5. **Learning**: The system can update its knowledge and refine its reasoning processes based on the outcomes of actions and decisions.
+
+This knowledge-centric approach enables MABOS to handle complex, dynamic business environments, adapting to new information and evolving requirements over time.
+
+---
+## Onboarding Activity Diagram
+Onboarding Activity diagram and a sequence diagram to illustrate the onboarding process using TOGAF framework, resulting in a Live Enterprise Architecture, Business Model, and Goal models.
+
+First, let's create an activity diagram:
+
+```mermaid
+graph TD
+    A[Start Onboarding] --> B[Elicit Business Vision]
+    B --> C[Define Business Mission]
+    C --> D[Capture Business Idea]
+    D --> E[Analyze Business Model]
+    E --> F[Apply TOGAF Framework]
+    F --> G{Is information complete?}
+    G -->|No| H[Request Additional Information]
+    H --> B
+    G -->|Yes| I[Generate Live Enterprise Architecture]
+    I --> J[Create Business Model Canvas]
+    J --> K[Develop Goal Models]
+    K --> L[Review and Validate Outputs]
+    L --> M{Approved?}
+    M -->|No| N[Refine Models]
+    N --> F
+    M -->|Yes| O[Finalize Onboarding]
+    O --> P[End Onboarding]
+```
+
+## Sequence Diagram for the same process:
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant OA as Onboarding Agent
+    participant TOGAF as TOGAF Engine
+    participant EA as Enterprise Architecture Generator
+    participant BM as Business Model Generator
+    participant GM as Goal Model Generator
+
+    C->>OA: Initiate onboarding
+    OA->>C: Request business vision
+    C->>OA: Provide business vision
+    OA->>C: Request business mission
+    C->>OA: Provide business mission
+    OA->>C: Request business idea
+    C->>OA: Provide business idea
+    OA->>C: Request business model details
+    C->>OA: Provide business model details
+
+    OA->>TOGAF: Apply TOGAF framework
+    TOGAF->>OA: Return TOGAF analysis
+
+    loop Information Gathering
+        OA->>C: Request additional information (if needed)
+        C->>OA: Provide additional information
+    end
+
+    OA->>EA: Generate Live Enterprise Architecture
+    EA->>OA: Return Live Enterprise Architecture
+
+    OA->>BM: Generate Business Model Canvas
+    BM->>OA: Return Business Model Canvas
+
+    OA->>GM: Generate Goal Models
+    GM->>OA: Return Goal Models
+
+    OA->>C: Present outputs for review
+    C->>OA: Provide feedback
+
+    loop Refinement
+        OA->>EA: Refine Enterprise Architecture
+        OA->>BM: Refine Business Model
+        OA->>GM: Refine Goal Models
+        OA->>C: Present refined outputs
+        C->>OA: Approve or request changes
+    end
+
+    OA->>C: Finalize onboarding
+```
+
+
+These diagrams illustrate the onboarding process, showing how the Onboarding Agent interacts with the client to gather information, applies the TOGAF framework, and generates the necessary outputs (Live Enterprise Architecture, Business Model, and Goal Models). The activity diagram shows the overall flow and decision points, while the sequence diagram details the interactions between the client, the Onboarding Agent, and various system components.
+
+---
+
+
 ## MABOS FASTAPI Endpoints
 
 Certainly! I'll organize the endpoints into a well-structured markdown table format. This will make the API documentation more readable and easier to navigate.

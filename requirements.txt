@@ -2,7 +2,10 @@ fastapi
 uvicorn
 pydantic
 python-dotenv
-uuid
 durable-rules
 transformers==4.42.3
 numpy<2.0,>=1.17
+pagan==0.3.0
+openai
+typing
+torch
