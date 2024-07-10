@@ -2,10 +2,21 @@ from app.models.multiagent_system import MultiAgentSystem
 from app.models.agent import Agent
 from typing import List, Optional
 from uuid import UUID
+from app.core.consistency_checker import ConsistencyChecker
+from app.core.temporal_reasoning import TemporalReasoning
+from app.core.distributed_knowledge import DistributedKnowledge
+from app.core.active_knowledge_acquisition import ActiveKnowledgeAcquisition
+from app.core.conflict_resolution import ConflictResolution
+from app.core.explanation_generator import ExplanationGenerator
 
 class MASService:
     def __init__(self, num_agents: int, num_states: int, state_size: int, action_size: int, ontology_path: str):
-        self.mas = MultiAgentSystem(num_agents, num_states, state_size, action_size, ontology_path)
+        self.consistency_checker = ConsistencyChecker(knowledge_base, ontology)
+        self.temporal_reasoning = TemporalReasoning(knowledge_base)
+        self.distributed_knowledge = DistributedKnowledge(db_integration)
+        self.active_knowledge_acquisition = ActiveKnowledgeAcquisition(knowledge_base, ontology)
+        self.conflict_resolution = ConflictResolution(knowledge_base)
+        self.explanation_generator = ExplanationGenerator(knowledge_base, reasoning_engine)
 
     def add_agent(self, agent: Agent) -> Agent:
         return self.mas.add_agent(agent)
