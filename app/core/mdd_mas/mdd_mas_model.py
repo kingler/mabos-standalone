@@ -68,3 +68,40 @@ class ReusableComponent(BaseModel):
     type: str
     content: Dict[str, Any]
     version: int = 1
+
+class OnboardingProcess(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    business_name: str
+    business_description: str
+    industry: str
+    target_market: str
+    key_stakeholders: List[str]
+    business_goals: List[str]
+    existing_systems: List[str]
+    desired_features: List[str]
+    integration_requirements: List[str]
+    performance_expectations: Dict[str, Any]
+    compliance_requirements: List[str]
+    budget_constraints: Optional[float]
+    timeline: str
+    risk_tolerance: str
+    scalability_requirements: str
+    data_sources: List[str]
+    expected_user_roles: List[str]
+    success_criteria: List[str]
+    
+    def to_business_model(self) -> 'BusinessModel':
+        # Convert onboarding data to a business model
+        pass
+    
+    def generate_initial_mas_config(self) -> Dict[str, Any]:
+        # Generate initial MAS configuration based on onboarding data
+        pass
+    
+    def identify_required_agent_types(self) -> List[str]:
+        # Identify the types of agents needed based on business requirements
+        pass
+    
+    def suggest_knowledge_base_structure(self) -> Dict[str, Any]:
+        # Suggest an initial knowledge base structure
+        pass
