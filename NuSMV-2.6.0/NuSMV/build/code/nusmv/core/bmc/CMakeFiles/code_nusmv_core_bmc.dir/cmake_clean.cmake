@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcBmcInc.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcBmcInc.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcBmcNonInc.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcBmcNonInc.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcCheck.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcCheck.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcConv.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcConv.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcDump.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcDump.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcGen.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcGen.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcInt.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcInt.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcModel.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcModel.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcOpt.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcOpt.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcPkg.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcPkg.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcSimulate.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcSimulate.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTableau.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTableau.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTableauLTLformula.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTableauLTLformula.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTableauPLTLformula.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTableauPLTLformula.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTest.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTest.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTrace.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcTrace.c.o.d"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcUtils.c.o"
+  "CMakeFiles/code_nusmv_core_bmc.dir/bmcUtils.c.o.d"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang C)
+  include(CMakeFiles/code_nusmv_core_bmc.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

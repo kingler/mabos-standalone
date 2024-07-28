@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<togaf:GoalObjectiveServiceDiagram     
+    xmlns:togaf="http://www.opengroup.org/xsd/togaf/2021/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.opengroup.org/xsd/togaf/2021/1.0 togaf_schema.xsd">
+    
+    <DiagramMetadata>
+        <Name>Customer Satisfaction Improvement</Name>
+        <Description>Diagram showing the relationship between business goals, objectives, and services for improving customer satisfaction</Description>
+        <Version>1.0</Version>
+        <CreationDate>2024-07-16</CreationDate>
+        <LastModifiedDate>2024-07-16</LastModifiedDate>
+        <Author>John Doe</Author>
+    </DiagramMetadata>
+    
+    <BusinessVision>
+        <Name>Market Leader in Customer Satisfaction</Name>
+        <Description>Become the industry leader in customer satisfaction by 2025</Description>
+    </BusinessVision>
+    
+    <Goals>
+        <Goal>
+            <ID>G1</ID>
+            <Name>Increase Customer Satisfaction</Name>
+            <Description>Improve overall customer satisfaction scores</Description>
+        </Goal>
+        <Goal>
+            <ID>G2</ID>
+            <Name>Enhance Brand Loyalty</Name>
+            <Description>Increase customer retention and repeat business</Description>
+        </Goal>
+    </Goals>
+    
+    <Objectives>
+        <Objective>
+            <ID>O1</ID>
+            <Name>Improve Service Quality</Name>
+            <Description>Enhance the quality of customer support services</Description>
+            <RelatedGoal>G1</RelatedGoal>
+        </Objective>
+        <Objective>
+            <ID>O2</ID>
+            <Name>Reduce Response Time</Name>
+            <Description>Decrease average response time for customer inquiries</Description>
+            <RelatedGoal>G1</RelatedGoal>
+        </Objective>
+        <Objective>
+            <ID>O3</ID>
+            <Name>Personalize Customer Experience</Name>
+            <Description>Tailor services and communications to individual customer preferences</Description>
+            <RelatedGoal>G2</RelatedGoal>
+        </Objective>
+    </Objectives>
+    
+    <Services>
+        <Service>
+            <ID>S1</ID>
+            <Name>24/7 Customer Support</Name>
+            <Description>Provide round-the-clock customer support through multiple channels</Description>
+            <RelatedObjectives>
+                <ObjectiveRef>O1</ObjectiveRef>
+                <ObjectiveRef>O2</ObjectiveRef>
+            </RelatedObjectives>
+        </Service>
+        <Service>
+            <ID>S2</ID>
+            <Name>Customer Feedback System</Name>
+            <Description>Implement a comprehensive system for collecting and analyzing customer feedback</Description>
+            <RelatedObjectives>
+                <ObjectiveRef>O1</ObjectiveRef>
+            </RelatedObjectives>
+        </Service>
+        <Service>
+            <ID>S3</ID>
+            <Name>Personalized Recommendations</Name>
+            <Description>Provide tailored product/service recommendations based on customer preferences and history</Description>
+            <RelatedObjectives>
+                <ObjectiveRef>O3</ObjectiveRef>
+            </RelatedObjectives>
+        </Service>
+    </Services>
+    
+    <Measures>
+        <Measure>
+            <ID>M1</ID>
+            <Name>Customer Satisfaction Score</Name>
+            <Description>Average customer satisfaction rating on a scale of 1-10</Description>
+            <Target>8.5 by end of 2024</Target>
+            <RelatedObjective>O1</RelatedObjective>
+        </Measure>
+        <Measure>
+            <ID>M2</ID>
+            <Name>Average Response Time</Name>
+            <Description>Average time taken to respond to customer inquiries</Description>
+            <Target>Less than 2 hours by Q3 2024</Target>
+            <RelatedObjective>O2</RelatedObjective>
+        </Measure>
+        <Measure>
+            <ID>M3</ID>
+            <Name>Customer Retention Rate</Name>
+            <Description>Percentage of customers retained year-over-year</Description>
+            <Target>90% by end of 2024</Target>
+            <RelatedObjective>O3</RelatedObjective>
+        </Measure>
+    </Measures>
+</togaf:GoalObjectiveServiceDiagram>

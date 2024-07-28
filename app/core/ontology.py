@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Union
 from pydantic import BaseModel, Field
 from rdflib import OWL, RDF, RDFS, Graph
 from owlready2 import World
@@ -16,9 +16,15 @@ class Relationship(BaseModel):
     range: str
     description: Optional[str] = None
 
+class UncertainConcept(Concept):
+    uncertainty_value: float = Field(ge=0, le=1)
+
+class UncertainRelationship(Relationship):
+    uncertainty_value: float = Field(ge=0, le=1)
+
 class Ontology(BaseModel):
-    concepts: List[Concept] = Field(description="Domain concepts")
-    relationships: List[Relationship] = Field(description="Relationships between concepts")
+    concepts: List[Union[Concept, UncertainConcept]] = Field(description="Domain concepts")
+    relationships: List[Union[Relationship, UncertainRelationship]] = Field(description="Relationships between concepts")
     ontology_path: Optional[str] = None
 
     def __init__(self, ontology_path: Optional[str] = None, world: Optional[World] = None, graph: Optional[Graph] = None):
@@ -192,18 +198,4 @@ class Ontology(BaseModel):
         
         # Update the ontology loader to include the merged elements
         self.loader = OntologyLoader(self.graph)
-        
-
-class UncertainConcept(Concept):
-    uncertainty_value: float = Field(ge=0, le=1)
-
-class UncertainRelationship(Relationship):
-    uncertainty_value: float = Field(ge=0, le=1)
-
-# Update the Ontology class to include uncertain concepts and relationships
-class Ontology(BaseModel):
-    concepts: List[Union[Concept, UncertainConcept]] = Field(description="Domain concepts")
-    relationships: List[Union[Relationship, UncertainRelationship]] = Field(description="Relationships between concepts")
-    # ... rest of the class remains the same        
-        
         

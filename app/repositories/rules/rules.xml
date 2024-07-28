@@ -1,0 +1,13 @@
+<rule id="rule1">
+    <condition>
+      <variable>customer_age</variable>
+      <operator>greaterThan</operator>
+      <value>18</value>
+    </condition>
+    <action>
+      <assign>
+        <variable>eligible_for_loan</variable>
+        <value>true</value>
+      </assign>
+    </action>
+  </rule>
