@@ -1,7 +1,7 @@
 from typing import List, Dict, Any, Optional
 from arango import ArangoClient
 from click import UUID
-from app.models.question_models import Question, Answer
+from app.core.models.knowledge.question_models import Question, Answer
 
 class ArangoDBClient:
     def __init__(self, host: str, port: int, username: str, password: str, database: str):

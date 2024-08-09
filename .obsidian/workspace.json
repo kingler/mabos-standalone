@@ -30,9 +30,19 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "5465a89b04ed683c",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.6.7"
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -160,7 +170,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "6db10435ed341465",
+  "active": "5465a89b04ed683c",
   "lastOpenFiles": [
     "app/core/__pycache__/explanation_generator.cpython-312.pyc",
     "app/core/__pycache__/conflict_resolution.cpython-312.pyc",
