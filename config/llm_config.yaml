@@ -1,0 +1,20 @@
+llms:
+  text_generation:
+    default: gpt-3.5-turbo
+    available:
+      - gpt-4
+      - gpt-3.5-turbo
+      - palm2
+      - gemini
+      - claude
+      - mistral-7b
+      - mixtral-8x7b
+  image_generation:
+    default: stable-diffusion
+    available:
+      - stable-diffusion
+  audio_generation:
+    default: audiocraft
+    available:
+      - audiocraft
+      - whisper
