@@ -1,6 +1,17 @@
 from typing import Dict, Any
 from owlready2 import World
-from app.core.models.knowledge.domain_ontology_generator import DomainOntologyGenerator
+
+class DomainOntologyGenerator:
+    def __init__(self, world: World):
+        self.world = world
+
+    def generate_domain_ontology(self, user_data: Dict[str, Any]) -> None:
+        # Implement basic domain ontology generation
+        pass
+
+    def validate_domain_ontology(self) -> Dict[str, Any]:
+        # Implement basic domain ontology validation
+        pass
 
 class SBVRDomainOntologyGenerator(DomainOntologyGenerator):
     def __init__(self, world: World, sbvr_ontology):
@@ -52,15 +63,8 @@ class SBVRDomainOntologyGenerator(DomainOntologyGenerator):
         # Check if all required concepts are present
         required_concepts = ["User", "BusinessModel", "ProductDescription", "Stakeholder"]
         for concept in required_concepts:
-        user = User(f"http://example.com/user/{user_data['user_id']}")
-        business_model = BusinessModel(f"http://example.com/business_model/{user_data['user_id']}")
-        business_model.hasDescription.append(user_data['business_idea'])
-        product = ProductDescription(f"http://example.com/product/{user_data['product_service']}")
-        product.belongsTo.append(business_model)
+            if not self.world.search_one(iri=f"*{concept}"):
+                validation_result["is_valid"] = False
+                validation_result["issues"].append(f"Concept '{concept}' not found in the ontology")
         
-        # Add stakeholders
-        for stakeholder_data in user_data.get('stakeholders', []):
-            stakeholder = Stakeholder(f"http://example.com/stakeholder/{stakeholder_data['id']}")
-            business_model.hasStakeholder.append(stakeholder)
-        
-        self.world.as_rdflib_graph().parse(data=domain_onto.world.as_rdflib_graph().serialize(format='xml'))
+        return validation_result

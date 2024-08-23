@@ -17,13 +17,13 @@ from app.core.tools.llm_manager import LLMManager
 from app.core.services.llm_service import LLMService
 from app.core.models.knowledge.ontology.ontology_aligner import OntologyAligner
 from app.core.models.knowledge.ontology.ontology_reasoner import OntologyReasoner
+from app.core.models.knowledge.vocabulary_manager import VocabularyManager
 
 class OntologyGenerator(BaseModel):
-    llm_manager: LLMManager = Field(default_factory=SkipValidation)
-    llm_service: LLMService = Field(default_factory=SkipValidation)
+    llm_manager: LLMManager = Field(default_factory=LLMManager)
+    llm_service: LLMService = Field(default_factory=LLMService)
     ontology: Ontology = Field(default_factory=Ontology)
-    llm_agent: LLMAgent = Field(default_factory=SkipValidation)
-    config: Dict[str, Any] = Field(default_factory=dict)
+    vocabulary: VocabularyManager = Field(default_factory=VocabularyManager)
 
     class Config:
         arbitrary_types_allowed = True
@@ -208,6 +208,88 @@ class OntologyGenerator(BaseModel):
         response = await self.llm_manager.get_text_completion_async(prompt, model=selected_model)
         return json.loads(response)
 
+class SBVROntologyGenerator(OntologyGenerator):
+    async def generate_sbvr_ontology(self, business_description: str) -> Ontology:
+        prompt = f"""
+        Given the following business description, generate an SBVR-compliant ontology structure:
+        
+        Business Description: {business_description}
+        
+        The ontology should include:
+        1. Business Vocabulary (terms, names, verb concept wordings)
+        2. Business Rules (structural and operative)
+        3. Concepts and their definitions
+        4. Propositions
+        
+        Format the output as a JSON structure with the following schema:
+        {{
+            "vocabulary": {{
+                "terms": {{"TermName": "Definition"}},
+                "names": ["Name1", "Name2"],
+                "verb_concept_wordings": ["Wording1", "Wording2"]
+            }},
+            "rules": {{
+                "structural": ["Rule1", "Rule2"],
+                "operative": ["Rule3", "Rule4"]
+            }},
+            "concepts": {{
+                "ConceptName": "Definition"
+            }},
+            "propositions": ["Proposition1", "Proposition2"]
+        }}
+        """
+        
+        selected_model = self.llm_manager.select_model("Generate SBVR ontology from business description", required_capabilities=["multilingual"])
+        response = await self.llm_manager.get_text_completion_async(prompt, model=selected_model)
+        sbvr_structure = self._parse_llm_response(response)
+        
+        ontology = Ontology()
+        
+        with self.sbvr_ontology:
+            for term, definition in sbvr_structure.get("vocabulary", {}).get("terms", {}).items():
+                new_term = Term(term)
+                new_concept = Concept(term + "_concept")
+                new_term.represents.append(new_concept)
+                new_concept.hasDefinition.append(definition)
+                ontology.add_concept(term, definition)
+            
+            for name in sbvr_structure.get("vocabulary", {}).get("names", []):
+                Name(name)
+            
+            for wording in sbvr_structure.get("vocabulary", {}).get("verb_concept_wordings", []):
+                VerbConceptWording(wording)
+            
+            for rule in sbvr_structure.get("rules", {}).get("structural", []):
+                StructuralRule(rule)
+            
+            for rule in sbvr_structure.get("rules", {}).get("operative", []):
+                OperativeRule(rule)
+            
+            for concept, definition in sbvr_structure.get("concepts", {}).items():
+                new_concept = Concept(concept)
+                new_concept.hasDefinition.append(definition)
+                ontology.add_concept(concept, definition)
+            
+            for proposition in sbvr_structure.get("propositions", []):
+                Proposition(proposition)
+        
+        return ontology
+
+    async def validate_sbvr_ontology(self, ontology: Ontology) -> Dict[str, Any]:
+        # Implement SBVR-specific validation
+        validation_result = {"is_valid": True, "issues": []}
+        
+        # Check for required SBVR elements
+        required_elements = ["Term", "Concept", "BusinessRule"]
+        for element in required_elements:
+            if not any(isinstance(entity, getattr(self.sbvr_ontology, element)) for entity in ontology.get_entities()):
+                validation_result["is_valid"] = False
+                validation_result["issues"].append(f"Missing required SBVR element: {element}")
+        
+        # Add more SBVR-specific validation checks here
+        
+        return validation_result
+
 class OntologyVersionControl:
        def __init__(self, storage_backend):
            self.storage = storage_backend
@@ -311,9 +393,9 @@ class NaturalLanguageOntologyInterface:
            pass 
        
 class OntologyManager(BaseModel):
-    def __init__(self, llm_manager: LLMManager, storage_backend, graph_database):
+    def __init__(self, llm_manager: LLMManager, storage_backend, graph_database, use_sbvr: bool = False):
         self.llm_manager = llm_manager
-        self.generator = OntologyGenerator(llm_manager)
+        self.generator = SBVROntologyGenerator(llm_manager) if use_sbvr else OntologyGenerator(llm_manager)
         self.version_control = OntologyVersionControl(storage_backend)
         self.graph_integrator = KnowledgeGraphIntegrator(graph_database)
         self.aligner = OntologyAligner(llm_manager)
@@ -353,41 +435,6 @@ class OntologyManager(BaseModel):
 
     async def perform_reasoning(self, query: str) -> str:
         return await self.reasoner.answer_query(query)
-
-class SBVROntologyManager(OntologyManager):
-    def __init__(self, llm_manager: LLMManager, storage_backend, graph_database):
-        super().__init__(llm_manager, storage_backend, graph_database)
-        self.generator = SBVROntologyGenerator(llm_manager)
-        self.sbvr_ontology = create_sbvr_base_ontology()
-        self.domain_generator = SBVRDomainOntologyGenerator(World(), self.sbvr_ontology)
-
-    async def create_ontology(self, business_description: str) -> Ontology:
-        try:
-            sbvr_ontology = await self.generator.generate_sbvr_ontology(business_description)
-            refined_ontology = await self.generator.refine_ontology(sbvr_ontology)
-            validation_report = await self.generator.validate_sbvr_ontology(refined_ontology)
-            
-            if validation_report['is_valid']:
-                self.version_control.save_version(refined_ontology, "1.0", {"source": "initial_generation"})
-                self.graph_integrator.ontology_to_graph(refined_ontology)
-                self.nl_interface = NaturalLanguageOntologyInterface(self.llm_manager, refined_ontology)
-                self.reasoner = OntologyReasoner(self.llm_manager, refined_ontology)
-                return refined_ontology
-            else:
-                raise ValueError(f"Generated SBVR ontology failed validation: {validation_report['issues']}")
-        except Exception as e:
-            logging.error(f"Error creating SBVR ontology: {str(e)}")
-            raise
-
-    async def generate_domain_ontology(self, user_data: Dict[str, Any]) -> None:
-        try:
-            self.domain_generator.generate_domain_ontology(user_data)
-            validation_report = self.domain_generator.validate_domain_ontology()
-            if not validation_report['is_valid']:
-                raise ValueError(f"Generated domain ontology failed validation: {validation_report['issues']}")
-        except Exception as e:
-            logging.error(f"Error generating domain ontology: {str(e)}")
-            raise
 
 # Usage example:
 async def main():

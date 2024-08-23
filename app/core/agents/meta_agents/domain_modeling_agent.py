@@ -1,116 +1,52 @@
 from typing import Dict, Any, List
 from owlready2 import World, Thing, ObjectProperty, DataProperty
-from pydantic import BaseModel
-from app.core.agents.base.agent_base import MetaAgent
+from pydantic import BaseModel, Field
+from app.core.models.knowledge.ontology.ontology import Ontology
+from app.core.models.knowledge.vocabulary_manager import VocabularyManager
+from app.core.services.llm_service import LLMService
+from app.core.tools.llm_manager import LLMManager
 
-class BusinessRule(BaseModel):
-    name: str
-    type: str
-    modality: str
-    formulation: str
 
-class DomainOntologyGenerator(BaseModel):
-    def __init__(self, world: World):
-        self.world = world
-        self.onto = self.world.get_ontology("http://example.com/domain-ontology")
+class OntologyGenerator(BaseModel):
+    llm_manager: LLMManager = Field(default_factory=LLMManager)
+    llm_service: LLMService = Field(default_factory=LLMService)
+    ontology: Ontology = Field(default_factory=Ontology)
+    vocabulary: VocabularyManager = Field(default_factory=VocabularyManager)
 
-    def generate_domain_ontology(self, business_vocabulary: Dict[str, Any], business_rules: List[BusinessRule]) -> None:
-        with self.onto:
-            class DomainConcept(Thing): pass
-            class hasRelation(ObjectProperty):
-                domain = [DomainConcept]
-                range = [DomainConcept]
-            class hasAttribute(DataProperty):
-                domain = [DomainConcept]
-            
-            class BusinessVocabulary(Thing): pass
-            class BusinessRule(Thing): pass
-            class StructuralRule(BusinessRule): pass
-            class OperativeRule(BusinessRule): pass
-            
-            class hasDefinition(DataProperty):
-                domain = [DomainConcept]
-                range = [str]
-            
-            class hasModality(DataProperty):
-                domain = [BusinessRule]
-                range = [str]
-            
-            class hasComponent(ObjectProperty):
-                domain = [BusinessVocabulary]
-                range = [DomainConcept]
-            
-            class hasRule(ObjectProperty):
-                domain = [BusinessVocabulary]
-                range = [BusinessRule]
-            
-            class hasStakeholder(ObjectProperty):
-                domain = [DomainConcept]
-                range = [DomainConcept]
-            
-            class hasDescription(ObjectProperty):
-                domain = [DomainConcept]
-                range = [str]
-            
-            class belongsTo(ObjectProperty):
-                domain = [DomainConcept]
-                range = [DomainConcept]
-            
-            class User(DomainConcept): pass
-            class BusinessModel(DomainConcept): pass
-            class ProductDescription(DomainConcept): pass
-            class Stakeholder(DomainConcept): pass
-            
-            class BusinessVocabularyInstance(BusinessVocabulary): pass
-            business_vocabulary_instance = BusinessVocabularyInstance("DomainVocabulary")
-            
-            for term, definition in business_vocabulary['terms'].items():
-                new_class = type(term, (DomainConcept,), {})
-                new_class.comment.append(definition)
-                business_vocabulary_instance.hasComponent.append(new_class)
-            
-            for verb_concept, definition in business_vocabulary['verb_concepts'].items():
-class DomainModelingAgent(BaseModel):
-    def __init__(self, name: str):
-        super().__init__(name=name, agent_type="domain_modeling")
-        self.add_belief("Domain models should be comprehensive and accurate")
-        self.add_desire("Create a detailed and consistent domain model", priority=9)
-        self.add_goal("Develop comprehensive domain model", priority=8)
-        self.create_plan(
-            self.goals[0].id,
-            [
-                "Analyze requirements document",
-                "Identify key domain entities",
-                "Define relationships between entities",
-                "Create initial domain model",
-                "Review model with domain experts",
-                "Refine and finalize domain model"
-            ]
-        )
+    def _parse_llm_response(self, response: str) -> Dict[str, Any]:
+        import json
+        try:
+            parsed_response = json.loads(response)
+            return parsed_response
+        except json.JSONDecodeError:
+            # Handle parsing error
+            return {}
 
-    def reason(self):
-        if any(belief.description == "New domain information received" for belief in self.beliefs):
-            self.add_goal("Update domain model with new information", priority=7)
+    async def generate_ontology(self, business_description: str) -> Ontology:
+        # Implement base ontology generation logic
+        pass
 
-    def plan(self):
-        for goal in self.goals:
-            if goal.description == "Update domain model with new information":
-                self.create_plan(
-                    goal.id,
-                    [
-                        "Analyze new domain information",
-                        "Identify affected model components",
-                        "Update domain model",
-                        "Validate updated model",
-                        "Document changes"
-                    ]
-                )
+    async def refine_ontology(self, ontology: Ontology) -> Ontology:
+        # Implement ontology refinement logic
+        pass
 
-    def execute(self):
-        for plan in self.plans:
-            for task in plan.steps:
-                if task.status == "pending":
-                    print(f"Executing task: {task.description}")
-                    # Simulate task execution
-                    task.execute(lambda: True, lambda x, y: None)
-                    self.update_task_status(task.id, "completed")
+    async def validate_ontology(self, ontology: Ontology) -> Dict[str, Any]:
+        # Implement base ontology validation logic
+        pass
+
+class SBVROntologyGenerator(OntologyGenerator):
+    def __init__(self, llm_manager: LLMManager, **data):
+        super().__init__(llm_manager=llm_manager, **data)
+        self.sbvr_ontology = self.create_sbvr_base_ontology()
+
+    def create_sbvr_base_ontology(self):
+        # Implement SBVR base ontology creation
+        pass
+
+    async def generate_sbvr_ontology(self, business_description: str) -> Ontology:
+        # Implement SBVR-specific ontology generation
+        pass
+
+    async def validate_sbvr_ontology(self, ontology: Ontology) -> Dict[str, Any]:
+        # Implement SBVR-specific ontology validation
+        pass
