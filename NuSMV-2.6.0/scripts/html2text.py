@@ -6,8 +6,9 @@
 #
 # $Id: html2text.py 355 2008-11-27 14:30:17Z fresh $
 
+from string import join, lower, replace, split
+
 import sgmllib
-from string import lower, replace, split, join
 
 
 class HTML2Text(sgmllib.SGMLParser):

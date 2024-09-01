@@ -1,6 +1,6 @@
 
-from extractors.file_searcher import FileSearcher
 from converters.pattern_changer import PatternChanger
+from extractors.file_searcher import FileSearcher
 
 
 def main():

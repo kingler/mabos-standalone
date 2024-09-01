@@ -1,8 +1,12 @@
 # app/routers/organization.py
 
-from fastapi import APIRouter, HTTPException
 from typing import List
-from app.core.models.system.organization import Organization, OrganizationCreate, OrganizationUpdate
+
+from fastapi import APIRouter, HTTPException
+
+from app.core.models.system.organization import (Organization,
+                                                 OrganizationCreate,
+                                                 OrganizationUpdate)
 from app.core.services import organization_service
 
 router = APIRouter()

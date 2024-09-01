@@ -1,14 +1,27 @@
-from typing import List, Dict, Any
-from pydantic import Field
-from app.core.models.agent.agent import Agent
+from typing import Any, Dict, List
+from uuid import UUID
 
-class ReactiveAgent(Agent):
+from pydantic import BaseModel, Field
+
+
+class ReactiveAgent(BaseModel):
     """
     A reactive agent that responds to stimuli based on predefined rules.
 
     Attributes:
         stimulus_response_rules (List[Dict[str, Any]]): List of stimulus-response rules.
     """
+    id: UUID
+    name: str
+    
+    class Config:
+        from_attributes = True  # Allows model creation from ORM objects
+        
+    def __init__(self):
+        # Import Agent within the constructor or methods as needed
+        from app.core.models.agent.agent import Agent
+        self.base = Agent()
+    # Rest of the class remains unchanged
     stimulus_response_rules: List[Dict[str, Any]] = Field(default_factory=list, description="List of stimulus-response rules")
 
     def add_rule(self, stimulus: str, response: str):
@@ -46,10 +59,9 @@ class ReactiveAgent(Agent):
         """
         # Check if the agent has the necessary resources to execute the action
         action_requirements = self.get_action_requirements(action)
-        for resource, required_amount in action_requirements.items():
-            if resource not in self.resources or self.resources[resource] < required_amount:
-                return False
-        return True
+
+        # Simplified check for resource sufficiency
+        return all(self.resources.get(resource, 0) >= required_amount for resource, required_amount in action_requirements.items())
 
     def execute_action(self, action: str):
         """

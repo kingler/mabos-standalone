@@ -1,13 +1,15 @@
-from typing import Dict, Any, List
-from app.core.models.knowledge.reasoning.htn_planner import HTNPlanner, GoalPlanTree
-from app.core.models.plan_library import PlanLibrary
+from typing import Any, Dict, List
+
+from app.core.models.agent.action import Action
 from app.core.models.agent.goal import Goal
 from app.core.models.agent.plan import Plan
 from app.core.models.agent.task import Task
-from app.core.models.agent.action import Action
-from app.core.models.knowledge.reasoning.htn_planner import HTNPlanner
-from app.core.models.knowledge.reasoning.reasoner import Reasoner
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
+from app.core.models.knowledge.reasoning.htn_planner import (GoalPlanTree,
+                                                             HTNPlanner)
+from app.core.models.knowledge.reasoning.reasoner import Reasoner
+from app.core.models.plan_library import PlanLibrary
+
 
 class PlanningService:
     def __init__(self, domain_knowledge: Dict[str, Any]):

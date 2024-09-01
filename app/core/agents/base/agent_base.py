@@ -1,17 +1,15 @@
 from __future__ import annotations
-from typing import List, Dict, Any
+
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
-from pydantic import BaseModel, Field, ConfigDict
 
-from app.core.models.message import ACLMessage, Performative, Message
-
-from base.base_models import BaseBelief
-from base.base_models import BaseDesire
-from base.base_models import BaseIntention
-from base.base_models import BaseGoal
-from base.base_models import BasePlan
-from base.base_models import BaseAction
+from base.base_models import (BaseAction, BaseBelief, BaseDesire, BaseGoal,
+                              BaseIntention, BasePlan)
 from models.utils.type_definitions import *
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.core.models.message import ACLMessage, Message, Performative
+
 
 class AgentBase(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)

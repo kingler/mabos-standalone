@@ -2,7 +2,9 @@
 # script to run a command by setting additional Latex-related env vars.
 # Used to build the docs
 #
-import os, sys, subprocess
+import os
+import subprocess
+import sys
 
 val = sys.argv[1]
 os.environ['TEXINPUTS'] = '%s%s%s' % (val, os.pathsep,

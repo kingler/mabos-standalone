@@ -1,8 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from app.core.services.archimate_service import ArchiMateService
-from app.core.models.mdd.archimate_model import BaseArchiMateElement, Relationship
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
+from app.core.models.mdd.archimate_model import (BaseArchiMateElement,
+                                                 Relationship)
+from app.core.services.archimate_service import ArchiMateService
 
 router = APIRouter()
 

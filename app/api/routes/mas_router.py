@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.models.agent import Agent
+from app.config.config import get_settings
+from app.core.models.mas.mas_models import (Explanation)
 from app.core.services.mas_services import MASService
-from app.core.models.config import get_settings
-from app.core.models.mas.mas_models import Inconsistency, KnowledgeGap, Conflict, Explanation
 
 router = APIRouter()
 

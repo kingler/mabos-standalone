@@ -1,4 +1,4 @@
-<rule id="rule1">
+  <rule id="rule1">
     <condition>
       <variable>customer_age</variable>
       <operator>greaterThan</operator>

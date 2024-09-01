@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Skill(ABC):
     def __init__(self, agent):
         self.agent = agent

@@ -1,5 +1,7 @@
+from typing import Dict, List, Optional
+
 from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional, Dict
+
 
 class SoftGoal(BaseModel):
     id: str

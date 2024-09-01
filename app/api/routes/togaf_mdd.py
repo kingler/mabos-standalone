@@ -1,19 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID
 
-from app.core.services.mdd_mas_services import get_modeling_service
-from app.core.models.mdd.togaf_mdd_models import (
-    EnterpriseArchitecture, BusinessService, TechnologyService,
-    ArchitectureViewpoint, ArchitectureView, ArchitectureRequirement,
-    ArchitectureRoadmap
-)
-from app.core.services.togaf_mdd_services import (
-    EnterpriseArchitectureService, ArchitectureRequirementService,
-    ArchitectureRoadmapService, TOGAFIntegrationService
-)
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.models.mdd.mdd_mas_model import Model
-from app.core.services.mdd_mas_services import ModelingService
+from app.core.models.mdd.togaf_mdd_models import (ArchitectureRequirement,
+                                                  ArchitectureRoadmap,
+                                                  ArchitectureView,
+                                                  ArchitectureViewpoint,
+                                                  BusinessService,
+                                                  EnterpriseArchitecture,  # Keep this import
+                                                  TechnologyService)
+from app.core.services.mdd_mas_services import (ModelingService,
+                                                get_modeling_service)
+from app.core.services.togaf_mdd_services import (
+    ArchitectureRequirementService, ArchitectureRoadmapService,
+    EnterpriseArchitectureService, TOGAFIntegrationService)
 
 router = APIRouter()
 

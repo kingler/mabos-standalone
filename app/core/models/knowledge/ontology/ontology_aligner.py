@@ -1,9 +1,9 @@
 import asyncio
 import json
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
-from app.core.tools.llm_manager import LLMManager
 from app.core.models.knowledge.ontology.ontology import Ontology
+from app.core.tools.llm_manager import LLMManager
 
 
 class OntologyAligner:

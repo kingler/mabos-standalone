@@ -1,70 +1,60 @@
-from typing import Dict, Any
+from typing import Any, Dict
+
 from owlready2 import World
 
+from app.core.models.knowledge.ontology.ontology import Ontology
+from app.core.models.knowledge.ontology.ontology_generator import (
+    OntologyGenerator, SBVROntologyGenerator)
+from app.core.tools.llm_manager import LLMManager
+
+
 class DomainOntologyGenerator:
-    def __init__(self, world: World):
+    def __init__(self, world: World, llm_manager: LLMManager):
         self.world = world
+        self.ontology_generator = OntologyGenerator(llm_manager=llm_manager)
 
-    def generate_domain_ontology(self, user_data: Dict[str, Any]) -> None:
-        # Implement basic domain ontology generation
-        pass
+    async def generate_domain_ontology(self, user_data: Dict[str, Any]) -> Ontology:
+        business_description = f"A business model for {user_data['business_idea']} with product/service: {user_data['product_service']}"
+        ontology = await self.ontology_generator.generate_ontology(business_description)
+        return await self.ontology_generator.refine_ontology(ontology)
 
-    def validate_domain_ontology(self) -> Dict[str, Any]:
-        # Implement basic domain ontology validation
-        pass
+    async def validate_domain_ontology(self, ontology: Ontology) -> Dict[str, Any]:
+        return await self.ontology_generator.validate_ontology(ontology)
 
 class SBVRDomainOntologyGenerator(DomainOntologyGenerator):
-    def __init__(self, world: World, sbvr_ontology):
-        super().__init__(world)
+    def __init__(self, world: World, llm_manager: LLMManager, sbvr_ontology):
+        super().__init__(world, llm_manager)
         self.sbvr_ontology = sbvr_ontology
+        self.sbvr_ontology_generator = SBVROntologyGenerator(llm_manager=llm_manager)
 
-    def generate_domain_ontology(self, user_data: Dict[str, Any]) -> None:
-        domain_onto = self.world.get_ontology("http://example.com/sbvr-domain-ontology")
-        domain_onto.imported_ontologies.append(self.sbvr_ontology)
+    async def generate_domain_ontology(self, user_data: Dict[str, Any]) -> Ontology:
+        business_description = f"A business model for {user_data['business_idea']} with product/service: {user_data['product_service']}"
+        sbvr_ontology = await self.sbvr_ontology_generator.generate_sbvr_ontology(business_description)
         
-        with domain_onto:
-            class User(self.sbvr_ontology.Concept): pass
-            class BusinessModel(self.sbvr_ontology.Concept): pass
-            class ProductDescription(self.sbvr_ontology.Concept): pass
-            class Stakeholder(self.sbvr_ontology.Concept): pass
+        # Enhance the SBVR ontology with user-specific data
+        with sbvr_ontology:
+            sbvr_ontology.add_concept("User", f"User with ID {user_data['user_id']}")
+            sbvr_ontology.add_concept("BusinessModel", f"Business model for {user_data['business_idea']}")
+            sbvr_ontology.add_concept("ProductDescription", f"Description of {user_data['product_service']}")
+            sbvr_ontology.add_concept("Stakeholder", "A person or entity with interest in the business")
             
-            class hasDescription(self.sbvr_ontology.ObjectProperty):
-                domain = [BusinessModel]
-                range = [str]
-            class belongsTo(self.sbvr_ontology.ObjectProperty):
-                domain = [ProductDescription]
-                range = [BusinessModel]
-            class hasStakeholder(self.sbvr_ontology.ObjectProperty):
-                domain = [BusinessModel]
-                range = [Stakeholder]
-            
-            user = User(f"http://example.com/user/{user_data['user_id']}")
-            business_model = BusinessModel(f"http://example.com/business_model/{user_data['user_id']}")
-            business_model.hasDescription.append(user_data['business_idea'])
-            product = ProductDescription(f"http://example.com/product/{user_data['product_service']}")
-            product.belongsTo.append(business_model)
+            sbvr_ontology.add_relationship("hasDescription", "BusinessModel", "string")
+            sbvr_ontology.add_relationship("belongsTo", "ProductDescription", "BusinessModel")
+            sbvr_ontology.add_relationship("hasStakeholder", "BusinessModel", "Stakeholder")
             
             for stakeholder_data in user_data.get('stakeholders', []):
-                stakeholder = Stakeholder(f"http://example.com/stakeholder/{stakeholder_data['id']}")
-                business_model.hasStakeholder.append(stakeholder)
-            
-            business_vocabulary = self.sbvr_ontology.BusinessVocabulary("DomainVocabulary")
-            for term in [User, BusinessModel, ProductDescription, Stakeholder]:
-                business_vocabulary.hasComponent.append(term)
-            
-            rule = self.sbvr_ontology.OperativeRule("EachBusinessModelMustHaveAtLeastOneStakeholder")
-            rule.hasModality.append("obligation")
+                sbvr_ontology.add_concept(f"Stakeholder_{stakeholder_data['id']}", f"Stakeholder with ID {stakeholder_data['id']}")
         
-        self.world.save()
+        return sbvr_ontology
 
-    def validate_domain_ontology(self) -> Dict[str, Any]:
-        validation_result = {"is_valid": True, "issues": []}
+    async def validate_domain_ontology(self, ontology: Ontology) -> Dict[str, Any]:
+        validation_result = await self.sbvr_ontology_generator.validate_sbvr_ontology(ontology)
         
-        # Check if all required concepts are present
+        # Additional domain-specific validation
         required_concepts = ["User", "BusinessModel", "ProductDescription", "Stakeholder"]
         for concept in required_concepts:
-            if not self.world.search_one(iri=f"*{concept}"):
+            if concept not in ontology.concepts:
                 validation_result["is_valid"] = False
-                validation_result["issues"].append(f"Concept '{concept}' not found in the ontology")
+                validation_result["issues"].append(f"Required concept '{concept}' not found in the ontology")
         
         return validation_result

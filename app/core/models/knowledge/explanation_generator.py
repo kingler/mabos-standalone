@@ -1,6 +1,9 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
-from app.core.models.knowledge.reasoning.reasoning_engine import ReasoningEngine
+from app.core.models.knowledge.reasoning.reasoning_engine import \
+    ReasoningEngine
+
 
 class ExplanationGenerator:
     def __init__(self, knowledge_base: KnowledgeBase, reasoning_engine: ReasoningEngine):

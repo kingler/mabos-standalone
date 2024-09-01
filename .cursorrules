@@ -1,0 +1,44 @@
+""" When generating Python code that involves structured data or responses:
+
+1. Always use Pydantic for defining data models and schemas.
+2. Utilize OpenAI's Structured Outputs feature with Pydantic models.
+3. Follow these steps when creating structured outputs:
+
+   a. Define Pydantic models for the data structure:
+      
+      ```python
+      from pydantic import BaseModel
+      
+      class YourModel(BaseModel):
+          field1: str
+          field2: int
+          # Add other fields as needed
+      ```
+
+   b. Use the OpenAI client to make API calls with the Pydantic model:
+      
+      ```python
+      from openai import OpenAI
+      
+      client = OpenAI()
+      
+      completion = client.beta.chat.completions.parse(
+          model="gpt-4o-2024-08-06",
+          messages=[
+              {"role": "system", "content": "Your system message here"},
+              {"role": "user", "content": "User query here"}
+          ],
+          response_format=YourModel
+      )
+      
+      result = completion.choices[0].message.parsed
+      ```
+
+4. Always include error handling for potential refusals:
+
+   ```python
+   if hasattr(completion.choices[0].message, 'refusal'):
+       print(completion.choices[0].message.refusal)
+   else:
+       result = completion.choices[0].message.parsed
+       # Process the result """

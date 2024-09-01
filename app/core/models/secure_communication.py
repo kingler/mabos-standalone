@@ -1,5 +1,6 @@
 from cryptography.fernet import Fernet
 
+
 class SecureCommunication:
     def __init__(self):
         self.key = Fernet.generate_key()

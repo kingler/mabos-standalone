@@ -1,5 +1,7 @@
 from typing import Optional
+
 from app.core.models.agent.belief import Belief
+
 
 class BeliefService:
     def __init__(self, knowledge_base):

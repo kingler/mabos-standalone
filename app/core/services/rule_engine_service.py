@@ -1,5 +1,8 @@
-from typing import Dict, Any
-from app.core.models.knowledge.reasoning.reasoning_engine import ReasoningEngine
+from typing import Any, Dict
+
+from app.core.models.knowledge.reasoning.reasoning_engine import \
+    ReasoningEngine
+
 
 class RulesService:
     @staticmethod

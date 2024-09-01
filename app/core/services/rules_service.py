@@ -1,9 +1,12 @@
 # rules_service.py
-from typing import Dict, Any, List, Union
+from typing import Any, Dict, List, Union
+
 from pydantic import BaseModel
 from rdflib import URIRef
-from app.core.models.rules.rules_engine import RulesEngine, RuleModel
+
 from app.core.models.knowledge.reasoning.reasoner import Reasoner
+from app.core.models.rules.rules_engine import RuleModel, RulesEngine
+
 
 class URIRefModel(BaseModel):
     value: str
@@ -32,14 +35,7 @@ class RulesService:
         self.reasoning_engine = Reasoner()
 
     def get_all_rules(self) -> List[Dict[str, Any]]:
-        rules = []
-        for rule in self.rules_engine.rules:
-            rules.append({
-                "name": rule.name,
-                "condition": rule.condition.__name__,
-                "action": rule.action.__name__
-            })
-        return rules
+        return [{"name": rule.name, "condition": rule.condition.__name__, "action": rule.action.__name__} for rule in self.rules_engine.rules]
 
     def create_rule(self, rule: Dict[str, Any]) -> Dict[str, Any]:
         if not rule.get('name') or not rule.get('condition') or not rule.get('action'):

@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends
-from typing import Dict, Any
+from typing import Any, Dict
 from uuid import UUID
 
-from mas_router import get_mas_service # TODO: remove this it seems out of place
-from app.core.models.mdd.tropos_mdd_model import TroposModel, Actor, Dependency, Contribution, Plan
-from app.core.services.tropos_mdd_services import TroposModelingService, TroposMASIntegrationService
+from fastapi import APIRouter, Depends
+from .mas_router import get_mas_service
+
+from app.core.models.mdd.tropos_mdd_model import (Actor,Contribution, Dependency, Plan,TroposModel)
 from app.core.services.mas_services import MASService
+from app.core.services.tropos_mdd_services import (TroposMASIntegrationService,TroposModelingService)
 
 router = APIRouter()
 

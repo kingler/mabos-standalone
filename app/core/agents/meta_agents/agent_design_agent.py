@@ -1,6 +1,11 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+from pydantic import BaseModel
 from meta_agents import MetaAgent
 
+class AgentType(BaseModel):
+    name: str
+    description: str
+    use_cases: List[str]
 
 class AgentDesignAgent(MetaAgent):
     """

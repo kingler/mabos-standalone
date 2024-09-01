@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from app.core.models.system.multiagent_system import MultiAgentSystem
+
 
 class ArchitecturalStyle(ABC):
     @abstractmethod

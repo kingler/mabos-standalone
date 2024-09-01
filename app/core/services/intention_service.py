@@ -1,8 +1,11 @@
 from typing import List, Optional
 from uuid import UUID, uuid4
-from app.core.models.agent.intention import Intention, IntentionCreate, IntentionUpdate
+
+from app.core.models.agent.intention import (Intention, IntentionCreate,
+                                             IntentionUpdate)
 from app.core.services.goal_service import GoalService
 from app.core.services.plan_service import PlanService
+
 
 class IntentionService:
     def __init__(self, goal_service: GoalService, plan_service: PlanService):

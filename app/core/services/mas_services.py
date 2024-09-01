@@ -1,17 +1,24 @@
-from app.core.models.knowledge.ontology.ontology import Ontology
-from app.core.models.knowledge import knowledge_base
-from app.core.models.system.multiagent_system import MultiAgentSystem
-from app.core.models.agent import Agent
 from typing import List, Optional
 from uuid import UUID
+
+from app.core.models.agent import Agent
 from app.core.models.consistency_checker import ConsistencyChecker
-from app.core.models.knowledge.reasoning.temporal_reasoning import TemporalReasoning
-from app.core.models.knowledge.distributed_knowledge import DistributedKnowledge
-from app.core.models.knowledge.active_knowledge_acquisition import ActiveKnowledgeAcquisition
+from app.core.models.knowledge import knowledge_base
+from app.core.models.knowledge.active_knowledge_acquisition import \
+    ActiveKnowledgeAcquisition
 from app.core.models.knowledge.conflict_resolution import ConflictResolution
-from app.core.models.knowledge.explanation_generator import ExplanationGenerator
+from app.core.models.knowledge.distributed_knowledge import \
+    DistributedKnowledge
+from app.core.models.knowledge.explanation_generator import \
+    ExplanationGenerator
+from app.core.models.knowledge.ontology.ontology import Ontology
+from app.core.models.knowledge.reasoning.reasoning_engine import \
+    ReasoningEngine
+from app.core.models.knowledge.reasoning.temporal_reasoning import \
+    TemporalReasoning
+from app.core.models.system.multiagent_system import MultiAgentSystem
 from app.db.db_integration import DatabaseIntegration
-from app.core.models.knowledge.reasoning.reasoning_engine import ReasoningEngine
+
 
 class MASService:
     def __init__(self, num_agents: int, num_states: int, state_size: int, action_size: int, ontology_path: str):

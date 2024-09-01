@@ -1,6 +1,9 @@
-from fastapi import APIRouter, HTTPException
 from typing import List
-from app.core.models.agent.intention import Intention, IntentionCreate, IntentionUpdate
+
+from fastapi import APIRouter, HTTPException
+
+from app.core.models.agent.intention import (Intention, IntentionCreate,
+                                             IntentionUpdate)
 from app.core.services import intention_service
 
 router = APIRouter()

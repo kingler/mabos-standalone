@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException
 from typing import List
+
+from fastapi import APIRouter, HTTPException
+
 from app.core.models.business.business_plan import BusinessPlan
-from app.core.services.business_plan_service import BusinessPlanService
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
+from app.core.services.business_plan_service import BusinessPlanService
 
 router = APIRouter()
 

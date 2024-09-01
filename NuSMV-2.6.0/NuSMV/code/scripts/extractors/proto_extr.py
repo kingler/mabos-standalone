@@ -2,6 +2,7 @@ import re
 import sys
 from os import path
 
+
 def processFile(file, outStream):
     text = file.read()
 

@@ -1,6 +1,9 @@
+from typing import Any, Dict, List
+
 from fastapi import APIRouter, HTTPException
-from typing import List, Dict, Any
-from app.core.models.knowledge.knowledge_base import KnowledgeBase, KnowledgeItem
+
+from app.core.models.knowledge.knowledge_base import (KnowledgeBase,
+                                                      KnowledgeItem)
 from app.core.services.knowledge_base_service import KnowledgeBaseService
 
 router = APIRouter()

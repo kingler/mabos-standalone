@@ -1,6 +1,8 @@
 from cryptography.fernet import Fernet
+
 from app.core.models.agent.agent import Agent
 from app.core.models.agent.agent_role import AgentRole
+
 
 class SecureCommunicationService:
     def __init__(self, key: str):

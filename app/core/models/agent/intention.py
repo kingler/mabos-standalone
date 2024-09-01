@@ -1,8 +1,10 @@
-from typing import List, Any, Optional
+from typing import Any, List, Optional
+
 from pydantic import BaseModel
+
 from .belief import Belief
-from .plan import Plan
 from .goal import Goal
+from .plan import Plan
 
 
 class Intention(BaseModel):

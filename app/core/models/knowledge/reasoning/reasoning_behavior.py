@@ -1,6 +1,7 @@
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
 from app.core.models.knowledge.reasoning.reasoner import Reasoner
 
+
 class ReasoningBehavior:
     def __init__(self, knowledge_base: KnowledgeBase, reasoner: Reasoner):
         self.knowledge_base = knowledge_base
@@ -19,15 +20,12 @@ class ReasoningBehavior:
         return results[0]['problem'] if results else None
 
     def formulate_problem(self, agent, problem_data):
-        # Use ontology to formulate problems for the reasoning engine
-        problem_class = self.knowledge_base.ontology.get_concept_hierarchy().get(problem_data)
-        if problem_class:
+        if problem_class := self.knowledge_base.ontology.get_concept_hierarchy().get(problem_data):
             properties = self.knowledge_base.ontology.get_properties()
-            formulated_problem = {
+            return {
                 'type': problem_class,
                 'data': {prop: getattr(agent, prop, None) for prop in properties if hasattr(agent, prop)}
             }
-            return formulated_problem
         return None
 
     def interpret_results(self, agent, results):
@@ -44,9 +42,7 @@ class ReasoningBehavior:
                 agent.perform_action(action['action'])
 
     def execute(self, agent):
-        problem = self.identify_problem(agent)
-        if problem:
-            formulated_problem = self.formulate_problem(agent, problem)
-            if formulated_problem:
+        if problem := self.identify_problem(agent):
+            if formulated_problem := self.formulate_problem(agent, problem):
                 results = self.reasoner.reason(formulated_problem, strategy="symbolic")
                 self.interpret_results(agent, results)

@@ -1,10 +1,11 @@
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 from uuid import UUID
-from app.core.models.message import ACLMessage, Performative
+
 from app.core.models.agent import Agent
-from app.core.models.message import Message
+from app.core.models.message import ACLMessage, Message, Performative
 from app.core.services.agent_service import AgentService
 from app.core.services.llm_service import LLMService
+
 
 class HumanCommunicationService:
     def __init__(self, agent_service: AgentService, llm_service: LLMService):

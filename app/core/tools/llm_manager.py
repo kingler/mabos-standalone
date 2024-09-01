@@ -1,231 +1,217 @@
-import httpx
-from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
-import os
-import logging
-from anthropic import Anthropic
-import yaml
-import openai
 import asyncio
+import logging
+import os
+import tiktoken
+from typing import Any, Dict, Optional
+
+import httpx
+import openai
+import yaml
+from anthropic import Anthropic
+from pydantic import BaseModel, Field
 from tenacity import retry, stop_after_attempt, wait_exponential
+
+from app.config.config import LLM_CONFIG, API_KEYS
 
 logger = logging.getLogger(__name__)
 
 class LLMManager(BaseModel):
-    llms_config: Dict[str, Any] = Field(...)
-    api_key: str = Field(...)
+    llms_config: Dict[str, Any] = Field(default_factory=lambda: LLM_CONFIG)
+    api_keys: Dict[str, str] = Field(default_factory=lambda: API_KEYS)
+    default_model: str = Field(default=None)
+    model_performance: Dict[str, float] = Field(default_factory=dict)
+    model_costs: Dict[str, Dict[str, float]] = Field(default_factory=dict)
+    tokenizers: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:
         arbitrary_types_allowed = True
 
-    def __init__(self, llms_config: Dict[str, Any], api_key: str):
-        super().__init__(llms_config=llms_config, api_key=api_key)
-        self.default_model = llms_config['llms']['text_generation']['default']
+    def __init__(self, **data):
+        super().__init__(**data)
+        if not self.llms_config:
+            raise ValueError("LLM configuration is empty. Check your LLM_CONFIG in app/config/config.py")
+        if 'llms' not in self.llms_config:
+            raise ValueError(f"Expected 'llms' key in config, got keys: {self.llms_config.keys()}")
+        self.default_model = self.llms_config['llms']['text_generation']['default']
+        if not self.default_model:
+            raise ValueError("Default model not found in configuration")
+        self.api_keys = self.llms_config.get('api_keys', {})
+        self.model_performance = self._load_model_performance()
+        self.model_costs = self._load_model_costs()
+        self._validate_api_keys()
 
-    async def generate_text(self, prompt: str) -> str:
-        model_config = self.get_model_config(self.default_model)
+    async def generate_text(self, prompt: str, model: Optional[str] = None) -> str:
+        model = model or self.default_model
+        model_config = self.get_model_config(model)
         
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                model_config['url'],
-                headers={
-                    "Content-Type": "application/json",
-                    "x-api-key": self.api_key,
-                },
-                json={
-                    "model": self.default_model,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": model_config['max_tokens'],
-                    "temperature": model_config['temperature'],
-                },
-                timeout=llms_config['default_params']['timeout']
-            )
-        
-        if response.status_code == 200:
-            return response.json()['content'][0]['text']
+        if 'claude' in model:
+            return await self._anthropic_completion(prompt, model, model_config)
+        elif 'gpt' in model:
+            return await self._openai_completion(prompt, model, model_config)
+        elif 'gemini' in model:
+            return await self._gemini_completion(prompt, model, model_config)
+        elif 'llama' in model:
+            return await self._groq_completion(prompt, model, model_config)
         else:
-            raise Exception(f"Error generating text: {response.text}")
+            raise ValueError(f"Unsupported model: {model}")
 
     def get_model_config(self, model_name: str) -> Dict[str, Any]:
-        for model in llms_config['llms']['text_generation']['available']:
+        for model in self.llms_config['text_generation']['available']:
             if model_name in model:
                 return model[model_name]
         raise ValueError(f"Model {model_name} not found in configuration")
 
-    def get_default_llm(self):
-        default_llm = llms_config['llms']['text_generation']['default']
-        available_llms = llms_config['llms']['text_generation']['available']
-        llm_config = next(
-            (llm for llm in available_llms if default_llm in llm),
-            None
-        )
-        return llm_config[default_llm] if llm_config else None
-
     def _validate_api_keys(self):
-        missing_keys = [key for key, value in self.api_keys.items() if value is None]
-        if missing_keys:
+        if missing_keys := [key for key, value in self.api_keys.items() if not value]:
             raise ValueError(f"Missing API keys: {', '.join(missing_keys)}")
-        for provider, key in self.api_keys.items():
-            if not key:
-                logger.warning(f"API key for {provider} is not set. Some functionality may be limited.")
 
     def _load_model_performance(self) -> Dict[str, float]:
-        # Load model performance scores (0-1 scale)
-        return {
-            'gpt-4': 0.95,
-            'gpt-3.5-turbo': 0.85,
-            'palm2': 0.80,
-            'gemini': 0.90,
-            'claude': 0.88,
-            'mistral-7b': 0.75,
-            'mixtral-8x7b': 0.82,
-        }
+        if 'llms' not in self.llms_config or 'text_generation' not in self.llms_config['llms']:
+            logging.warning("Expected structure not found in llms_config")
+            return {}
+        
+        available_models = self.llms_config['llms']['text_generation'].get('available', [])
+        return {model: config.get('performance', 0.5) 
+                for model_dict in available_models 
+                for model, config in model_dict.items()}
 
-    def _load_model_costs(self) -> Dict[str, float]:
-        # Load model costs per 1000 tokens (approximate values)
-        return {
-            'gpt-4': 0.06,
-            'gpt-3.5-turbo': 0.002,
-            'palm2': 0.001,
-            'gemini': 0.0035,
-            'claude': 0.015,
-            'mistral-7b': 0.0005,
-            'mixtral-8x7b': 0.0008,
-        }
+    def _load_model_costs(self) -> Dict[str, Dict[str, float]]:
+        if 'llms' not in self.llms_config or 'text_generation' not in self.llms_config['llms']:
+            logging.warning("Expected structure not found in llms_config")
+            return {}
+        
+        available_models = self.llms_config['llms']['text_generation'].get('available', [])
+        return {model: {'input': config.get('cost_input', 0), 'output': config.get('cost_output', 0)} 
+                for model_dict in available_models 
+                for model, config in model_dict.items()}
+
+    def _load_tokenizers(self):
+        for model_dict in self.llms_config['text_generation']['available']:
+            for model, config in model_dict.items():
+                if 'gpt' in model:
+                    self.tokenizers[model] = tiktoken.encoding_for_model(model)
+                elif 'claude' in model:
+                    # Claude uses GPT-4's tokenizer
+                    self.tokenizers[model] = tiktoken.encoding_for_model("gpt-4")
+
+    def estimate_tokens(self, text: str, model: str) -> int:
+        if tokenizer := self.tokenizers.get(model):
+            return len(tokenizer.encode(text))
+        else:
+            # Fallback to a simple estimation if no specific tokenizer is available
+            return len(text.split())
+
+    def estimate_cost(self, text: str, model: str) -> float:
+        tokens = self.estimate_tokens(text, model)
+        cost_info = self.model_costs.get(model, {})
+        input_cost = cost_info.get('input', 0) * (tokens / 1000)
+        output_cost = cost_info.get('output', 0) * (tokens / 1000)  # Assuming same token count for output
+        return input_cost + output_cost
 
     def select_best_model(self, task: str, max_tokens: int) -> str:
-        available_models = llms_config['llms']['text_generation']['available']
         task_complexity = self._estimate_task_complexity(task)
         
         best_model = None
         best_score = float('-inf')
 
-        for model in available_models:
-            performance_score = self.model_performance.get(model, 0)
-            cost = self.model_costs.get(model, float('inf')) * (max_tokens / 1000)
-            
-            # Calculate a score based on performance, cost, and task complexity
-            score = (performance_score * task_complexity) / (cost + 0.001)  # Adding 0.001 to avoid division by zero
-            
-            if score > best_score:
-                best_score = score
-                best_model = model
+        for model_dict in self.llms_config['text_generation']['available']:
+            for model, config in model_dict.items():
+                performance_score = self.model_performance.get(model, 0)
+                cost = (self.model_costs[model]['input'] + self.model_costs[model]['output']) * (max_tokens / 1000)
+                
+                score = (performance_score * task_complexity) / (cost + 0.001)
+                
+                if score > best_score:
+                    best_score = score
+                    best_model = model
 
         logger.info(f"Selected model {best_model} for task: {task}")
         return best_model
 
     def _estimate_task_complexity(self, task: str) -> float:
-        # Simple estimation based on task length and keyword presence
-        complexity = min(len(task) / 100, 1)  # 0-1 scale based on length
+        complexity = min(len(task) / 100, 1)
         complex_keywords = ['analyze', 'evaluate', 'synthesize', 'create', 'design']
         if any(keyword in task.lower() for keyword in complex_keywords):
             complexity += 0.2
-        return min(complexity, 1)  # Ensure it doesn't exceed 1
-
-    async def get_text_completion_async(self, prompt: str, model: str = None, max_tokens: int = None, temperature: float = None) -> str:
-        if model is None:
-            model = llms_config['llms']['text_generation']['default']
-        
-        model_config = next(m for m in llms_config['llms']['text_generation']['available'] if model in m)[model]
-        
-        max_tokens = max_tokens or model_config.get('max_tokens', 4096)
-        temperature = temperature or model_config.get('temperature', 0.7)
-
-        if 'claude' in model:
-            return self._anthropic_completion_with_retry(prompt, model, max_tokens, temperature)
-        elif 'gpt' in model:
-            return self._openai_completion(prompt, model, max_tokens, temperature)
-        # Add other model providers as needed
-        else:
-            raise ValueError(f"Unsupported model: {model}")
+        return min(complexity, 1)
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
-    def _anthropic_completion_with_retry(self, prompt: str, model: str, max_tokens: int, temperature: float) -> str:
-        import anthropic
-        from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
-        anthropic_client = Anthropic(api_key=self.api_key)
-        response = anthropic_client.messages.create(
+    async def _anthropic_completion(self, prompt: str, model: str, model_config: Dict[str, Any]) -> str:
+        anthropic_client = Anthropic(api_key=self.api_keys['anthropic'])
+        response = await anthropic_client.messages.create(
             model=model,
-            max_tokens=max_tokens,
-            temperature=temperature,
+            max_tokens=model_config.get('max_tokens', 4096),
+            temperature=model_config.get('temperature', 0.7),
             messages=[
                 {"role": "user", "content": prompt}
             ]
         )
         return response.content[0].text
 
-    def _openai_completion(self, prompt: str, model: str, max_tokens: int, temperature: float) -> str:
-        openai.api_key = self.api_key
-        response = openai.ChatCompletion.create(
+    async def _openai_completion(self, prompt: str, model: str, model_config: Dict[str, Any]) -> str:
+        openai.api_key = self.api_keys['openai']
+        response = await openai.ChatCompletion.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=temperature
+            max_tokens=model_config.get('max_tokens', 4096),
+            temperature=model_config.get('temperature', 0.7)
         )
         return response.choices[0].message.content
 
-    def track_usage(self, model: str, input_tokens: int, output_tokens: int):
-        # Track token usage and costs
+    async def _gemini_completion(self, prompt: str, model: str, model_config: Dict[str, Any]) -> str:
+        # Implement Gemini API call here
+        # This is a placeholder and needs to be implemented based on Gemini's API
         pass
 
-    async def stream_completion(self, prompt: str, model: str = None):
-        # Implement streaming for supported models
-        pass
+    async def _groq_completion(self, prompt: str, model: str, model_config: Dict[str, Any]) -> str:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                model_config['url'],
+                headers={
+                    "Authorization": f"Bearer {self.api_keys['groq']}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": model_config.get('max_tokens', 4096),
+                    "temperature": model_config.get('temperature', 0.7)
+                }
+            )
+        if response.status_code == 200:
+            return response.json()['choices'][0]['message']['content']
+        else:
+            raise Exception(f"Error generating text with Groq: {response.text}")
 
-    def get_image(self, prompt: str, model: str = "stable-diffusion") -> str:
-        # Implement image generation using Replicate API
-        import replicate
+    async def generate_image(self, prompt: str, model: Optional[str] = None) -> bytes:
+        model = model or self.llms_config['image_generation']['default']
+        model_config = next(m for m in self.llms_config['image_generation']['available'] if model in m)[model]
         
-        output = replicate.run(
-            "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
-            input={"prompt": prompt}
-        )
-        
-        return output[0]  # Returns URL of generated image
-
-    def generate_audio(self, prompt: str, task: str) -> str:
-        model = llms_config['llms']['audio']['text_to_speech']['models'][0]
-        voice = llms_config['llms']['audio']['text_to_speech']['parameters']['voice']['options'][0]
-        return self.text_to_speech(prompt, model, voice)
-
-    def speech_to_text(self, audio_file_path: str, model: str = "whisper-1", **kwargs) -> str:
-        audio_config = llms_config['llms']['audio']['speech_to_text']
-        
-        with open(audio_file_path, "rb") as audio_file:
-            response = openai.Audio.transcribe(
-                model=model,
-                file=audio_file,
-                **kwargs
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                model_config['url'],
+                headers={"Authorization": f"Bearer {self.api_keys['stability_ai']}"},
+                json={"text_prompts": [{"text": prompt}]}
             )
         
-        return response['text']
+        if response.status_code == 200:
+            return response.content
+        else:
+            raise Exception(f"Error generating image: {response.text}")
 
-    def text_to_speech(self, text: str, model: str = "tts-1", voice: str = "alloy", **kwargs) -> bytes:
-        tts_config = llms_config['llms']['audio']['text_to_speech']
-        
-        response = openai.Audio.speech(
-            model=model,
-            input=text,
-            voice=voice,
-            **kwargs
-        )
-        
-        return response.content
+    async def generate_speech(self, text: str, voice: str = "alloy") -> bytes:
+        # Implement text-to-speech functionality here
+        pass
 
-# Usage example:
+    def speech_to_text(self, audio_file_path: str, model: str = "whisper-1") -> str:
+        # Implement speech-to-text functionality here
+        pass
+
+# Usage example
 async def main():
     manager = LLMManager()
-    tasks = [
-        manager.get_text_completion_async("Task 1 prompt", model="claude-3-opus-20240229"),
-        manager.get_text_completion_async("Task 2 prompt", model="gemini-1.5-pro"),
-        manager.get_text_completion_async("Task 3 prompt", model="gpt-4")
-    ]
-    results = await asyncio.gather(*tasks)
-    for result in results:
-        print(result)
-
-    async for chunk in manager.stream_completion("Stream this response", model="claude-3-opus-20240229"):
-        print(chunk, end='', flush=True)
+    result = await manager.generate_text("Explain the concept of quantum computing.")
+    print(result)
 
 if __name__ == "__main__":
     asyncio.run(main())

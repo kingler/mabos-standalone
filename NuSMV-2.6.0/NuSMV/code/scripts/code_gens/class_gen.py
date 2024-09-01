@@ -5,9 +5,11 @@
 # It generates all scheleton code within the directory where the script is launched.
 
 
-import templates
 import os.path
 import time
+
+import templates
+
 
 class Renamer:
     def __init__(self):
@@ -298,8 +300,8 @@ def rename_pathname(dpath):
     
 
 if __name__ == "__main__":
-    import sys
     import getopt
+    import sys
 
     try: ptlist, args = getopt.getopt(sys.argv[1:], 'hea:p:b:', ["help"])
     except getopt.GetoptError:

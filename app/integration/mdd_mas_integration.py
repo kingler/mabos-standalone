@@ -1,18 +1,23 @@
+from functools import lru_cache
+from typing import Any, Dict
 from uuid import UUID
-from fastapi import FastAPI, Depends, HTTPException
+
+from fastapi import Depends, FastAPI, HTTPException
+from pydantic import Field
+
+from app.api.routes.agents import agents as existing_agent_router
+from app.api.routes.mdd_mas import router as mdd_router
+from app.core.models.agent.agent import Agent as ExistingAgent
 from app.core.models.agent.belief import Belief
 from app.core.models.agent.desire import Desire
 from app.core.models.agent.intention import Intention
-from app.core.models.agent.agent import Agent as ExistingAgent
+from app.core.models.mdd.mdd_mas_model import Agent as MDDAgent
+from app.core.models.mdd.mdd_mas_model import Goal, Model
 from app.core.models.system.world_model import WorldModel
-from app.core.services.agent_service import AgentService as ExistingAgentService
-from app.api.routes.agents import agents as existing_agent_router
-from app.core.models.mdd.mdd_mas_model import Model, Agent as MDDAgent, Goal
-from app.core.services.mdd_mas_services import ModelingService, AgentService as MDDAgentService, GoalService
-from app.api.routes.mdd_mas import router as mdd_router
-from functools import lru_cache
-from pydantic import Field
-from typing import Dict, Any
+from app.core.services.agent_service import \
+    AgentService as ExistingAgentService
+from app.core.services.mdd_mas_services import AgentService as MDDAgentService
+from app.core.services.mdd_mas_services import GoalService, ModelingService
 
 app = FastAPI()
 

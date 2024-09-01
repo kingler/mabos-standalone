@@ -1,5 +1,7 @@
 from functools import lru_cache
+
 from .world_model import WorldModel
+
 
 @lru_cache(maxsize=None)
 def get_world_model() -> WorldModel:

@@ -1,5 +1,6 @@
 import re
 
+
 class IncludeGuardSubstituter:
     """
     Returns a copy of the string given to the constructors, in which

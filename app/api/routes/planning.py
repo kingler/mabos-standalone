@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Dict
+from typing import Dict, List
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.models.agent.goal import Goal
 from app.core.models.agent.plan import Plan
 from app.core.services.planning_service import PlanningService

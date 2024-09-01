@@ -1,5 +1,7 @@
-from app.core.models.mas.mas_version_control import MASVersionControl
 import os
+
+from app.core.models.mas.mas_version_control import MASVersionControl
+
 
 class VersionControlService:
     def __init__(self):

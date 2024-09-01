@@ -1,6 +1,8 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID
+
 from app.core.models.system.world_model import WorldModel
+
 
 class WorldModelService:
     def __init__(self, world_model: WorldModel):

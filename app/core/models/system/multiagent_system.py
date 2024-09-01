@@ -1,8 +1,10 @@
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 from uuid import UUID, uuid4
-from core.models.agent.agent import Agent
-from core.models.message import Message
-from core.models.system.world_model import WorldModel
+
+from app.core.models.agent.agent import Agent
+from app.core.models.message import Message
+from app.core.models.system.world_model import WorldModel
+
 
 class MultiAgentSystem:
     def __init__(self, num_agents: int, num_states: int, state_size: int, action_size: int, ontology_path: str):
@@ -42,8 +44,7 @@ class MultiAgentSystem:
 
     def process_messages(self):
         for message in self.message_queue:
-            receiver = self.agents.get(message.receiver_id)
-            if receiver:
+            if receiver := self.agents.get(message.receiver_id):
                 receiver.receive_message(message)
         self.message_queue.clear()
 
@@ -65,13 +66,8 @@ class MultiAgentSystem:
 
     def process_agent_actions(self, agent_id: UUID, actions: List[Dict[str, Any]]):
         for action in actions:
-            # Process each action and update the world model accordingly
-            # This is a simplified example and should be expanded based on your specific action types
             if action['type'] == 'move':
                 self.world_model.update_agent(agent_id, {'position': action['target']})
-            elif action['type'] == 'interact':
-                # Handle interaction with objects or other agents
-                pass
             # Add more action types as needed
 
     def run(self, steps: int):

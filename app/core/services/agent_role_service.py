@@ -1,5 +1,7 @@
-from app.core.models.agent.agent_role import AgentRole
 from typing import List
+
+from app.core.models.agent.agent_role import AgentRole
+
 
 class AgentRolesService:
     def __init__(self):

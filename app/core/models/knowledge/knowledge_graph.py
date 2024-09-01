@@ -1,42 +1,39 @@
 from __future__ import annotations
+
+from app.core.models.knowledge.base import KnowledgeGraphInterface
+
 import json
-from typing import List, Dict, Any, TYPE_CHECKING
+from typing import Any, Dict, List, Optional
 
-from app.core.models.agent.agent import Agent
-from app.core.models.agent.action import Action
 import networkx as nx
-from pydantic import BaseModel
-from rdflib import Literal, URIRef
+from pydantic import BaseModel, Field, ConfigDict
+from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF
-from app.core.models.knowledge.ontology.ontology import Ontology
-from app.core.tools.llm_manager import LLMManager
-from app.core.services.database_service import DatabaseService
+
+from app.core.models.agent.action import Action
+from app.core.models.agent.agent import Agent
 from app.core.models.database.database_schema_generator import DatabaseSchemaGenerator
+from app.core.models.knowledge.ontology.ontology import Ontology
+from app.core.services.database_service import DatabaseService
+from app.core.tools.llm_manager import LLMManager
 
-if TYPE_CHECKING:
-    from core.models.knowledge.knowledge_base import KnowledgeBase
+class KnowledgeGraph(KnowledgeGraphInterface):
+    graph: nx.MultiDiGraph = Field(default_factory=nx.MultiDiGraph)
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-class KnowledgeGraph(BaseModel):
-    def __init__(self, knowledge_base: KnowledgeBase):
-        self.knowledge_base = knowledge_base
-        self.graph = nx.MultiDiGraph()
-        self.build_graph()  
-
-    def build_graph(self):
-        for s, p, o in self.knowledge_base.graph:
+    def build_graph(self, rdf_graph: Graph, ontology: Ontology):
+        for s, p, o in rdf_graph:
             s_id, o_id = str(s), str(o)
-            self.graph.add_node(s_id, type=self.get_node_type(s))
-            self.graph.add_node(o_id, type=self.get_node_type(o))
+            self.graph.add_node(s_id, type=self.get_node_type(s, rdf_graph, ontology))
+            self.graph.add_node(o_id, type=self.get_node_type(o, rdf_graph, ontology))
             self.graph.add_edge(s_id, o_id, predicate=str(p))
             
             if isinstance(o, Literal):
                 self.graph.nodes[s_id][str(p)] = str(o)
 
-    def get_node_type(self, node: URIRef) -> str:
-        for node_class in self.knowledge_base.ontology.get_classes():
-            if (node, RDF.type, URIRef(node_class)) in self.knowledge_base.graph:
-                return node_class
-        return None
+    def get_node_type(self, node: URIRef, rdf_graph: Graph, ontology: Ontology) -> Optional[str]:
+        return next((str(o) for s, p, o in rdf_graph 
+                     if s == node and p == RDF.type and str(o) in ontology.get_classes()), None)
 
     def add_node(self, node_id: str, node_data: Dict[str, Any]):
         self.graph.add_node(node_id, **node_data)
@@ -88,8 +85,7 @@ class KnowledgeGraphIntegrator:
         # Store properties as attributes of concept nodes
         for concept in ontology.concepts.values():
             for prop in ontology.get_properties_for_concept(concept.name):
-                node = db_service.get_agent(concept.name)
-                if node:
+                if node := db_service.get_agent(concept.name):
                     node.metadata[prop.name] = prop.range
                     db_service.update_agent(node)
         

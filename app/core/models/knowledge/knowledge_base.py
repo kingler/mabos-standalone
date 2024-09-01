@@ -1,8 +1,15 @@
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 from pydantic import BaseModel, Field
-from typing import Dict, Any, Union, List, Optional
 from rdflib import Graph, Literal, URIRef
 from app.core.models.sentence_transformer import SentenceTransformerWrapper
 from app.core.tools.llm_manager import LLMManager
+from app.core.models.knowledge.base import KnowledgeBaseInterface
+from app.config.config import LLM_CONFIG
+from uuid import UUID, uuid4
+
+# Use forward references for types that might cause circular imports
+if TYPE_CHECKING:
+    from app.core.models.knowledge.ontology.ontology import Ontology
 
 class KnowledgeItem(BaseModel):
     """
@@ -30,20 +37,28 @@ class KnowledgeBase(BaseModel):
         graph (Graph): The RDF graph representing the symbolic knowledge.
         sentence_transformer (SentenceTransformerWrapper): The sentence transformer model for encoding text.
         llm_manager (LLMManager): The LLM manager for handling LLM capabilities.
+        ontology (Any): The ontology associated with the knowledge base.
     """
-    id: str
+    id: UUID = Field(default_factory=uuid4)
     symbolic_kb: Dict[str, KnowledgeItem] = Field(default_factory=dict)
     neural_kb: Dict[str, KnowledgeItem] = Field(default_factory=dict)
     graph: Graph = Field(default_factory=Graph, exclude=True)
     sentence_transformer: SentenceTransformerWrapper = Field(default_factory=lambda: SentenceTransformerWrapper('all-MiniLM-L6-v2'), exclude=True)
-    llm_manager: LLMManager = Field(default_factory=lambda: LLMManager({}), exclude=True)
-    
+    llm_manager: LLMManager = Field(default_factory=lambda: LLMManager(llms_config=LLM_CONFIG), exclude=True)
+    ontology: Any = Field(default_factory=lambda: None, exclude=True)
+
     model_config = {
         "arbitrary_types_allowed": True,
         "json_encoders": {
             Graph: lambda v: "<Graph object>"
         }
     }
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.graph = Graph()
+        from app.core.models.knowledge.ontology.ontology import Ontology
+        self.ontology = Ontology()
 
     def add_symbolic_knowledge(self, item: KnowledgeItem):
         """
@@ -258,3 +273,6 @@ class KnowledgeBase(BaseModel):
         """
         prompt = f"Summarize the following document: {document}"
         return self.llm_manager.get_text_completion(prompt)
+
+    def get_rdf_graph(self) -> Graph:
+        return self.graph

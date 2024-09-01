@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from typing import List, Optional
 from uuid import UUID
 
-from core.agents.core_agents.environmental_agent import EnvironmentalAgent
+from pydantic import BaseModel
+
+from app.core.agents.core_agents.environmental_agent import EnvironmentalAgent
+
 
 class EnvironmentError(Exception):
     """

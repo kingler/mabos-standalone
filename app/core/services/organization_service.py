@@ -1,7 +1,11 @@
 from typing import List
-from app.core.models.system.organization import Organization, OrganizationCreate, OrganizationUpdate
+
 from app.core.models.agent import Agent
 from app.core.models.agent.agent_role import AgentRole
+from app.core.models.system.organization import (Organization,
+                                                 OrganizationCreate,
+                                                 OrganizationUpdate)
+
 
 class OrganizationService:
     """

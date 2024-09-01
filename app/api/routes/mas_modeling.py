@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException
-from app.core.models.openai_client import openai_client
-from uuid import uuid4
 import json
-from app.core.models.system.multiagent_system import MultiAgentSystem
+from uuid import uuid4
+
+from fastapi import APIRouter, HTTPException
+
+from app.core.models.openai_client import openai_client
 from app.core.models.system.multi_model_view import (
-    ArchitecturalView, CommunicationView, EnvironmentalView, IntentionalView,
-    BusinessDevelopmentView, OperationsView, PerformanceMeasurementView
-)
+    ArchitecturalView, BusinessDevelopmentView, CommunicationView,
+    EnvironmentalView, IntentionalView, OperationsView,
+    PerformanceMeasurementView)
+from app.core.models.system.multiagent_system import MultiAgentSystem
 
 router = APIRouter()
 mas = MultiAgentSystem()

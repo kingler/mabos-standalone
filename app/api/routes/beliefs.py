@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
+
+from app.core.models.agent.belief import Belief
 from app.core.models.knowledge.knowledge_base import knowledge_base
 from app.core.services.belief_service import BeliefService
-from app.core.models.agent.belief import Belief
 
 router = APIRouter()
 

@@ -1,11 +1,11 @@
-import re
-from fnmatch import fnmatch
+import collections
+import optparse
 import os
 import os.path
-import collections
-from html2text import HTML2Text
-import optparse
+import re
+from fnmatch import fnmatch
 
+from html2text import HTML2Text
 
 CommandMatch = collections.namedtuple('CommandMatch',
                                       'found_index, command_name, description')

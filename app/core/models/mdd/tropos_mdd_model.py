@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
+from enum import Enum
 from typing import List
 from uuid import UUID, uuid4
-from enum import Enum
+
+from pydantic import BaseModel, Field
+
 
 class ActorType(str, Enum):
     AGENT = "Agent"

@@ -1,8 +1,9 @@
 #
 # script to generate a single grammar/lexer file from components
 #
-import os, sys
 import optparse
+import os
+import sys
 
 parser = optparse.OptionParser()
 parser.add_option('--output')

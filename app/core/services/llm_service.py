@@ -1,9 +1,12 @@
 import json
 from typing import Any, List, Optional
+
+from pydantic import BaseModel, Field
+
 from app.core.models.agent.agent import Agent
 from app.core.models.message import ACLMessage
-from pydantic import BaseModel, Field
 from app.core.tools.llm_manager import LLMManager
+
 
 class LLMService(BaseModel):
     llm_manager: LLMManager

@@ -1,14 +1,16 @@
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
 from urllib import request
 
-from app.core.models.knowledge.reasoning.reasoner import OWLReasoner, RDFSReasoner
+import psycopg2
+from arango import ArangoClient
 from pydantic import BaseModel
 from rdflib import Graph, Literal, URIRef
-from app.core.models.knowledge.ontology.ontology import Ontology
 from wikipediaapi import Wikipedia
-from arango import ArangoClient
-import psycopg2
+
 from app.core.models.agent.agent import Agent, Role
+from app.core.models.knowledge.ontology.ontology import Ontology
+from app.core.models.knowledge.reasoning.reasoner import (OWLReasoner,
+                                                          RDFSReasoner)
 
 
 class Inconsistency(BaseModel):

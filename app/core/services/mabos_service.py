@@ -1,20 +1,25 @@
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
+from app.core.models.consistency_checker import ConsistencyChecker
+from app.core.models.knowledge.active_knowledge_acquisition import \
+    ActiveKnowledgeAcquisition
+from app.core.models.knowledge.conflict_resolution import ConflictResolution
+from app.core.models.knowledge.distributed_knowledge import \
+    DistributedKnowledge
+from app.core.models.knowledge.explanation_generator import \
+    ExplanationGenerator
+from app.core.models.knowledge.reasoning.reasoning_engine import \
+    ReasoningEngine
+from app.core.models.knowledge.reasoning.temporal_reasoning import \
+    TemporalReasoning
+from app.core.models.mdd.mdd_mas_model import Agent, Model
 from app.core.models.system.multiagent_system import MultiAgentSystem
-from app.core.models.knowledge.reasoning.reasoning_engine import ReasoningEngine
-from app.core.services import ontology_service
-from app.core.services import knowledge_base_service
+from app.core.services import knowledge_base_service, ontology_service
 from app.core.services.erp_service import ERPService
 from app.core.services.mdd_mas_services import ModelingService
-from app.core.models.mdd.mdd_mas_model import Model, Agent
-from app.core.models.consistency_checker import ConsistencyChecker
-from app.core.models.knowledge.reasoning.temporal_reasoning import TemporalReasoning
-from app.core.models.knowledge.distributed_knowledge import DistributedKnowledge
-from app.core.models.knowledge.active_knowledge_acquisition import ActiveKnowledgeAcquisition
-from app.core.models.knowledge.conflict_resolution import ConflictResolution
-from app.core.models.knowledge.explanation_generator import ExplanationGenerator
 from app.db.db_integration import DatabaseIntegration
+
 
 class MABOSService:
     def __init__(self, erp_service: ERPService, modeling_service: ModelingService, 

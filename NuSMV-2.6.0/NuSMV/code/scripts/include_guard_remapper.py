@@ -1,7 +1,9 @@
-from optparse import OptionParser
-from extractors.file_searcher import HeaderSearcher
-from extractors.include_guard_extr import IncludeGuardExtractor, IncludeGuardSubstituter
 import os.path
+from optparse import OptionParser
+
+from extractors.file_searcher import HeaderSearcher
+from extractors.include_guard_extr import (IncludeGuardExtractor,
+                                           IncludeGuardSubstituter)
 
 
 def main(search_paths, dry_run, debug):

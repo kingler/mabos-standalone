@@ -1,7 +1,8 @@
+import logging
 from typing import Any
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
 from app.core.models.knowledge.knowledge_graph import KnowledgeGraph
-import logging
 
 logger = logging.getLogger(__name__)
 

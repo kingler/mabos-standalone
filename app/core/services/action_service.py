@@ -4,6 +4,7 @@ from app.core.models.agent.action import Action
 from app.core.models.agent.agent import Agent
 from app.core.services.database_service import DatabaseService
 
+
 class ActionService:
     def __init__(self, database_service: DatabaseService):
         self.database_service = database_service

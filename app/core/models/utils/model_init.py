@@ -1,10 +1,11 @@
+from core.models.agent.action import Action
 from core.models.agent.agent import Agent
 from core.models.agent.belief import Belief
 from core.models.agent.desire import Desire
-from core.models.agent.intention import Intention
 from core.models.agent.goal import Goal
+from core.models.agent.intention import Intention
 from core.models.agent.plan import Plan
-from core.models.agent.action import Action
+
 
 def initialize_models():
     Agent.update_forward_refs()

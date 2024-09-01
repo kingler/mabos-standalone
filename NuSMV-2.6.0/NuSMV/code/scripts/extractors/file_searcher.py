@@ -1,7 +1,7 @@
 # Searches into a dir and sub dir all the header files
 
-import os.path
 import glob
+import os.path
 
 
 class FileSearcher:

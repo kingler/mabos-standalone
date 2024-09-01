@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.models.agent.task import Task
-from app.core.services.task_manager import TaskManager
 from app.core.services.agent_service import AgentService
+from app.core.services.task_manager import TaskManager
 
 router = APIRouter()
 

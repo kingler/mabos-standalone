@@ -1,6 +1,8 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
 from app.core.models.knowledge.reasoning.reasoner import Reasoner
+
 
 class HTNPlanner:
     def __init__(self, knowledge_base: KnowledgeBase, reasoner: Reasoner):

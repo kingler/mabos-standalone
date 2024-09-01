@@ -1,7 +1,8 @@
 import asyncio
 import json
+from typing import Any, Dict
+
 from tenacity import retry, stop_after_attempt, wait_exponential
-from typing import Dict, Any
 
 from app.core.models.knowledge.ontology.ontology import Ontology
 from app.core.tools.llm_manager import LLMManager

@@ -1,6 +1,7 @@
-from converters.includes import IncludesConverter
-import sys
 import os.path
+import sys
+
+from converters.includes import IncludesConverter
 
 ROOT_PATHS = [".."]
 SEARCH_PATHS = ["./tmp"]

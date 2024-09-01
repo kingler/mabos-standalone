@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
+
 from models.utils.type_definitions import *
+from pydantic import BaseModel, Field
+
 
 class AgentBase(BaseModel):
     agent_id: UUID = Field(default_factory=uuid4, description="Unique identifier for the agent")

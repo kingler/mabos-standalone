@@ -1,8 +1,10 @@
 from typing import List
-from app.core.models.business.business_plan import BusinessPlan
+
 from app.core.agents.core_agents.business_plan_agent import BusinessPlanAgent
-from app.core.models.knowledge.reasoning.reasoner import Reasoner
+from app.core.models.business.business_plan import BusinessPlan
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
+from app.core.models.knowledge.reasoning.reasoner import Reasoner
+
 
 class BusinessPlanService:
     def __init__(self, knowledge_base: KnowledgeBase, api_key: str):

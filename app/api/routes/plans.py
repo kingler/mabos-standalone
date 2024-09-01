@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
 from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.models.agent.plan import Plan, PlanStep
-from app.core.services.plan_service import PlanService
+from app.core.models.system.world_model import WorldModel
+from app.core.models.system.world_model_provider import get_world_model
 from app.core.services.agent_service import AgentService
 from app.core.services.goal_service import GoalService
-from app.core.models.system.world_model_provider import get_world_model
-from app.core.models.system.world_model import WorldModel
+from app.core.services.plan_service import PlanService
 
 router = APIRouter()
 

@@ -1,6 +1,8 @@
+from typing import List
+
 import git
 from pydantic import BaseModel
-from typing import List
+
 
 class CommitInfo(BaseModel):
     """

@@ -1,15 +1,10 @@
 from typing import List
 
-from meta_agents import MetaAgent
-from meta_agents import RequirementsAnalysisAgent
-from meta_agents import DomainModelingAgent
-from meta_agents import ArchitectureDesignAgent
-from meta_agents import ImplementationAgent
-from meta_agents import TestingAndVerificationAgent
-from meta_agents import DeploymentAgent
-from meta_agents import IntegrationAgent
-from meta_agents import MonitoringAgent
-from meta_agents import OptimizationAgent
+from meta_agents import (ArchitectureDesignAgent, DeploymentAgent,
+                         DomainModelingAgent, ImplementationAgent,
+                         IntegrationAgent, MetaAgent, MonitoringAgent,
+                         OptimizationAgent, RequirementsAnalysisAgent,
+                         TestingAndVerificationAgent)
 
 
 class MetaMAS:

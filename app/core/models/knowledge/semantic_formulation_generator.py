@@ -1,6 +1,8 @@
 from typing import List
+
 from app.core.models.knowledge.vocabulary_manager import VocabularyManager
-from app.core.models.rules.business_rules_engine import BusinessRule
+from app.core.models.rules.rules_engine import BusinessRule
+
 
 class SemanticFormulationGenerator:
     def __init__(self, vocabulary_manager: VocabularyManager):

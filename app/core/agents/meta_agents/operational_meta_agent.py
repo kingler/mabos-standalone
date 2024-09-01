@@ -1,10 +1,12 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from app.core.models.agent.agent import Agent
 from app.core.models.agent.goal import Goal
 from app.core.models.agent.plan import Plan
 from app.core.services.agent_service import AgentService
 from app.core.services.goal_service import GoalService
 from app.core.services.plan_service import PlanService
+
 
 class OperationalMetaAgent(Agent):
     def __init__(self, agent_service: AgentService, goal_service: GoalService, plan_service: PlanService):

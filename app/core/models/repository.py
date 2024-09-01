@@ -1,7 +1,9 @@
-from typing import Dict, Optional
-from pydantic import BaseModel, Field
 import os
+from typing import Dict, Optional
+
 import git
+from pydantic import BaseModel, Field
+
 
 class RepositoryConfig(BaseModel):
     """
@@ -19,6 +21,10 @@ class RepositoryConfig(BaseModel):
     auth_credentials: Dict[str, str] = Field(
         default={"username": "default_user", "password": "default_password"},
         description="Authentication credentials"
+    )
+    ontology_repo_path: str = Field(
+        default="/Users/kinglerbercy/Projects/Apps/mas-repo/mabos-standalone/app/repositories/ontologies",
+        description="Path to ontology repository"
     )
 
 class Repository:

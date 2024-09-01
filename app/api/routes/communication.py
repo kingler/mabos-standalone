@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.models.message import Message
-from app.core.services.agent_communication_service import AgentCommunicationService
-from app.core.services.human_communication_service import HumanCommunicationService
+from app.core.services.agent_communication_service import \
+    AgentCommunicationService
 from app.core.services.agent_service import AgentService
+from app.core.services.human_communication_service import \
+    HumanCommunicationService
 from app.core.services.knowledge_base_service import KnowledgeBaseService
 
 router = APIRouter()

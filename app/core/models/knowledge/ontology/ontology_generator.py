@@ -2,22 +2,21 @@ import asyncio
 import datetime
 import json
 import logging
-from pydantic import BaseModel, Field, SkipValidation
-from typing import Dict, Any
-import yaml
 import os
+from typing import Any, Dict
 
-from app.db.database import SessionLocal
-
-from app.core.models.knowledge.knowledge_graph import KnowledgeGraph, KnowledgeGraphIntegrator
-from app.core.models.knowledge.knowledge_base import KnowledgeBase
-from app.core.models.knowledge.ontology.ontology import Ontology
+import yaml
+from pydantic import BaseModel, Field, SkipValidation
 from app.core.agents.core_agents.llm_agent import LLMAgent
-from app.core.tools.llm_manager import LLMManager
-from app.core.services.llm_service import LLMService
-from app.core.models.knowledge.ontology.ontology_aligner import OntologyAligner
-from app.core.models.knowledge.ontology.ontology_reasoner import OntologyReasoner
+from app.core.models.knowledge.ontology import (Concept, Name, OperativeRule,
+                                                Proposition, StructuralRule,
+                                                Term, VerbConceptWording)
+from app.core.models.knowledge.ontology.ontology import Ontology
 from app.core.models.knowledge.vocabulary_manager import VocabularyManager
+from app.db.database import SessionLocal
+from app.core.services.llm_service import LLMService
+from app.core.tools.llm_manager import LLMManager
+
 
 class OntologyGenerator(BaseModel):
     llm_manager: LLMManager = Field(default_factory=LLMManager)
@@ -85,10 +84,7 @@ class OntologyGenerator(BaseModel):
 
     def _get_api_key(self) -> str:
         default_provider = self.config['llms']['text_generation']['default']
-        for provider, key_name in self.config['api_keys'].items():
-            if provider in default_provider:
-                return os.environ.get(key_name, '')
-        return ''
+        return next((os.environ.get(key_name, '') for provider, key_name in self.config['api_keys'].items() if provider in default_provider), '')
 
     async def generate_ontology(self, business_description: str) -> Ontology:
         prompt = f"""
@@ -147,7 +143,7 @@ class OntologyGenerator(BaseModel):
             
             # Validate the structure of the parsed response
             required_keys = ["concepts", "relationships", "properties"]
-            if not all(key in parsed_response for key in required_keys):
+            if any(key not in parsed_response for key in required_keys):
                 raise ValueError("Response is missing one or more required keys")
             
             return parsed_response
@@ -248,7 +244,7 @@ class SBVROntologyGenerator(OntologyGenerator):
         with self.sbvr_ontology:
             for term, definition in sbvr_structure.get("vocabulary", {}).get("terms", {}).items():
                 new_term = Term(term)
-                new_concept = Concept(term + "_concept")
+                new_concept = Concept(f"{term}_concept")
                 new_term.represents.append(new_concept)
                 new_concept.hasDefinition.append(definition)
                 ontology.add_concept(term, definition)
@@ -308,9 +304,7 @@ class OntologyVersionControl:
 
        def get_version(self, version: str) -> Ontology:
            # Retrieve specific version of ontology
-           version_data = self.storage.load(f'ontology_v{version}')
-           if version_data:
-               data = json.loads(version_data)
+           if data := json.loads(self.storage.load(f'ontology_v{version}') or '{}'):
                ontology = Ontology()
                ontology.from_json(data['ontology'])
                return ontology
@@ -354,14 +348,14 @@ class OntologyVersionControl:
                    differences["concepts"]["modified"].append(concept)
            
            # Compare relationships
-           relationships1 = set((r.source, r.target, r.type) for r in ontology1.relationships)
-           relationships2 = set((r.source, r.target, r.type) for r in ontology2.relationships)
+           relationships1 = {(r.source, r.target, r.type) for r in ontology1.relationships}
+           relationships2 = {(r.source, r.target, r.type) for r in ontology2.relationships}
            differences["relationships"]["added"] = list(relationships2 - relationships1)
            differences["relationships"]["removed"] = list(relationships1 - relationships2)
            
            # Compare properties
-           properties1 = set((p.name, p.concept, p.range) for p in ontology1.properties)
-           properties2 = set((p.name, p.concept, p.range) for p in ontology2.properties)
+           properties1 = {(p.name, p.concept, p.range) for p in ontology1.properties}
+           properties2 = {(p.name, p.concept, p.range) for p in ontology2.properties}
            differences["properties"]["added"] = list(properties2 - properties1)
            differences["properties"]["removed"] = list(properties1 - properties2)
            
@@ -386,72 +380,15 @@ class NaturalLanguageOntologyInterface:
            """
 
            selected_model = self.llm_manager.select_model("Natural language ontology interface", required_capabilities=["multilingual"])
-           response = await self.llm_manager.get_text_completion_async(prompt, model=selected_model)
-           
-           # Parse the response and update the ontology if necessary
-           # Return a user-friendly message describing the action taken
-           pass 
-       
-class OntologyManager(BaseModel):
-    def __init__(self, llm_manager: LLMManager, storage_backend, graph_database, use_sbvr: bool = False):
-        self.llm_manager = llm_manager
-        self.generator = SBVROntologyGenerator(llm_manager) if use_sbvr else OntologyGenerator(llm_manager)
-        self.version_control = OntologyVersionControl(storage_backend)
-        self.graph_integrator = KnowledgeGraphIntegrator(graph_database)
-        self.aligner = OntologyAligner(llm_manager)
-        self.nl_interface = None
-        self.reasoner = None
-
-    async def create_ontology(self, business_description: str) -> Ontology:
-        ontology = await self.generator.generate_ontology(business_description)
-        refined_ontology = await self.generator.refine_ontology(ontology)
-        validation_report = await self.generator.validate_ontology(refined_ontology)
-        
-        if validation_report['is_valid']:
-            self.version_control.save_version(refined_ontology, "1.0", {"source": "initial_generation"})
-            self.graph_integrator.ontology_to_graph(refined_ontology)
-            self.nl_interface = NaturalLanguageOntologyInterface(self.llm_manager, refined_ontology)
-            self.reasoner = OntologyReasoner(self.llm_manager, refined_ontology)
-            return refined_ontology
-        else:
-            raise ValueError("Generated ontology failed validation")
-
-    async def update_ontology(self, updates: Dict[str, Any]) -> Ontology:
-        current_ontology = self.version_control.get_version("latest")
-        updated_ontology = current_ontology.apply_updates(updates)
-        validation_report = await self.generator.validate_ontology(updated_ontology)
-        
-        if validation_report['is_valid']:
-            new_version = self.version_control.save_version(updated_ontology, "increment", {"source": "manual_update"})
-            self.graph_integrator.update_graph_from_ontology(updated_ontology)
-            self.nl_interface.ontology = updated_ontology
-            self.reasoner.ontology = updated_ontology
-            return updated_ontology
-        else:
-            raise ValueError("Updated ontology failed validation")
-
-    async def process_nl_command(self, command: str) -> str:
-        return await self.nl_interface.process_command(command)
-
-    async def perform_reasoning(self, query: str) -> str:
-        return await self.reasoner.answer_query(query)
+           return await self.llm_manager.get_text_completion_async(prompt, model=selected_model)
 
 # Usage example:
 async def main():
+    from app.core.models.knowledge.knowledge_graph import KnowledgeGraph
+    from app.core.models.knowledge.knowledge_base import KnowledgeBase
     llm_manager = LLMManager()
     storage_backend = SessionLocal()  # Using the database session from database.py
     graph_database = KnowledgeGraph(KnowledgeBase())  # Using KnowledgeGraph from knowledge_graph.py with a KnowledgeBase from knowledge_base.py
-    
-    ontology_manager = OntologyManager(llm_manager, storage_backend, graph_database)
-    
-    initial_ontology = await ontology_manager.create_ontology("An e-commerce platform selling electronics")
-    print("Initial ontology created:", initial_ontology)
-    
-    update_result = await ontology_manager.process_nl_command("Add a new concept 'Smartphone' as a subclass of 'Electronics'")
-    print("Ontology updated:", update_result)
-    
-    reasoning_result = await ontology_manager.perform_reasoning("What are the potential relationships between 'Smartphone' and 'Customer'?")
-    print("Reasoning result:", reasoning_result)
 
 if __name__ == "__main__":
     asyncio.run(main())      

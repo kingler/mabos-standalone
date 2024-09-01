@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
-from uuid import UUID, uuid4
 from enum import Enum
+from typing import Any, Dict, List, Optional
+from uuid import UUID, uuid4
+
+from pydantic import BaseModel, Field
+
 
 class ArchitectureLayer(str, Enum):
     BUSINESS = "Business"

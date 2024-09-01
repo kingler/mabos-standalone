@@ -1,9 +1,13 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
-from app.core.models.erp.erp_models import (
-    ERPModule, FinancialModule, HRModule, CRMModule, SupplyChainModule,
-    InventoryModule, ProjectManagementModule, ManufacturingModule, ERPSystem
-)
+
+from app.core.models.erp.erp_models import (CRMModule, ERPModule, ERPSystem,
+                                            FinancialModule, HRModule,
+                                            InventoryModule,
+                                            ManufacturingModule,
+                                            ProjectManagementModule,
+                                            SupplyChainModule)
+
 
 class ERPService:
     def __init__(self):

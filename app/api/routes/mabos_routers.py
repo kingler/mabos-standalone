@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
-from app.core.services.mabos_service import MABOSService
-from app.core.models.mabos_service_model import MABOSServiceModel, MABOSServiceSummary
+
 from app.core.dependencies import get_mabos_service
+from app.core.models.mabos_service_model import (MABOSServiceModel,
+                                                 MABOSServiceSummary)
+from app.core.services.mabos_service import MABOSService
 
 router = APIRouter()
 

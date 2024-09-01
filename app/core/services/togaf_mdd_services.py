@@ -3,12 +3,12 @@ from uuid import UUID
 
 from app.core.models.mdd.mdd_mas_model import Model
 from app.core.models.mdd.togaf_mdd_models import (ArchitectureRequirement,
-                                              ArchitectureRoadmap,
-                                              ArchitectureView,
-                                              ArchitectureViewpoint,
-                                              BusinessService,
-                                              EnterpriseArchitecture,
-                                              TechnologyService)
+                                                  ArchitectureRoadmap,
+                                                  ArchitectureView,
+                                                  ArchitectureViewpoint,
+                                                  BusinessService,
+                                                  EnterpriseArchitecture,
+                                                  TechnologyService)
 from app.core.services.mdd_mas_services import ModelingService
 
 

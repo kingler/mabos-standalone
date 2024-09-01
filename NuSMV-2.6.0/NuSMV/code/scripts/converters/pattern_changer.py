@@ -4,6 +4,7 @@
 
 import re
 
+
 class PatternChanger:
 
     def __init__(self, pattern_str):

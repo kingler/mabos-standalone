@@ -1,13 +1,15 @@
-from typing import List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
+
 from pydantic import BaseModel
-from app.core.models.agent.agent import Agent
+
 from app.core.models.agent.action import Action
+from app.core.models.agent.agent import Agent
+from app.core.models.agent.agent_role import AgentRole
 from app.core.models.agent.belief import Belief
 from app.core.models.agent.desire import Desire
-from app.core.models.agent.intention import Intention
 from app.core.models.agent.goal import Goal
+from app.core.models.agent.intention import Intention
 from app.core.models.agent.plan import Plan, PlanStep
-from app.core.models.agent.agent_role import AgentRole
 
 if TYPE_CHECKING:
     from app.core.services.database_service import DatabaseService

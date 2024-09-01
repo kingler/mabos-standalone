@@ -1,7 +1,9 @@
 import os
-from dotenv import load_dotenv
 import uuid
-from typing import List, Dict
+from typing import Dict, List
+
+from dotenv import load_dotenv
+
 from app.core.models.agent.plan import Plan
 from app.core.services.agent_service import AgentService
 from app.core.services.goal_service import GoalService

@@ -1,12 +1,14 @@
-from uuid import UUID
 from typing import List
+from uuid import UUID
+
 from app.core.models.agent.agent import Agent
 from app.core.models.agent.belief import Belief
 from app.core.models.agent.desire import Desire
-from app.core.models.agent.intention import Intention
 from app.core.models.agent.goal import Goal
+from app.core.models.agent.intention import Intention
 from app.core.models.agent.plan import Plan
 from app.core.models.agent.task import Task
+
 
 class MetaAgent(Agent):
     beliefs: List[Belief] = []

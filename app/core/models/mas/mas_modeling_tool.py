@@ -1,11 +1,12 @@
 import uuid
+from typing import Any, Dict, List
 
-from app.core.models.mdd.mdd_mas_model import OnboardingProcess
-from app.core.models.knowledge.ontology.ontology import Ontology
-from typing import Dict, Any, List
 from app.core.models.agent.agent import Agent
+from app.core.models.knowledge.ontology.ontology import Ontology
 from app.core.models.mas.mas_version_control import MASVersionControl
+from app.core.models.mdd.mdd_mas_model import OnboardingProcess
 from app.core.models.uml_diagram_generator import UMLDiagramGenerator
+
 
 class TOGAFADM:
     def __init__(self):

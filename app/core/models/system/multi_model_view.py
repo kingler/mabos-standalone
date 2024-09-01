@@ -1,5 +1,7 @@
-import graphviz
 from typing import Dict, List
+
+import graphviz
+
 
 class ArchimateArchimateElement:
     def __init__(self, id: str, name: str, element_type: str):

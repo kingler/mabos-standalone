@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from typing import List, Optional
 
-from core.models.agent.agent_role import AgentRole
-from core.models.agent.agent import Agent
+from pydantic import BaseModel
+
+from app.core.models.agent.agent import Agent
+from app.core.models.agent.agent_role import AgentRole
+
 
 class OrganizationBase(BaseModel):
     name: str

@@ -1,7 +1,10 @@
-from typing import Dict, Any
+from typing import Any, Dict
+
 from pydantic import Field
+
 from app.core.models.agent.agent import Agent
 from app.core.models.agent.belief import Belief
+
 
 class EnvironmentalAgent(Agent):
     """

@@ -1,5 +1,6 @@
-from functions import FunDefPrototype
 import re
+
+from functions import FunDefPrototype
 
 
 # ----------------------------------------------------------------------

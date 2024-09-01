@@ -1,9 +1,11 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID
+
 from app.core.models.agent.agent import Agent
 from app.core.models.message import ACLMessage, Performative
 from app.core.services.agent_service import AgentService
 from app.core.services.knowledge_base_service import KnowledgeBaseService
+
 
 class AgentCommunicationService:
     def __init__(self, agent_service: AgentService, knowledge_base_service: KnowledgeBaseService):

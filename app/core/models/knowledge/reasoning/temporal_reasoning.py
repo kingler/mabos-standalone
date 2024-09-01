@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
 from app.core.models.knowledge.reasoning.reasoner import Reasoner
+
 
 class TemporalReasoning:
     def __init__(self, knowledge_base: KnowledgeBase, reasoner: Reasoner):
@@ -30,13 +32,9 @@ class TemporalReasoning:
             ?futureState :afterTimeDelta {time_delta} .
         }}
         """
-        results = self.knowledge_base.reason(query)
-        
-        if results:
-            future_state_concept = results[0]['futureState']
-            return self._ontology_concept_to_state(future_state_concept)
-        else:
-            return current_state  # Return current state if no prediction is available
+        if results := self.knowledge_base.reason(query):
+            return self._ontology_concept_to_state(results[0]['futureState'])
+        return current_state  # Return current state if no prediction is available
 
     def _state_to_ontology_concept(self, state: Dict[str, Any]) -> str:
         # Convert state to ontology concept

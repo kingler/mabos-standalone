@@ -97,7 +97,8 @@ def pritty_splitter(str, length=50, tabs=-1):
 
 
 def main():
-    import os.path    
+    import os.path
+
     from extractors.file_searcher import FileSearcher
     
     for pkg_name in PKGS.split():

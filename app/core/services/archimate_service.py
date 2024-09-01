@@ -1,9 +1,14 @@
 from typing import List, Optional
-from app.core.models.mdd.archimate_model import (
-    ArchiMateModel, BaseArchiMateElement, Relationship,
-    BusinessProcess, BusinessFunction, ApplicationComponent,
-    ApplicationService, TechnologyService, Node
-)
+
+from app.core.models.mdd.archimate_model import (ApplicationComponent,
+                                                 ApplicationService,
+                                                 ArchiMateModel,
+                                                 BaseArchiMateElement,
+                                                 BusinessFunction,
+                                                 BusinessProcess, Node,
+                                                 Relationship,
+                                                 TechnologyService)
+
 
 class ArchiMateService:
     def __init__(self):

@@ -1,5 +1,6 @@
 from app.core.models.agent.agent import Agent
 
+
 class AgentExecutor:
     """
     The AgentExecutor class is responsible for executing the perceive-reason-act cycle of an agent.

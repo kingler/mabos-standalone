@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from app.core.services.rule_engine_service import RuleEngineService
+
 from app.core.services.agent_role_service import AgentRolesService
+from app.core.services.rule_engine_service import RuleEngineService
 
 router = APIRouter()  # Added this line
 

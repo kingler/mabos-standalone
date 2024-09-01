@@ -1,15 +1,18 @@
 import os
-from typing import List, Dict, Any, Union
 from enum import Enum
+from typing import Any, Dict, List, Union
 
-from pydantic import BaseModel
-from owlready2 import *
-from rdflib import Graph, Literal, URIRef
-from app.core.models.llm_decomposer import LLMDecomposer
-from app.core.models.agent import Belief, Desire, Intention
-from app.core.models.knowledge.knowledge_base import KnowledgeBase
-from app.core.models.agent.plan import Plan
 import openai  # Assuming we're using OpenAI's GPT for LLM capabilities
+from owlready2 import *
+from pydantic import BaseModel, Field
+from rdflib import Graph, Literal, URIRef
+
+from app.core.models.agent import Belief, Desire, Intention
+from app.core.models.agent.plan import Plan
+from app.core.models.knowledge.knowledge_base import KnowledgeBase
+from app.core.models.llm_decomposer import LLMDecomposer
+from app.core.tools.llm_manager import LLMManager
+
 
 class ReasoningStrategy(Enum):
     SYMBOLIC = "symbolic"
@@ -21,17 +24,17 @@ class Reasoner(BaseModel):
     """
     A reasoner that combines different reasoning strategies to update beliefs, generate desires, select intentions, and make decisions.
     """
-    knowledge_base: KnowledgeBase
-    api_key: str
-    strategy: ReasoningStrategy
+    knowledge_base: KnowledgeBase = Field(...)
+    strategy: ReasoningStrategy = Field(default=ReasoningStrategy.SYMBOLIC)
+    llm_manager: LLMManager = Field(default_factory=LLMManager)
+    llm_decomposer: LLMDecomposer = Field(default=None)
 
-    def __init__(self, knowledge_base: KnowledgeBase, api_key: str, strategy: ReasoningStrategy = ReasoningStrategy.SYMBOLIC):
-        super().__init__(knowledge_base=knowledge_base, api_key=api_key, strategy=strategy)
-        self.knowledge_base = knowledge_base
-        self.llm_decomposer = LLMDecomposer(api_key=api_key)
-        openai.api_key = os.getenv('OPENAI_API_KEY')
+    def __init__(self, knowledge_base: KnowledgeBase, strategy: ReasoningStrategy = ReasoningStrategy.SYMBOLIC, **data):
+        super().__init__(knowledge_base=knowledge_base, strategy=strategy, **data)
+        self.llm_manager = LLMManager()
+        self.llm_decomposer = LLMDecomposer(llm_manager=self.llm_manager)
 
-    def infer(self, beliefs: List[Belief]) -> List[Belief]:
+    async def infer(self, beliefs: List[Belief]) -> List[Belief]:
         """
         Perform inference based on the given beliefs and the selected reasoning strategy.
 
@@ -44,7 +47,7 @@ class Reasoner(BaseModel):
         if self.strategy == ReasoningStrategy.SYMBOLIC:
             return self._symbolic_infer(beliefs)
         elif self.strategy == ReasoningStrategy.LLM:
-            return self._llm_infer(beliefs)
+            return await self._llm_infer(beliefs)
         elif self.strategy == ReasoningStrategy.RDFS:
             return self._rdfs_infer(beliefs)
         elif self.strategy == ReasoningStrategy.OWL:
@@ -52,7 +55,7 @@ class Reasoner(BaseModel):
         else:
             raise ValueError(f"Unknown reasoning strategy: {self.strategy}")
 
-    def generate_desires(self, beliefs: List[Belief]) -> List[Desire]:
+    async def generate_desires(self, beliefs: List[Belief]) -> List[Desire]:
         """
         Generate desires based on the given beliefs and the selected reasoning strategy.
 
@@ -65,7 +68,7 @@ class Reasoner(BaseModel):
         if self.strategy == ReasoningStrategy.SYMBOLIC:
             return self._symbolic_generate_desires(beliefs)
         elif self.strategy == ReasoningStrategy.LLM:
-            return self._llm_generate_desires(beliefs)
+            return await self._llm_generate_desires(beliefs)
         elif self.strategy == ReasoningStrategy.RDFS:
             return self._rdfs_generate_desires(beliefs)
         elif self.strategy == ReasoningStrategy.OWL:
@@ -74,17 +77,15 @@ class Reasoner(BaseModel):
             raise ValueError(f"Unknown reasoning strategy: {self.strategy}")
 
     def _symbolic_infer(self, beliefs: List[Belief]) -> List[Belief]:
-        new_beliefs = []
-        for belief in beliefs:
-            if belief.content == "A" and self.knowledge_base.symbolic_kb.get("A_implies_B"):
-                new_beliefs.append(Belief(id="inferred_B", content="B"))
-        return new_beliefs
+        return [Belief(id="inferred_B", content="B") 
+                for belief in beliefs 
+                if belief.content == "A" and self.knowledge_base.symbolic_kb.get("A_implies_B")]
 
-    def _llm_infer(self, beliefs: List[Belief]) -> List[Belief]:
+    async def _llm_infer(self, beliefs: List[Belief]) -> List[Belief]:
         belief_texts = [b.content for b in beliefs]
         prompt = f"Given these beliefs: {', '.join(belief_texts)}. What new beliefs can be inferred?"
-        response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=100)
-        new_belief_texts = response.choices[0].text.strip().split(", ")
+        response = await self.llm_manager.generate_text(prompt)
+        new_belief_texts = response.strip().split(", ")
         return [Belief(id=f"llm_inferred_{i}", content=text) for i, text in enumerate(new_belief_texts)]
 
     def _rdfs_infer(self, beliefs: List[Belief]) -> List[Belief]:
@@ -140,17 +141,14 @@ class Reasoner(BaseModel):
         return new_beliefs
 
     def _symbolic_generate_desires(self, beliefs: List[Belief]) -> List[Desire]:
-        desires = []
-        for belief in beliefs:
-            if belief.content == "hungry":
-                desires.append(Desire(id="eat_desire", description="Find food", priority=5))
-        return desires
+        return [Desire(id="eat_desire", description="Find food", priority=5) 
+                for belief in beliefs if belief.content == "hungry"]
 
-    def _llm_generate_desires(self, beliefs: List[Belief]) -> List[Desire]:
+    async def _llm_generate_desires(self, beliefs: List[Belief]) -> List[Desire]:
         belief_texts = [b.content for b in beliefs]
         prompt = f"Given these beliefs: {', '.join(belief_texts)}. What desires should the agent have?"
-        response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=100)
-        desire_texts = response.choices[0].text.strip().split(", ")
+        response = await self.llm_manager.generate_text(prompt)
+        desire_texts = response.strip().split(", ")
         return [Desire(id=f"llm_desire_{i}", description=text, priority=5) for i, text in enumerate(desire_texts)]
 
     def _rdfs_generate_desires(self, beliefs: List[Belief]) -> List[Desire]:
@@ -241,7 +239,7 @@ class Reasoner(BaseModel):
 
         return desires
 
-    def update_beliefs(self, current_beliefs: List[Belief]) -> List[Belief]:
+    async def update_beliefs(self, current_beliefs: List[Belief]) -> List[Belief]:
         """
         Update the agent's beliefs using the selected reasoning strategy.
 
@@ -251,7 +249,7 @@ class Reasoner(BaseModel):
         Returns:
             List[Belief]: The updated beliefs after reasoning.
         """
-        inferred_beliefs = self.infer(current_beliefs)
+        inferred_beliefs = await self.infer(current_beliefs)
         return list(set(current_beliefs + inferred_beliefs))
 
     def select_intentions(self, desires: List[Desire], beliefs: List[Belief], resources: Dict[str, float]) -> List[Intention]:
@@ -272,7 +270,7 @@ class Reasoner(BaseModel):
                 intentions.append(Intention(id=f"intention_{desire.id}", desire_id=desire.id, plan_id=None))
         return intentions
 
-    def make_decision(self, agent_id: str, beliefs: List[Belief], desires: List[Desire], intentions: List[Intention], resources: Dict[str, float]) -> Dict[str, Any]:
+    async def make_decision(self, agent_id: str, beliefs: List[Belief], desires: List[Desire], intentions: List[Intention], resources: Dict[str, float]) -> Dict[str, Any]:
         """
         Make a decision based on the agent's beliefs, desires, intentions, and resources using an LLM.
 
@@ -286,8 +284,8 @@ class Reasoner(BaseModel):
         Returns:
             Dict[str, Any]: The decision made by the agent, including the action, reasoning, and updated mental states.
         """
-        updated_beliefs = self.update_beliefs(beliefs)
-        updated_desires = self.generate_desires(updated_beliefs)
+        updated_beliefs = await self.update_beliefs(beliefs)
+        updated_desires = await self.generate_desires(updated_beliefs)
         updated_intentions = self.select_intentions(updated_desires, updated_beliefs, resources)
         
         belief_texts = [b.content for b in updated_beliefs]
@@ -306,10 +304,9 @@ class Reasoner(BaseModel):
         Reasoning: [brief explanation]
         """
         
-        response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=150)
-        decision = response.choices[0].text.strip()
+        response = await self.llm_manager.generate_text(prompt)
         
-        action_line, reasoning_line = decision.split("\n")
+        action_line, reasoning_line = response.strip().split("\n")
         action = action_line.split(": ")[1]
         reasoning = reasoning_line.split(": ")[1]
         
@@ -322,16 +319,10 @@ class Reasoner(BaseModel):
         }
 
     def natural_to_formal(self, natural_language: str) -> str:
-        # Translate natural language to formal logic
-        # This could use the LLM model for translation
-        formal_logic = self.llm_decomposer.translate_to_formal(natural_language)
-        return formal_logic
+        return self.llm_decomposer.translate_to_formal(natural_language)
 
     def formal_to_natural(self, formal_logic: str) -> str:
-        # Translate formal logic to natural language
-        # This could use the LLM model for translation
-        natural_language = self.llm_decomposer.translate_to_natural(formal_logic)
-        return natural_language
+        return self.llm_decomposer.translate_to_natural(formal_logic)
 
     def combine_symbolic_and_formal(self, symbolic_insights: Dict[str, Any], formal_results: Dict[str, Any]) -> Dict[str, Any]:
         # Combine symbolic AI insights with formal reasoning results
@@ -349,11 +340,10 @@ class Reasoner(BaseModel):
         
         if isinstance(plan, Plan):
             # Translate the plan steps back to natural language if needed
-            natural_language_plan = Plan(
+            return Plan(
                 steps=[self.formal_to_natural(step) for step in plan.steps],
                 goal=self.formal_to_natural(plan.goal)
             )
-            return natural_language_plan
         else:
             raise ValueError("Failed to generate a valid plan")
 
@@ -363,36 +353,12 @@ class Reasoner(BaseModel):
         plan = self.plan(goal, current_state)
         formal_results = {"plan": plan}
         
-        combined_results = self.combine_symbolic_and_formal(symbolic_insights, formal_results)
-        return combined_results
+        return self.combine_symbolic_and_formal(symbolic_insights, formal_results)
 
     def get_current_state(self) -> Dict[str, Any]:
-        current_state = {}
-
-        # Query the knowledge base for current beliefs
-        beliefs = self.knowledge_base.get_beliefs()
-        current_state['beliefs'] = [belief.to_dict() for belief in beliefs]
-
-        # Query the knowledge base for current desires
-        desires = self.knowledge_base.get_desires()
-        current_state['desires'] = [desire.to_dict() for desire in desires]
-
-        # Query the knowledge base for current intentions
-        intentions = self.knowledge_base.get_intentions()
-        current_state['intentions'] = [intention.to_dict() for intention in intentions]
-
-        # Query external data sources if necessary
-        # For example, if we have an environment state:
-        # current_state['environment'] = self.knowledge_base.get_environment_state()
-
-        # If we have any ongoing plans, include them in the current state
-        current_plan = self.planning_service.get_current_plan()
-        if current_plan:
-            current_state['current_plan'] = current_plan.to_dict()
-
-        # Include any other relevant information from the knowledge base
-        # For example, if we have a concept of time or resources:
-        # current_state['time'] = self.knowledge_base.get_current_time()
-        # current_state['resources'] = self.knowledge_base.get_available_resources()
-
-        return current_state
+        return {
+            'beliefs': [belief.to_dict() for belief in self.knowledge_base.get_beliefs()],
+            'desires': [desire.to_dict() for desire in self.knowledge_base.get_desires()],
+            'intentions': [intention.to_dict() for intention in self.knowledge_base.get_intentions()],
+            'current_plan': self.planning_service.get_current_plan().to_dict() if self.planning_service.get_current_plan() else None,
+        }

@@ -1,7 +1,9 @@
-from rdflib import Graph, URIRef, Namespace
-from rdflib.namespace import RDF, RDFS, OWL
+from typing import Any, Dict, List, Tuple
+
 from owlready2 import get_ontology
-from typing import List, Tuple, Dict, Any
+from rdflib import Graph, Namespace, URIRef
+from rdflib.namespace import OWL, RDF, RDFS
+
 
 class OntologyLoader:
     def __init__(self):

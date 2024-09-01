@@ -1,5 +1,6 @@
 from plantuml import PlantUML
 
+
 class UMLDiagramGenerator:
     def __init__(self, server_url='http://www.plantuml.com/plantuml/img/'):
         self.plantuml = PlantUML(url=server_url)

@@ -1,7 +1,9 @@
-from app.core.models.business.business_model import BusinessModel
-from app.core.models.openai_client import openai_client
 import json
 import uuid
+
+from app.core.models.business.business_model import BusinessModel
+from app.core.models.openai_client import openai_client
+
 
 class BusinessModelService:
     async def generate_model(self, model_type: str, description: str) -> BusinessModel:

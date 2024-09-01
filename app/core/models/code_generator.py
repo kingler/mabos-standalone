@@ -1,5 +1,6 @@
 from app.core.tools.llm_manager import LLMManager
 
+
 class CodeGenerator:
     def __init__(self, config):
         self.llm_manager = LLMManager(config['llms'])

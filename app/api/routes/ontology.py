@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException
 from typing import List
-from app.core.models.knowledge.ontology import Ontology, Concept, Relationship
+
+from fastapi import APIRouter, HTTPException
+
+from app.core.models.knowledge.ontology import Concept, Ontology, Relationship
 from app.core.services.ontology_service import OntologyService
 
 router = APIRouter()

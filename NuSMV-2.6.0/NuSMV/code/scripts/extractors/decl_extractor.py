@@ -1,8 +1,7 @@
-from functions import FunDeclPrototype
+import os.path
 import re
 
-import os.path
-
+from functions import FunDeclPrototype
 
 
 class FunDeclExtractor:

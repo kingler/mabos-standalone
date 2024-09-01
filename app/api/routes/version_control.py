@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
 from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.core.models.mas.mas_version_control import BranchInfo, CommitInfo
 from app.core.services.version_control_service import VersionControlService
-from app.core.models.mas.mas_version_control import CommitInfo, BranchInfo
 
 router = APIRouter()
 

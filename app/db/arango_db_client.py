@@ -1,12 +1,24 @@
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+from uuid import UUID
+
 from arango import ArangoClient
-from click import UUID
-from app.core.models.knowledge.question_models import Question, Answer
+from arango.database import Database as ArangoDatabase
+
+from app.core.models.knowledge.question_models import Answer, Question
+
 
 class ArangoDBClient:
-    def __init__(self, host: str, port: int, username: str, password: str, database: str):
-        self.client = ArangoClient(hosts=f"http://{host}:{port}")
-        self.db = self.client.db(database, username=username, password=password)
+    def __init__(self, host: str, username: str, password: str):
+        self.client = ArangoClient(hosts=host)
+        self.username = username
+        self.password = password
+        self.db = None
+
+    def connect(self, db_name: str):
+        self.db = self.client.db(db_name, username=self.username, password=self.password)
+
+    def update_connection(self, db: ArangoDatabase):
+        self.db = db
 
     async def execute_query(self, query: str, bind_vars: Dict[str, Any] = None) -> List[Dict[str, Any]]:
         cursor = await self.db.aql.execute(query, bind_vars=bind_vars)

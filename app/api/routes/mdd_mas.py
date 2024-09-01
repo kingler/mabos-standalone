@@ -1,8 +1,24 @@
-from fastapi import APIRouter, Depends
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID
-from app.core.models.mdd.mdd_mas_model import Model, Agent, Goal, BusinessProcess, Communication, PerformanceMetrics, ModelRepository, DomainSpecificLanguage, BusinessSystemIntegration, ReusableComponent
-from app.core.services.mdd_mas_services import ModelingService, AgentService, GoalService, BusinessProcessService, CommunicationService, PerformanceService, RepositoryService, DSLService, IntegrationService, ComponentService
+
+from fastapi import APIRouter, Depends
+
+from app.core.models.mdd.mdd_mas_model import (Agent, BusinessProcess,
+                                               BusinessSystemIntegration,
+                                               Communication,
+                                               DomainSpecificLanguage, Goal,
+                                               Model, ModelRepository,
+                                               PerformanceMetrics,
+                                               ReusableComponent)
+from app.core.services.mdd_mas_services import (AgentService,
+                                                BusinessProcessService,
+                                                CommunicationService,
+                                                ComponentService, DSLService,
+                                                GoalService,
+                                                IntegrationService,
+                                                ModelingService,
+                                                PerformanceService,
+                                                RepositoryService)
 
 router = APIRouter()
 

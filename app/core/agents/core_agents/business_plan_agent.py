@@ -1,12 +1,15 @@
 # mabos/agents/business_plan_agent.py
 from pydantic import BaseModel
+
+from app.core.agents.core_agents.broker import Broker
 from app.core.models.communication import AgentCommunication
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
-
 from app.core.models.knowledge.knowledge_graph import KnowledgeGraph
 from app.core.models.knowledge.reasoning.reasoning_engine import Reasoning
-from app.core.models.skills import CommunicationSkill, ExecutionSkill, LearningSkill, PerceptionSkill, PlanningSkill
-from app.core.agents.core_agents.broker import Broker
+from app.core.models.skills import (CommunicationSkill, ExecutionSkill,
+                                    LearningSkill, PerceptionSkill,
+                                    PlanningSkill)
+
 
 class BusinessPlanTemplate(BaseModel):
     executive_summary: str

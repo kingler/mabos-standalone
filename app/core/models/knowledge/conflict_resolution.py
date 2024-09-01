@@ -1,5 +1,7 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
+
 
 class ConflictResolution:
     def __init__(self, knowledge_base: KnowledgeBase):

@@ -1,7 +1,10 @@
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
+import requests
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
 from app.core.models.knowledge.ontology.ontology import Ontology
-import requests
+
 
 class ActiveKnowledgeAcquisition:
     """

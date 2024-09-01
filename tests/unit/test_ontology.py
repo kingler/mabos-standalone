@@ -1,5 +1,6 @@
 from app.core.models.knowledge.ontology import Ontology
 
+
 def test_ontology():
     ontology = Ontology(
         ontology_file="/mabos-standalone/app/core/ontologies/business_ontology.owl",

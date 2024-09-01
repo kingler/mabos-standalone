@@ -1,8 +1,10 @@
 # app/services/question_service.py
 from typing import List, Optional
 from uuid import UUID
-from app.core.models.knowledge.question_models import Question, Answer
+
+from app.core.models.knowledge.question_models import Answer, Question
 from app.db.arango_db_client import ArangoDBClient
+
 
 class QuestionService:
     def __init__(self, db_client: ArangoDBClient):

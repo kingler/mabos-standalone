@@ -1,7 +1,9 @@
+from typing import Any, List, Union
+
 import numpy as np
-from typing import List, Union, Any
-from sentence_transformers import SentenceTransformer
 from pydantic import BaseModel, Field
+from sentence_transformers import SentenceTransformer
+
 
 class SentenceTransformerWrapper(BaseModel):
     model: Any = Field(default_factory=lambda: SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2"))

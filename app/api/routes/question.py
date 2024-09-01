@@ -1,10 +1,12 @@
 # app/routers/question_router.py
-from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
 from uuid import UUID
-from app.core.models.knowledge.question_models import Question, Answer
-from app.core.services.question_service import QuestionService
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.dependencies import get_question_service
+from app.core.models.knowledge.question_models import Answer, Question
+from app.core.services.question_service import QuestionService
 
 router = APIRouter()
 

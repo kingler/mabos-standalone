@@ -1,8 +1,10 @@
 import json
-from typing import Dict, Any, List, Union
+from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel
+
 from app.core.models.sentence_transformer import SentenceTransformerWrapper
+
 
 class KnowledgeConverter(BaseModel):
     def __init__(self):

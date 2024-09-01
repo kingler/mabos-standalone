@@ -1,8 +1,11 @@
 # app/services/topic_map_service.py
-from typing import List, Dict
-from app.core.models.knowledge.topic_map import TopicMap, Topic, Association
 import uuid
+from typing import Dict, List
+
 import hypergraphx as hgx
+
+from app.core.models.knowledge.topic_map import Association, Topic, TopicMap
+
 
 class TopicMapService:
     def __init__(self):

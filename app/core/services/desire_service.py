@@ -1,7 +1,9 @@
 from typing import Optional
-from app.core.models.agent.desire import Desire
+
 from app.core.models.agent.agent import Agent
+from app.core.models.agent.desire import Desire
 from app.core.services.agent_service import AgentService
+
 
 class DesireService:
     def __init__(self, agent_service: AgentService):

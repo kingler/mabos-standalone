@@ -1,11 +1,14 @@
 # app/routers/environment.py
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID
-from app.core.services.environment_service import EnvironmentService
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from app.core.agents.core_agents.environmental_agent import EnvironmentalAgent
-from app.core.models.system.environment import Environment, EnvironmentCreate, EnvironmentUpdate
+from app.core.models.system.environment import (Environment, EnvironmentCreate,
+                                                EnvironmentUpdate)
+from app.core.services.environment_service import EnvironmentService
 
 router = APIRouter()
 

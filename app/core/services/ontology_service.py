@@ -1,10 +1,18 @@
-from typing import List, Dict, Any, Optional
-from app.core.models.knowledge.ontology.ontology import Ontology, Concept, Relationship
+from typing import Any, Dict, List, Optional
+
+from app.core.models.knowledge.ontology.ontology import (Concept, Ontology,
+                                                         Relationship)
+from app.core.models.knowledge.ontology.ontology_generator import OntologyVersionControl
 from app.core.models.knowledge.ontology.ontology_loader import OntologyLoader
+from app.config.config import get_settings
+from app.core.models.knowledge.ontology.ontology_version_control import OntologyVersionControl
+
 
 class OntologyService:
     def __init__(self):
-        self.ontology = None
+        settings = get_settings()
+        repo_path = settings.ontology_repo_path
+        self.ontology_vc = OntologyVersionControl(repo_path)
 
     def load_ontology(self, ontology_path: str) -> Ontology:
         loader = OntologyLoader()

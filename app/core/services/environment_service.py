@@ -1,10 +1,11 @@
-from typing import Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID
-from app.core.services.agent_service import AgentService
-from typing import List
-from uuid import UUID
-from app.core.models.system.environment import Environment, EnvironmentCreate, EnvironmentUpdate
+
 from app.core.agents.core_agents.environmental_agent import EnvironmentalAgent
+from app.core.models.system.environment import (Environment, EnvironmentCreate,
+                                                EnvironmentUpdate)
+from app.core.services.agent_service import AgentService
+
 
 class EnvironmentService:
     def __init__(self):

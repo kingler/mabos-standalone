@@ -1,7 +1,9 @@
-from typing import Dict, Any
+from typing import Any, Dict
 from uuid import UUID
+
+from app.core.agents.core_agents.reactive_agent import ReactiveAgent
 from app.core.services.agent_service import AgentService
-from app.core.models.agent import ReactiveAgent
+
 
 class ReactiveService:
     def __init__(self, agent_service: AgentService):
@@ -9,16 +11,9 @@ class ReactiveService:
 
     def handle_event(self, agent_id: UUID, event: Dict[str, Any]) -> Dict[str, Any]:
         agent = self.agent_service.get_agent(agent_id)
-        if isinstance(agent, ReactiveAgent):
-            response = agent.handle_event(event)
-            # Here you might want to add logic to execute the action
-            # or update the agent's state based on the response
-            return response
-        return None
+        return agent.handle_event(event) if isinstance(agent, ReactiveAgent) else None
+        # Note: Logic to execute the action or update agent's state should be added here if needed
 
-    def add_reaction_rule(self, agent_id: UUID, event_type: str, action: str) -> ReactiveAgent:
+    def add_reaction_rule(self, agent_id: UUID, event_type: str, action: str) -> ReactiveAgent | None:
         agent = self.agent_service.get_agent(agent_id)
-        if isinstance(agent, ReactiveAgent):
-            agent.reaction_rules[event_type] = action
-            return agent
-        return None
+        return agent.reaction_rules.update({event_type: action}) if isinstance(agent, ReactiveAgent) else None

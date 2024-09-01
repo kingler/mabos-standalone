@@ -1,9 +1,12 @@
 import os
-from dotenv import load_dotenv
 import uuid
 from typing import List
+
+from dotenv import load_dotenv
+
 from app.core.models.agent.goal import Goal, SoftGoal
 from app.core.models.llm_decomposer import LLMDecomposer
+from app.core.tools.llm_manager import LLMManager
 
 # Load environment variables
 load_dotenv()
@@ -11,7 +14,8 @@ load_dotenv()
 
 class GoalService:
     def __init__(self):
-        self.llm_decomposer = LLMDecomposer()
+        self.llm_manager = LLMManager()
+        self.llm_decomposer = LLMDecomposer(llm_manager=self.llm_manager)
         self.goals = {}
 
     def create_goal(self, description: str, priority: int) -> Goal:
@@ -30,11 +34,8 @@ class GoalService:
     def list_goals(self) -> List[Goal]:
         return list(self.goals.values())
 
-    def decompose_goal(self, goal_id: str) -> Goal:
-        goal = self.goals.get(goal_id)
-        if goal:
-            goal.decompose(self.llm_decomposer)
-        return goal
+    async def decompose_goal(self, goal: Goal) -> List[Goal]:
+        return await self.llm_decomposer.decompose(goal)
 
     def update_goal_status(self, goal_id: str, is_achieved: bool) -> Goal:
         goal = self.goals.get(goal_id)

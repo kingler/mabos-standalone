@@ -1,9 +1,10 @@
 
 
+import os.path
+
 from comment_stripper import CommentStripper
 from decl_extractor import FunDeclExtractor
 from def_extractor import FunDefExtractor
-import os.path
 
 
 class HeaderChecker:

@@ -1,6 +1,8 @@
 # mabos/process/process_coordinator.py
-from app.core.models.message import DelayedMessageQueue
 from datetime import datetime
+
+from app.core.models.message import DelayedMessageQueue
+
 
 class ProcessCoordinator:
     def __init__(self, broker):

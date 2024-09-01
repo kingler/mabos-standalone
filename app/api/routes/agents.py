@@ -1,17 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 from uuid import UUID
 
-from app.core.agents.core_agents.agent_types import Agent, EnvironmentalAgent, ProactiveAgent, ReactiveAgent    
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.core.agents.core_agents.agent_types import (Agent, EnvironmentalAgent,
+                                                     ProactiveAgent,
+                                                     ReactiveAgent)
 from app.core.models.agent.belief import Belief
 from app.core.models.agent.desire import Desire
 from app.core.models.agent.intention import Intention
-from app.core.services.agent_service import AgentService
-from app.core.models.system.world_model_provider import get_world_model
-from app.core.services.environment_service import EnvironmentService
-from app.core.services.strategy_service import StrategyService
-from app.core.services.reactive_service import ReactiveService
 from app.core.models.system.world_model import WorldModel
+from app.core.models.system.world_model_provider import get_world_model
+from app.core.services.agent_service import AgentService
+from app.core.services.environment_service import EnvironmentService
+from app.core.services.reactive_service import ReactiveService
+from app.core.services.strategy_service import StrategyService
 
 router = APIRouter()
 

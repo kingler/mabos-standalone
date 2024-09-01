@@ -1,78 +1,41 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List, Tuple
+import asyncio
 from meta_agents import MetaAgent
 
+
 class IntegrationAgent(MetaAgent):
-    """
-    Manages the integration of various components of the domain-specific MAS.
-    
-    Key functions:
-    - Coordinate the integration of different agent subsystems
-    - Ensure interoperability between agents and external systems
-    - Manage dependencies and resolve conflicts
-    - Implement and test inter-agent communication
-    """
-    def integrate_agent_subsystems(self, agent_subsystems: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Coordinate the integration of different agent subsystems.
+    def __init__(self):
+        super().__init__()
+        self.communication_protocols = {}
 
-        Args:
-            agent_subsystems (Dict[str, Any]): A dictionary containing the agent subsystems to be integrated.
+    async def integrate_agent_subsystems(self, agent_subsystems: Dict[str, Any]) -> Dict[str, Any]:
+        integration_tasks = []
+        for subsystem, details in agent_subsystems.items():
+            integration_tasks.append(self._integrate_subsystem(subsystem, details))
+        
+        results = await asyncio.gather(*integration_tasks)
+        return dict(results)
 
-        Returns:
-            Dict[str, Any]: The integrated agent subsystems with their status and any relevant details.
-        """
-        integrated_subsystems = {}
-        for subsystem_name, subsystem in agent_subsystems.items():
-            # Implement logic to integrate the subsystem
-            # Example: integrated_subsystems[subsystem_name] = self._integrate_subsystem(subsystem)
-            pass
-        return integrated_subsystems
-    
-    def ensure_interoperability(self, agents: Dict[str, Any], external_systems: Dict[str, Any]) -> bool:
-        """
-        Ensure interoperability between agents and external systems.
-
-        Args:
-            agents (Dict[str, Any]): A dictionary containing the agents to be checked for interoperability.
-            external_systems (Dict[str, Any]): A dictionary containing the external systems to be checked for interoperability.
-
-        Returns:
-            bool: True if interoperability is ensured, False otherwise.
-        """
-        # Implement logic to check and ensure interoperability between agents and external systems
-        # Example: return self._check_interoperability(agents, external_systems)
+    async def _integrate_subsystem(self, subsystem: str, details: Any) -> Tuple[str, Any]:
+        # Implement integration logic for each subsystem
         pass
-    
-    def manage_dependencies(self, agent_dependencies: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Manage dependencies and resolve conflicts between agents.
 
-        Args:
-            agent_dependencies (Dict[str, Any]): A dictionary containing the dependencies between agents.
-
-        Returns:
-            Dict[str, Any]: The managed dependencies with any resolved conflicts.
-        """
-        managed_dependencies = {}
-        for agent, dependencies in agent_dependencies.items():
-            # Implement logic to manage dependencies and resolve conflicts
-            # Example: managed_dependencies[agent] = self._resolve_conflicts(dependencies)
-            pass
-        return managed_dependencies
-    
     def implement_inter_agent_communication(self, agent_interactions: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Implement and test inter-agent communication protocols.
-
-        Args:
-            agent_interactions (Dict[str, Any]): A dictionary containing the interactions between agents.
-
-        Returns:
-            Dict[str, Any]: The implemented inter-agent communication protocols with their status and any relevant details.
-        """
-        communication_protocols = {}
         for interaction, details in agent_interactions.items():
-            # Implement logic to implement and test inter-agent communication protocols
-            # Example: communication_protocols[interaction] = self._implement_protocol(details)
-            pass
-        return communication_protocols
+            protocol = self._implement_protocol(details)
+            self.communication_protocols[interaction] = protocol
+        return self.communication_protocols
+
+    def _implement_protocol(self, details: Dict[str, Any]):
+        # Implement secure communication protocol
+        pass
+
+    def resolve_conflicts(self, conflicting_agents: List[str], conflict_details: Dict[str, Any]) -> Dict[str, Any]:
+        resolution = {}
+        for agent in conflicting_agents:
+            resolution[agent] = self._negotiate_resolution(agent, conflict_details)
+        return resolution
+
+    def _negotiate_resolution(self, agent: str, conflict_details: Dict[str, Any]) -> Dict[str, Any]:
+        # Implement conflict resolution logic
+        pass

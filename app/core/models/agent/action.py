@@ -1,7 +1,10 @@
-from typing import Dict, Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional
+
 from pydantic import BaseModel, Field
-from sqlalchemy import Column, String, JSON
+from sqlalchemy import JSON, Column, String
+
 from app.db.database import Base
+
 
 class Action(BaseModel):
     id: str = Field(..., description="The unique identifier of the action")

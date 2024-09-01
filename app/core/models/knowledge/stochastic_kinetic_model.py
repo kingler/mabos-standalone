@@ -2,6 +2,7 @@
 # models state probabilities for agents using a stochastic kinetic approach
 import numpy as np
 
+
 class StochasticKineticModel:
     def __init__(self, num_agents, num_states):
         self.num_agents = num_agents

@@ -1,8 +1,19 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import uuid4
-from app.core.models.mas.mas_modeling_tool import MASModelingTool, TOGAFADM, EnterpriseContinuum
-from app.core.models.mdd.mdd_mas_model import Model, ModelType, Agent, Goal, BusinessProcess, Communication, PerformanceMetrics, ModelRepository, DomainSpecificLanguage, BusinessSystemIntegration, ReusableComponent, OnboardingProcess
+
+from app.core.models.mas.mas_modeling_tool import (TOGAFADM,
+                                                   EnterpriseContinuum,
+                                                   MASModelingTool)
+from app.core.models.mdd.mdd_mas_model import (Agent, BusinessProcess,
+                                               BusinessSystemIntegration,
+                                               Communication,
+                                               DomainSpecificLanguage, Goal,
+                                               Model, ModelRepository,
+                                               ModelType, OnboardingProcess,
+                                               PerformanceMetrics,
+                                               ReusableComponent)
 from app.core.models.repository import Repository
+
 
 class ModelingService:
     def __init__(self, repository_service: Repository):

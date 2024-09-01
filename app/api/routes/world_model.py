@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
-from typing import Dict, Any
+from typing import Any, Dict
 from uuid import UUID
-from app.core.services.world_model_service import WorldModelService
+
+from fastapi import APIRouter, Depends
+
 from app.core.models.system.world_model import WorldModel
+from app.core.services.world_model_service import WorldModelService
 
 router = APIRouter()
 

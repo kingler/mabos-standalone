@@ -9,3 +9,4 @@ pagan==0.3.0
 openai
 typing
 torch
+business-rule-engine

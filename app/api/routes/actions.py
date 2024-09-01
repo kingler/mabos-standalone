@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from app.core.models.core.action import Action
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.core.models.agent.action import Action
 from app.core.services.action_service import ActionService
 from app.core.services.agent_service import AgentService
 

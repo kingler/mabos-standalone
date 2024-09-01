@@ -1,9 +1,10 @@
-from typing import List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
+
 from sqlalchemy.orm import Session
-from app.db.database import get_db
-from app.core.models.agent.action import Action
+
+from app.core.models.agent.action import Action, ActionDB
 from app.core.models.agent.agent import Agent
-from app.core.models.agent.action import ActionDB
+from app.db.database import get_db
 
 if TYPE_CHECKING:
     from app.core.agents.meta_agents.database_agent import AgentDB

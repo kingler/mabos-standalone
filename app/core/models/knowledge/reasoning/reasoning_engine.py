@@ -1,12 +1,53 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
+import sympy
 from pydantic import BaseModel
+from pyres import *
+from pysmt.shortcuts import *
+from z3 import *
+
 from app.core.models.knowledge.knowledge_base import KnowledgeBase
 from app.core.models.knowledge.reasoning.reasoner import Reasoner
-from z3 import *
-from pysmt.shortcuts import *
-from pyres import *
-import sympy
+from app.core.models.agent.plan import Plan
+from app.core.models.agent import Goal
+
+
+class SymbolicPlanner:
+    def __init__(self, knowledge_base: KnowledgeBase):
+        self.knowledge_base = knowledge_base
+
+    def create_plan(self, goal: Goal, initial_state: Dict[str, Any]) -> Plan:
+        actions = self._backward_chaining(goal, initial_state)
+        return Plan(steps=actions, goal=goal)
+
+    def _backward_chaining(self, goal: Goal, state: Dict[str, Any]) -> List[str]:
+        if self._goal_achieved(goal, state):
+            return []
+
+        applicable_actions = self._find_applicable_actions(goal, state)
+        for action in applicable_actions:
+            new_state = self._apply_action(action, state)
+            subplan = self._backward_chaining(goal, new_state)
+            if subplan is not None:
+                return [action] + subplan
+
+        return None
+
+    def _goal_achieved(self, goal: Goal, state: Dict[str, Any]) -> bool:
+        return self.knowledge_base.query_goal_state(goal, state)
+
+    def _find_applicable_actions(self, goal: Goal, state: Dict[str, Any]) -> List[str]:
+        return self.knowledge_base.query_applicable_actions(goal, state)
+
+    def _apply_action(self, action: str, state: Dict[str, Any]) -> Dict[str, Any]:
+        return self.knowledge_base.query_action_effects(action, state)
+
+    def validate_plan(self, plan: Plan, initial_state: Dict[str, Any]) -> bool:
+        current_state = initial_state.copy()
+        for action in plan.steps:
+            current_state = self._apply_action(action, current_state)
+        return self._goal_achieved(plan.goal, current_state)
+
 
 class ReasoningEngine(BaseModel):
     """
@@ -41,9 +82,7 @@ class ReasoningEngine(BaseModel):
         # Probabilistic reasoning
         probabilistic_results = self._probabilistic_reasoning(context)
         
-        # Combine results
-        combined_results = {**rule_based_results, **probabilistic_results}
-        return combined_results
+        return {**rule_based_results, **probabilistic_results}
 
     def _rule_based_reasoning(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -86,8 +125,7 @@ class ReasoningEngine(BaseModel):
         Provide the updated state in the same format as the input state.
         """
         response = self._query_llm(prompt)
-        updated_state = self._safe_eval(response)
-        return updated_state
+        return self._safe_eval(response)
 
     def generate_plan(self, goal: str, initial_state: Dict[str, Any]) -> List[str]:
         """
@@ -100,8 +138,7 @@ class ReasoningEngine(BaseModel):
         Returns:
             List[str]: The generated plan as a list of actions.
         """
-        plan = self._goal_oriented_reasoning(goal, initial_state)
-        return plan
+        return self._goal_oriented_reasoning(goal, initial_state)
 
     def _bdi_reasoning(self, beliefs: Dict[str, Any], desires: List[str], intentions: List[str]) -> Dict[str, Any]:
         """
@@ -138,50 +175,31 @@ class ReasoningEngine(BaseModel):
         beliefs = [{"content": f"{k}: {v}"} for k, v in current_state.items()]
         desires = [{"description": goal, "priority": 1}]
         intentions = self.reasoner.select_intentions(desires, beliefs, {})
-        plan = [i.plan_id for i in intentions if i.plan_id]
-        return plan
+        return [i.plan_id for i in intentions if i.plan_id]
 
     def _case_based_reasoning(self, current_case: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Perform case-based reasoning using the knowledge base to find a solution for the current case.
-        
-        Args:
-            current_case (Dict[str, Any]): The current case.
-        
-        Returns:
-            Dict[str, Any]: The solution for the current case.
-        """
-        prompt = f"""
-        Given the current case:
-        {current_case}
-        
-        Retrieve the most similar case from the knowledge base and provide the solution.
-        Provide the solution in the same format as the input case.
-        """
-        response = self._query_llm(prompt)
-        solution = self._safe_eval(response)
-        return solution
+        return self._reason_with_llm(
+            {"current_case": current_case},
+            """
+            Given the current case:
+            {current_case}
+            
+            Retrieve the most similar case from the knowledge base and provide the solution.
+            Provide the solution in the same format as the input case.
+            """
+        )
 
     def _temporal_reasoning(self, timeline: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Perform temporal reasoning using the knowledge base to analyze a timeline of events.
-        
-        Args:
-            timeline (List[Dict[str, Any]]): The timeline of events.
-        
-        Returns:
-            Dict[str, Any]: The insights and predictions based on the temporal reasoning.
-        """
-        prompt = f"""
-        Given the timeline of events:
-        {timeline}
-        
-        Analyze the timeline and provide insights or predictions.
-        Provide the output as a dictionary with 'insights' and 'predictions' as keys.
-        """
-        response = self._query_llm(prompt)
-        output = self._safe_eval(response)
-        return output
+        return self._reason_with_llm(
+            {"timeline": timeline},
+            """
+            Given the timeline of events:
+            {timeline}
+            
+            Analyze the timeline and provide insights or predictions.
+            Provide the output as a dictionary with 'insights' and 'predictions' as keys.
+            """
+        )
 
     def _uncertainty_reasoning(self, uncertain_facts: List[Dict[str, float]]) -> Dict[str, Any]:
         """
@@ -201,8 +219,7 @@ class ReasoningEngine(BaseModel):
         Provide the output as a dictionary with 'conclusions' as the key.
         """
         response = self._query_llm(prompt)
-        output = self._safe_eval(response)
-        return output
+        return self._safe_eval(response)
         
     def _query_llm(self, prompt: str) -> str:
         """
@@ -215,8 +232,7 @@ class ReasoningEngine(BaseModel):
             str: The response from the LLM.
         """
         try:
-            response = self.reasoner.llm_decomposer.query(prompt)
-            return response
+            return self.reasoner.llm_decomposer.query(prompt)
         except Exception as e:
             print(f"Error querying LLM: {e}")
             return "{}"
@@ -237,13 +253,16 @@ class ReasoningEngine(BaseModel):
             print(f"Error evaluating response: {e}")
             return {}
 
+    def _reason_with_llm(self, context: Dict[str, Any], prompt_template: str) -> Dict[str, Any]:
+        prompt = prompt_template.format(**context)
+        response = self._query_llm(prompt)
+        return self._safe_eval(response)
+
     def solve_constraint(self, constraints):
         self.z3_solver.reset()
         for constraint in constraints:
             self.z3_solver.add(constraint)
-        if self.z3_solver.check() == sat:
-            return self.z3_solver.model()
-        return None
+        return self.z3_solver.model() if self.z3_solver.check() == sat else None
     
     def prove_theorem(self, axioms, theorem):
         with self.pysmt_solver:

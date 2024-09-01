@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
 from typing import List
+
+from fastapi import APIRouter, HTTPException
+
 from app.core.models.agent.goal import Goal
 from app.core.services.goal_service import GoalService
 

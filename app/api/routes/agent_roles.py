@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
 from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.models.agent.agent_role import AgentRole
 from app.core.services.agent_role_service import AgentRolesService

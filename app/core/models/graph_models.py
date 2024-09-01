@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from typing import Dict
+
+from pydantic import BaseModel
+
 
 class GraphSummary(BaseModel):
     num_triples: int

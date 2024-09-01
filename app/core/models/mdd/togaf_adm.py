@@ -1,7 +1,9 @@
 from typing import List
+
 from app.core.models.mdd.mdd_mas_model import OnboardingProcess
 from app.core.models.repository import Repository
 from app.core.services.version_control_service import VersionControlService
+
 
 class TOGAFADM:
     def __init__(self):

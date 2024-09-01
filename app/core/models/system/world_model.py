@@ -1,14 +1,22 @@
 import uuid
-from pydantic import BaseModel, Field
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID
-from core.models.knowledge.ontology.ontology_manager import OntologyManager
-from core.models.system.organization import Organization
-from core.services.organization_service import OrganizationService
-from core.models.knowledge.stochastic_kinetic_model import StochasticKineticModel
-from core.models.knowledge.fnrl import FNRL
-from core.models.mdd.togaf_mdd_models import EnterpriseArchitecture
-from core.models.mdd.tropos_mdd_model import TroposModel
+import asyncio
+
+from pydantic import BaseModel, Field
+
+from app.core.models.knowledge.fnrl import FNRL
+from app.core.models.knowledge.ontology.ontology_manager import OntologyManager
+from app.core.models.knowledge.stochastic_kinetic_model import \
+    StochasticKineticModel
+from app.core.models.mdd.togaf_mdd_models import EnterpriseArchitecture
+from app.core.models.mdd.tropos_mdd_model import TroposModel
+from app.core.models.system.organization import Organization
+from app.db.database import SessionLocal
+from app.core.services.organization_service import OrganizationService
+from app.core.tools.llm_manager import LLMManager
+from app.db.storage_backend import GraphDatabase, StorageBackend
+from app.core.models.business.business_profile import BusinessProfile
 
 class WorldModel(BaseModel):
     id: UUID = Field(default_factory=uuid.uuid4)
@@ -28,10 +36,13 @@ class WorldModel(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         
-    def __init__(self, **data):
+    async def __init__(self, **data):
         super().__init__(**data)
-        ontology_path = "/Users/kinglerbercy/Projects/Apps/mas-repo/mabos-standalone/app/core/ontologies/mabos.owl"
-        self.ontology_manager = OntologyManager(ontology_path)
+        llm_manager = LLMManager()
+        business_profile = BusinessProfile.get_current()  # Ensure this returns the current business profile
+        storage_backend = StorageBackend(business_name=business_profile.name, llm_agent=llm_manager)
+        graph_database = GraphDatabase()
+        self.ontology_manager = OntologyManager(llm_manager, storage_backend, graph_database)
         
         # Initialize StochasticKineticModel and FNRL
         num_agents = len(self.agents)
@@ -126,8 +137,7 @@ class WorldModel(BaseModel):
         return self.organization_service.delete_organization(name)
 
     def assign_agent_to_role(self, organization_name: str, agent_id: UUID, role: str):
-        agent = self.agents.get(agent_id)
-        if agent:
+        if agent := self.agents.get(agent_id):
             self.organization_service.assign_agent_to_role(organization_name, agent, role)
 
     def get_agents_with_role(self, organization_name: str, role: str) -> List[Dict[str, Any]]:

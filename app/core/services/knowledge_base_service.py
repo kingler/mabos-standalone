@@ -1,12 +1,16 @@
-from typing import Dict, List, Any
 import re
 import uuid
-from app.core.models.knowledge.reasoning.reasoner import Reasoner
+from typing import Any, Dict, List
+
 import numpy as np
+
+from app.core.models.knowledge.knowledge_base import (KnowledgeBase,
+                                                      KnowledgeItem)
+from app.core.models.knowledge.reasoning.reasoner import Reasoner
+from app.core.models.knowledge.reasoning.reasoning_engine import \
+    ReasoningEngine
 from app.core.models.sentence_transformer import SentenceTransformer
-from app.core.models.knowledge.knowledge_base import KnowledgeBase, KnowledgeItem
-from app.core.models.knowledge.knowledge_base import KnowledgeBase
-from app.core.models.knowledge.reasoning.reasoning_engine import ReasoningEngine
+
 
 class KnowledgeBaseService:
     def __init__(self):

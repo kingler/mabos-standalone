@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
 from typing import List
+
+from fastapi import APIRouter, HTTPException
+
 from app.core.models.agent.desire import Desire, DesireCreate, DesireUpdate
 from app.core.services import desire_service
 

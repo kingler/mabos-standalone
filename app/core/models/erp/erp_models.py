@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID
+
+from pydantic import BaseModel
+
 
 class ERPModule(BaseModel):
     id: UUID

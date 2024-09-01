@@ -1,8 +1,10 @@
 # app/models/topic_map.py
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
-from rdflib import RDF, RDFS, Graph, URIRef
+from typing import Dict, List, Optional
+
 import hypergraphx as hgx
+from pydantic import BaseModel, Field
+from rdflib import RDF, RDFS, Graph, URIRef
+
 
 class Topic(BaseModel):
     id: str

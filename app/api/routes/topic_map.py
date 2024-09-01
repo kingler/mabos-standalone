@@ -1,7 +1,9 @@
 # app/routers/topic_map.py
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Dict
-from app.core.models.knowledge.topic_map import TopicMap, Topic, Association
+from typing import Dict, List
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.core.models.knowledge.topic_map import Association, Topic, TopicMap
 from app.core.services.topic_map_service import TopicMapService
 
 router = APIRouter()

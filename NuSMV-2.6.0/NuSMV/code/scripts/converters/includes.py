@@ -2,10 +2,12 @@
 # e.g. "#include 'error.h'" is converted into "#include 'utils/error.h'",
 # since error.h is located into the package 'utils'
 
-from extractors.includes_extr import IncludesExtractor, IncludesSubstituter
-from extractors.file_searcher import HeaderSearcher, ImplementationSearcher, ParserSearcher
-
 import os.path
+
+from extractors.file_searcher import (HeaderSearcher, ImplementationSearcher,
+                                      ParserSearcher)
+from extractors.includes_extr import IncludesExtractor, IncludesSubstituter
+
 
 class IncludesConverter:
 

@@ -1,5 +1,7 @@
+from typing import Any, Dict, List
+
 from pydantic import BaseModel
-from typing import Dict, List, Any
+
 
 class MABOSServiceSummary(BaseModel):
     name: str

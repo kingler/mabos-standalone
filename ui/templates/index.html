@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Test UI</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Onboarding Test UI</h1>
+    <button onclick="startOnboarding(false)">Start Manual Onboarding</button>
+    <button onclick="startOnboarding(true)">Use Example Business</button>
+    <div id="result"></div>
+
+    <script>
+        async function startOnboarding(useExample) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Processing...';
+
+            try {
+                const response = await axios.post('/onboard', {
+                    use_example: useExample
+                }, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+                resultDiv.innerHTML = '<pre>' + JSON.stringify(response.data, null, 2) + '</pre>';
+            } catch (error) {
+                resultDiv.innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

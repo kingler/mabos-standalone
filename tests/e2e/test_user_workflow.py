@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_user_registration():
     # TODO: Implement user registration e2e test
     pass

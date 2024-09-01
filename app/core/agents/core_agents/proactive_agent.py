@@ -1,10 +1,14 @@
-from typing import List, Dict, Optional
+import uuid
+from typing import Dict, List, Optional
+
 from pydantic import Field
+
 from app.core.models.agent.agent import Agent
 from app.core.models.agent.goal import Goal
 from app.core.models.agent.plan import Plan, PlanStep
-import uuid
-from app.core.models.knowledge.reasoning.reasoning_engine import SymbolicPlanner
+from app.core.models.knowledge.reasoning.reasoning_engine import \
+    SymbolicPlanner
+
 
 class ProactiveAgent(Agent):
     """
@@ -81,7 +85,7 @@ class ProactiveAgent(Agent):
             Optional[Plan]: The generated plan, or None if a plan cannot be generated.
         """
         # Use a planning library or custom logic to generate a plan
-        from app.models.plan_library import PlanningLibrary, CustomPlanner
+        from app.models.plan_library import CustomPlanner, PlanningLibrary
 
         # Check if a suitable plan exists in the plan library
         plan_library = PlanningLibrary()

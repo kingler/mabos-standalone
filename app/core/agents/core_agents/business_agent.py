@@ -1,10 +1,12 @@
 from typing import Any, Dict, List
-from pydantic import Field
+
 from core.models.agent.agent import Agent
 from core.models.agent.belief import Belief
 from core.models.agent.desire import Desire
 from core.models.agent.intention import Intention
 from core.models.knowledge.reasoning.reasoning_engine import ReasoningEngine
+from pydantic import Field
+
 
 class BusinessAgent(Agent):
     business_id: str = Field(..., description="The business ID associated with the agent")

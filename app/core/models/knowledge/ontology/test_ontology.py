@@ -1,9 +1,12 @@
 # test_ontology.py
-from typing import Dict, Any, Optional
-from ...sentence_transformer import SentenceTransformerWrapper
-from pydantic import BaseModel, Field, ConfigDict
-from rdflib import Graph
+from typing import Any, Dict, Optional
+
 from owlready2 import World
+from pydantic import BaseModel, ConfigDict, Field
+from rdflib import Graph
+
+from ...sentence_transformer import SentenceTransformerWrapper
+
 
 class Concept(BaseModel):
     name: str

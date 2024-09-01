@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, Any
-from uuid import UUID, uuid4
 from enum import Enum
+from typing import Any, Optional
+from uuid import UUID, uuid4
+
+from pydantic import BaseModel, Field
+
 
 class Performative(str, Enum):
     """

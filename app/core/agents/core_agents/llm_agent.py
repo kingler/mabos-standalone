@@ -1,12 +1,21 @@
+from __future__ import annotations, division, print_function
+
+import os
+from string import Template
 from typing import Any, Dict, List
-from pydantic import Field, SkipValidation
-from app.core.models.agent import Agent
-from app.core.models.message import ACLMessage, Performative
-from app.core.models.agent.goal import Goal
-from app.core.services.llm_service import LLMService
-from app.core.services.agent_communication_service import AgentCommunicationService
-from app.core.models.llm_decomposer import LLMDecomposer
+
 import openai
+from pydantic import Field, SkipValidation
+
+from app.core.models.agent import Agent
+from app.core.models.agent.goal import Goal
+from app.core.models.llm_decomposer import LLMDecomposer
+from app.core.models.message import ACLMessage, Performative
+from app.core.services.agent_communication_service import \
+    AgentCommunicationService
+from app.core.services.llm_service import LLMService
+from app.core.tools.llm_manager import LLMManager
+
 
 class LLMAgent(Agent):
     agent_id: str
@@ -19,9 +28,19 @@ class LLMAgent(Agent):
         arbitrary_types_allowed = True
 
     def __init__(self, agent_id: str, name: str, api_key: str, llm_service: LLMService, agent_communication_service: AgentCommunicationService):
+        # Deferred import inside the constructor
+        from app.core.models.agent import Agent
         super().__init__(agent_id=agent_id, name=name, api_key=api_key, llm_service=llm_service, agent_communication_service=agent_communication_service)
+        self.agent = Agent()
         self.llm_decomposer = LLMDecomposer(api_key)
         openai.api_key = self.api_key
+        self.llm_manager = LLMManager(llms_config=llm_service.llms_config, api_key=api_key)
+        self.prompt_template = self._load_prompt_template()
+
+    def _load_prompt_template(self) -> Template:
+        prompt_path = os.path.join(os.path.dirname(__file__), '..', '..', 'tools', 'prompts', 'business_gen_prompt.md')
+        with open(prompt_path, 'r') as file:
+            return Template(file.read())
 
     async def process_message(self, message: ACLMessage):
         """Process incoming messages using LLM capabilities."""
@@ -84,6 +103,13 @@ class LLMAgent(Agent):
         for key, value in state_update.items():
             setattr(self, key, value)
 
-    async def generate_response(self, human_message: str) -> str:
+    async def generate_response(self, prompt: str) -> str:
         """Generate a response to a human message."""
-        return await self.llm_service.generate_agent_response(self, human_message)
+        return await self.llm_manager.generate_text(prompt)
+
+    async def generate_business_description(self, business_data: Dict[str, Any]) -> str:
+        prompt = self._create_business_description_prompt(business_data)
+        return await self.llm_manager.generate_text(prompt)
+
+    def _create_business_description_prompt(self, business_data: Dict[str, Any]) -> str:
+        return self.prompt_template.substitute(business_data)

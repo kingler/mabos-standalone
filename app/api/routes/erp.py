@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from uuid import UUID
-from app.core.models.erp.erp_models import ERPSystem, ERPModule
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.core.models.erp.erp_models import ERPModule, ERPSystem
 from app.core.services.erp_service import ERPService
 
 router = APIRouter()

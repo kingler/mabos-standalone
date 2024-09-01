@@ -1,5 +1,7 @@
-from app.core.models.knowledge.reasoning.reasoning_behavior import ReasoningBehavior
+from app.core.models.knowledge.reasoning.reasoning_behavior import \
+    ReasoningBehavior
 from app.core.models.rules import Rule, Rules
+
 
 class ReasoningRule(Rule):
     def condition(self, agent):

@@ -1,0 +1,38 @@
+{
+    "llms": {
+      "text_generation": {
+        "default": "claude-3-5-sonnet-20240620",
+        "available": [
+          {
+            "claude-3-5-sonnet-20240620": {
+              "url": "https://api.anthropic.com/v1/messages",
+              "model": "claude-3-5-sonnet-20240620",
+              "max_tokens": 8192,
+              "temperature": 0
+            }
+          },
+          {
+            "gpt-4o": {
+              "url": "https://api.openai.com/v1/chat/completions",
+              "model": "gpt-4o",
+              "max_tokens": 8192,
+              "temperature": 0.7,
+              "cost_input": 10.00,
+              "cost_output": 30.00
+            }
+          }
+        ]
+      }
+    },
+    "api_keys": {
+      "anthropic": "ANTHROPIC_API_KEY",
+      "openai": "OPENAI_API_KEY"
+    },
+    "default_params": {
+      "max_retries": 3,
+      "timeout": 30,
+      "retry_delay": 1,
+      "max_tokens": 2048,
+      "temperature": 0.7
+    }
+  }

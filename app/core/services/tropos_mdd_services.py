@@ -1,8 +1,12 @@
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
-from app.core.models.mdd.tropos_mdd_model import TroposModel, Actor, Dependency, Contribution, Plan
-from app.core.services.mas_services import MASService
+
+from app.core.models.mdd.tropos_mdd_model import (Actor, Contribution,
+                                                  Dependency, Plan,
+                                                  TroposModel)
 from app.core.models.system.multiagent_system import MultiAgentSystem
+from app.core.services.mas_services import MASService
+
 
 class TroposModelingService:
     async def create_tropos_model(self, model: TroposModel) -> TroposModel:

@@ -1,0 +1,54 @@
+@startuml code_engineer_diagram
+!define RECTANGLE participant
+
+actor User
+RECTANGLE "LLM Manager" as LLMManager
+RECTANGLE "LLM Agent" as LLMAgent
+RECTANGLE "Code Evaluation Agent" as Evaluator
+RECTANGLE "Code Improver Agent" as Improver
+RECTANGLE "Code Rating Agent" as Rater
+RECTANGLE "Code Output Agent" as OutputAgent
+
+User -> Evaluator: Submit initial code
+activate Evaluator
+
+loop until optimal score or max iterations reached
+    Evaluator -> LLMManager: Request LLM for code analysis
+    LLMManager -> LLMAgent: Generate evaluation report
+    LLMAgent --> Evaluator: Return evaluation report
+    
+    Evaluator -> Improver: Send evaluation report
+    deactivate Evaluator
+    activate Improver
+    
+    Improver -> LLMManager: Request LLM for code improvement
+    LLMManager -> LLMAgent: Generate improved code
+    LLMAgent --> Improver: Return improved code
+    
+    Improver -> Rater: Send improved code
+    deactivate Improver
+    activate Rater
+    
+    Rater -> LLMManager: Request LLM for code rating
+    LLMManager -> LLMAgent: Generate rating report
+    LLMAgent --> Rater: Return rating report
+    
+    Rater -> OutputAgent: Send rating report
+    deactivate Rater
+    activate OutputAgent
+    
+    OutputAgent -> OutputAgent: Calculate total score
+    
+    alt Score is not optimal and iterations < max
+        OutputAgent -> Evaluator: Send improved code for re-evaluation
+        activate Evaluator
+        note right: Continue iteration
+    else Score is optimal or max iterations reached
+        OutputAgent -> User: Output final improved code
+        note right: Process complete
+    end
+    
+    deactivate OutputAgent
+end
+
+@enduml

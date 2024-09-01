@@ -1,7 +1,8 @@
 # app/core/fnrl.py -- Federated Neural Reinforcement Learning model 
 import numpy as np
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
 
 class FNRL:
     def __init__(self, num_agents, model_name="distilbert-base-uncased"):
