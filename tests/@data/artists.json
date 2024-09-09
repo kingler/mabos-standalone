@@ -1,0 +1,29 @@
+[
+  {
+    "_key": "artist1",
+    "name": "Emma Johnson",
+    "email": "emma.johnson@example.com",
+    "bio": "Contemporary abstract artist specializing in vibrant color palettes",
+    "joinDate": "2023-01-15",
+    "totalSales": 1250,
+    "rating": 4.8
+  },
+  {
+    "_key": "artist2",
+    "name": "Michael Chen",
+    "email": "michael.chen@example.com",
+    "bio": "Nature photographer with a focus on landscapes and wildlife",
+    "joinDate": "2023-02-20",
+    "totalSales": 980,
+    "rating": 4.7
+  },
+  {
+    "_key": "artist3",
+    "name": "Sophia Patel",
+    "email": "sophia.patel@example.com",
+    "bio": "Digital illustrator creating whimsical character designs",
+    "joinDate": "2023-03-10",
+    "totalSales": 1500,
+    "rating": 4.9
+  }
+]

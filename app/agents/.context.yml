@@ -1,0 +1,46 @@
+component: core
+description: Contains core business logic, agent implementations, and services
+main-technologies:
+  - Python
+  - Custom agent framework
+conventions:
+  - Use dependency injection for services
+  - Implement agents as separate classes with clear responsibilities
+  - Use strategy pattern for interchangeable agent behaviors
+architecture:
+  main-components:
+    agents: Multi-agent system implementations
+    models: Data models and knowledge representation
+    services: Business logic services
+    tools: Utility functions and helper classes
+key-responsibilities:
+  - Implementation of the multi-agent system
+  - Core business logic and decision-making processes
+  - Knowledge representation and reasoning
+  - Service layer for handling complex operations
+  - Implementing various agent types with specific behaviors and goals
+  - Managing agent interactions and communication
+  - Executing decision-making processes based on system state and inputs
+  - Coordinating actions to achieve system-wide objectives
+development-guidelines:
+  - Keep agent implementations modular and focused on single responsibilities
+  - Use the strategy pattern for interchangeable agent behaviors
+  - Implement comprehensive logging for agent actions and decision-making processes
+  - Use type hints and docstrings for better code readability
+  - Inherit from the base agent class when creating new agent types
+  - Implement clear interfaces for agent communication
+  - Use dependency injection for agent dependencies
+  - Document each agent's purpose, inputs, outputs, and decision-making process
+agent-development:
+  - Clearly define the agent's goals and behaviors
+  - Consider interactions with other agents in the system
+  - Implement proper error handling and recovery mechanisms
+  - Document the agent's decision-making process and key algorithms
+knowledge-representation:
+  - Keep the ontology up-to-date and consistent with the business domain
+  - Use established ontology design patterns when extending the knowledge base
+  - Implement proper versioning for ontology changes
+testing-agents:
+  - Create unit tests for individual agent behaviors
+  - Implement integration tests for agent interactions
+  - Use mocking to simulate complex environments and agent inputs

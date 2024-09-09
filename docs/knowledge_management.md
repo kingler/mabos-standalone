@@ -391,7 +391,7 @@ class MABOSService:
 ```1:26:mabos-standalone/app/core/ontology_manager.py
 from owlready2 import *
 from typing import List
-from app.core.ontology_types import OntologyStructure, QueryResult
+from app.ontology_types import OntologyStructure, QueryResult
 
 class OntologyManager:
     def __init__(self, ontology_path: str):

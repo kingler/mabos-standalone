@@ -1,0 +1,31 @@
+component: base_agents
+description: Defines the foundational structures for agents in the MABOS platform
+main-technologies:
+  - Python
+  - Pydantic
+conventions:
+  - Use Pydantic models for defining agent structures
+  - Implement core agent functionalities in the AgentBase class
+  - Use type hints for better code readability and maintainability
+key-responsibilities:
+  - Provide a consistent foundation for all agent types
+  - Implement the BDI (Belief-Desire-Intention) architecture
+  - Define core agent operations (perceive, deliberate, plan, execute)
+  - Facilitate agent communication and interaction
+  - Manage agent beliefs, desires, intentions, goals, and plans
+file-structure:
+  - agent_base.py: Implements the AgentBase class with core agent functionalities
+  - base_models.py: Defines Pydantic models for agent-related data structures
+  - __init__.py: Marks the directory as a Python package
+development-guidelines:
+  - Inherit from AgentBase when creating new agent types
+  - Use base models from base_models.py for consistency
+  - Override or extend AgentBase methods for specific agent behaviors
+  - Maintain BDI architecture principles in new developments
+  - Use type hints and Pydantic models for code clarity and type safety
+integration-points:
+  - Core agent types in the MABOS system
+  - Planning and reasoning services
+  - Communication protocols
+  - Knowledge management systems
+  - Environment simulation components

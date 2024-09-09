@@ -1,0 +1,36 @@
+component: documentation
+description: Contains project documentation, design documents, and specifications for MABOS
+main-technologies:
+  - Markdown
+  - PlantUML
+conventions:
+  - Use Markdown for all documentation files
+  - Organize documents logically by topic or component
+  - Include diagrams and visual aids where appropriate
+  - Keep documentation up-to-date with system changes
+key-responsibilities:
+  - Providing comprehensive project documentation
+  - Explaining system architecture and design decisions
+  - Offering usage guides and tutorials for system components
+  - Maintaining up-to-date specifications and API documentation
+  - Supporting developers, users, and stakeholders with clear information
+development-guidelines:
+  - Use Markdown for all documentation files for consistency and ease of reading
+  - Organize documents logically by topic, component, or purpose
+  - Include diagrams, flowcharts, and other visual aids to enhance understanding
+  - Keep documentation up-to-date with system changes and new features
+  - Use clear, concise language and provide examples where appropriate
+documentation-standards:
+  - Start each document with a clear title and brief description
+  - Use consistent heading levels for document structure
+  - Include a table of contents for longer documents
+  - Provide code examples, command-line instructions, or configuration snippets where relevant
+  - Link between related documents for easy navigation
+diagrams-and-visual-aids:
+  - Use PlantUML or similar tools for creating diagrams
+  - Store diagram source files alongside the rendered images
+  - Provide alt text for images to enhance accessibility
+version-control:
+  - Include version information in each document
+  - Update documentation as part of the development process
+  - Consider using a changelog for tracking significant documentation changes

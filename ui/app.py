@@ -7,7 +7,7 @@ sys.path.append(project_root)
 
 from flask import Flask, jsonify, render_template, request
 
-from app.core.agents.ui_agents.onboarding_agent import OnboardingAgent
+from app.agents.ui_agents.onboarding_agent import OnboardingAgent
 from app.db.arango_db_client import ArangoDBClient
 
 app = Flask(__name__)

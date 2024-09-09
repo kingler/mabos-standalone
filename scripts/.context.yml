@@ -1,0 +1,36 @@
+component: scripts
+description: Contains utility scripts and tools for development, deployment, and maintenance of MABOS
+main-technologies:
+  - Python
+  - Bash
+conventions:
+  - Use clear and descriptive names for scripts
+  - Include usage instructions in script headers
+  - Implement proper error handling and logging
+  - Use command-line arguments for configurable options
+key-responsibilities:
+  - Automating common development tasks
+  - Facilitating system setup and configuration
+  - Providing tools for data management and migration
+  - Supporting deployment and maintenance processes
+  - Assisting in testing and validation procedures
+development-guidelines:
+  - Use clear and descriptive names for scripts
+  - Include a header in each script with usage instructions and purpose
+  - Implement proper error handling and logging
+  - Use command-line arguments for configurable options
+  - Keep scripts focused on a single responsibility
+script-implementation:
+  - Start with a shebang line
+  - Include a docstring explaining the script's purpose and usage
+  - Implement argument parsing for configurable options
+  - Use functions to organize code and improve readability
+  - Implement proper error handling and provide meaningful error messages
+logging-and-output:
+  - Use Python's logging module for scripts that may be used in production
+  - Provide clear and informative output for scripts used interactively
+  - Consider implementing different verbosity levels
+security-considerations:
+  - Be cautious with scripts that modify system state or handle sensitive data
+  - Implement proper input validation and sanitization
+  - Avoid hardcoding sensitive information (use environment variables or config files)

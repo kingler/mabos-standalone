@@ -38,7 +38,7 @@ class Agent(BaseModel):
         self.rule_engine: 'RuleEngine' = None
         
     def initialize_rule_engine(self):
-        from app.core.models.rules.rules_engine import RuleEngine
+        from app.models.rules.rules_engine import RuleEngine
         self.rule_engine = RuleEngine()
     
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -850,7 +850,7 @@ class ReactiveAgent(BaseModel):
         
     def __init__(self):
         # Import Agent within the constructor or methods as needed
-        from app.core.models.agent.agent import Agent
+        from app.models.agent.agent import Agent
         self.base = Agent()
     # Rest of the class remains unchanged
     stimulus_response_rules: List[Dict[str, Any]] = Field(default_factory=list, description="List of stimulus-response rules")
@@ -1045,12 +1045,12 @@ This file defines the BusinessPlanAgent, responsible for developing and managing
 # mabos/agents/business_plan_agent.py
 from pydantic import BaseModel
 
-from app.core.agents.core_agents.broker import Broker
-from app.core.models.communication import AgentCommunication
-from app.core.models.knowledge.knowledge_base import KnowledgeBase
-from app.core.models.knowledge.knowledge_graph import KnowledgeGraph
-from app.core.models.knowledge.reasoning.reasoning_engine import Reasoning
-from app.core.models.skills import (CommunicationSkill, ExecutionSkill,
+from app.agents.core_agents.broker import Broker
+from app.models.communication import AgentCommunication
+from app.models.knowledge.knowledge_base import KnowledgeBase
+from app.models.knowledge.knowledge_graph import KnowledgeGraph
+from app.tools.reasoning_engine import Reasoning
+from app.models.skills import (CommunicationSkill, ExecutionSkill,
                                     LearningSkill, PerceptionSkill,
                                     PlanningSkill)
 
@@ -1150,8 +1150,8 @@ from typing import Any, Dict
 
 from pydantic import Field
 
-from app.core.models.agent.agent import Agent
-from app.core.models.agent.belief import Belief
+from app.models.agent.agent import Agent
+from app.models.agent.belief import Belief
 
 
 class EnvironmentalAgent(Agent):
@@ -1227,14 +1227,14 @@ from typing import Any, Dict, List
 import openai
 from pydantic import Field, SkipValidation
 
-from app.core.models.agent import Agent
-from app.core.models.agent.goal import Goal
-from app.core.models.llm_decomposer import LLMDecomposer
-from app.core.models.message import ACLMessage, Performative
-from app.core.services.agent_communication_service import \
+from app.models.agent import Agent
+from app.models.agent.goal import Goal
+from app.models.llm_decomposer import LLMDecomposer
+from app.models.message import ACLMessage, Performative
+from app.services.agent_communication_service import \
     AgentCommunicationService
-from app.core.services.llm_service import LLMService
-from app.core.tools.llm_manager import LLMManager
+from app.services.llm_service import LLMService
+from app.tools.llm_manager import LLMManager
 ...
 class LLMAgent(Agent):
     agent_id: str
@@ -1248,7 +1248,7 @@ class LLMAgent(Agent):
 
     def __init__(self, agent_id: str, name: str, api_key: str, llm_service: LLMService, agent_communication_service: AgentCommunicationService):
         # Deferred import inside the constructor
-        from app.core.models.agent import Agent
+        from app.models.agent import Agent
         super().__init__(agent_id=agent_id, name=name, api_key=api_key, llm_service=llm_service, agent_communication_service=agent_communication_service)
         self.agent = Agent()
         self.llm_decomposer = LLMDecomposer(api_key)
@@ -1336,9 +1336,9 @@ This file defines the MaintenanceAgent, responsible for system maintenance tasks
 
 
 ```1:18:app/core/agents/core_agents/maintenance_agent.py
-from app.core.models.agent.agent import Agent
-from app.core.models.agent.agent_role import AgentRole
-from app.core.services.repository_service import RepositoryService
+from app.models.agent.agent import Agent
+from app.models.agent.agent_role import AgentRole
+from app.services.repository_service import RepositoryService
 
 
 class MaintenanceAgent(Agent):
@@ -1368,8 +1368,8 @@ This file defines the SecurityAgent, responsible for ensuring secure communicati
 ```1:25:app/core/agents/core_agents/security_agent.py
 from cryptography.fernet import Fernet
 
-from app.core.models.agent.agent import Agent
-from app.core.models.agent.agent_role import AgentRole
+from app.models.agent.agent import Agent
+from app.models.agent.agent_role import AgentRole
 
 
 class SecureCommunicationService:
@@ -1413,7 +1413,7 @@ from base.base_models import (BaseAction, BaseBelief, BaseDesire, BaseGoal,
 from models.utils.type_definitions import *
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.core.models.message import ACLMessage, Message, Performative
+from app.models.message import ACLMessage, Message, Performative
 ...
 class AgentBase(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)

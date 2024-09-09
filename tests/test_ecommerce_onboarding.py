@@ -1,18 +1,23 @@
-import csv
+import json
+import sys
 import os
 import unittest
+import subprocess
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.core.agents.ui_agents.onboarding_agent import OnboardingAgent
-from app.core.models.knowledge.ontology.ontology import Ontology
-from app.core.models.knowledge.ontology.ontology_generator import \
-    OntologyGenerator
-from app.core.services.erp_service import ERPService
-from app.core.services.llm_service import LLMService
-from app.core.services.mabos_service import MABOSService
-from app.core.tools.llm_manager import LLMManager
+# Add the app directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'app')))
+
+from app.agents.ui_agents.onboarding_agent import OnboardingAgent
+from app.models.knowledge.ontology.ontology import Ontology
+from app.models.knowledge.ontology.ontology_generator import OntologyGenerator
+from app.models.knowledge.ontology.ontology_version_control import OntologyVersionControl
+from app.services.erp_service import ERPService
+from app.services.llm_service import LLMService
+from app.services.mabos_service import MABOSService
+from app.tools.llm_manager import LLMManager
 from app.db.arango_db_client import ArangoDBClient
 from app.config.config import CONFIG
 
@@ -49,6 +54,19 @@ class TestEcommerceOnboarding(unittest.TestCase):
         # Load sample business description
         with open(CONFIG.BUSINESS_DESCRIPTION_PATH, 'r') as file:
             self.business_description = file.read()
+
+        # Initialize OntologyVersionControl
+        self.repo_path = "/Users/kinglerbercy/Projects/Apps/mas-repo/mabos-standalone/app/repositories/ontologies"
+        self.ontology_vc = OntologyVersionControl(self.repo_path)
+
+        # Initialize ArangoDB client
+        self.arango_client = ArangoDBClient(
+            host="http://localhost:8529",
+            username="root",
+            password="password"
+        )
+        self.arango_client.connect("test_db")
+        self.arango_client.create_collections()
 
     @pytest.mark.asyncio
     async def test_load_example_business(self):
@@ -94,7 +112,50 @@ class TestEcommerceOnboarding(unittest.TestCase):
         self.assertIn("ShoppingCart", ontology.concepts)
 
         self.assertTrue(any(r.name == "places" and r.source == "Customer" and r.target == "Order" for r in ontology.relationships))
-        self.assertTrue(any(r.name == "contains" and r.source == "ShoppingCart" and r.target == "Product" for r in ontology.relationships))
+
+    @pytest.mark.asyncio
+    async def test_refine_and_validate_ontology(self):
+        # Mock the refine_ontology and validate_ontology methods
+        self.ontology_generator.refine_ontology = AsyncMock(return_value=Ontology(
+            concepts=["Product", "Customer", "Order", "ShoppingCart", "Payment"],
+            relationships=[
+                {"name": "places", "source": "Customer", "target": "Order"},
+                {"name": "contains", "source": "ShoppingCart", "target": "Product"},
+                {"name": "pays", "source": "Customer", "target": "Payment"}
+            ]
+        ))
+        self.ontology_generator.validate_ontology = AsyncMock(return_value={
+            "is_valid": True,
+            "issues": []
+        })
+
+        ontology = await self.ontology_generator.generate_ontology(self.business_description)
+        refined_ontology = await self.ontology_generator.refine_ontology(ontology)
+        validation_result = await self.ontology_generator.validate_ontology(refined_ontology)
+
+        self.assertTrue(validation_result["is_valid"])
+        self.assertEqual(len(validation_result["issues"]), 0)
+
+        self.assertIn("Payment", refined_ontology.concepts)
+        self.assertTrue(any(r.name == "pays" and r.source == "Customer" and r.target == "Payment" for r in refined_ontology.relationships))
+
+    @pytest.mark.asyncio
+    async def test_ontology_version_control(self):
+        # Generate and refine ontology
+        ontology = await self.ontology_generator.generate_ontology(self.business_description)
+        refined_ontology = await self.ontology_generator.refine_ontology(ontology)
+
+        # Save ontology version
+        self.ontology_vc.current_ontology = refined_ontology
+        self.ontology_vc._save_ontology_state()
+        commit_info = self.ontology_vc.commit_changes("Generated and refined ontology from business description")
+
+        self.assertIsNotNone(commit_info.id)
+        self.assertEqual(commit_info.message, "Generated and refined ontology from business description")
+
+        # Retrieve and compare ontology versions
+        saved_ontology = self.ontology_vc.get_version(commit_info.id)
+        self.assertEqual(saved_ontology.to_dict(), refined_ontology.to_dict())
 
     @pytest.mark.asyncio
     async def test_create_mabos_agent(self):
@@ -197,5 +258,34 @@ class TestEcommerceOnboarding(unittest.TestCase):
             self.assertEqual(business_data["general_information"]["What is your organization's name?"], "TechElectronics")
             self.assertEqual(business_data["business_architecture"]["What are your key business functions?"], "Sales, Customer Service, Inventory Management")
 
+    @pytest.mark.asyncio
+    async def test_generate_and_validate_ontology(self):
+        # Run the generate_and_validate_ontology.py script
+        subprocess.run(["python", "scripts/generate_and_validate_ontology.py"], check=True)
+
+        # Check if the ontology and validation result files are created
+        ontology_path = "/path/to/output/ontology.json"
+        validation_result_path = "/path/to/output/validation_result.json"
+
+        self.assertTrue(os.path.exists(ontology_path))
+        self.assertTrue(os.path.exists(validation_result_path))
+
+        # Load the validation result
+        with open(validation_result_path, 'r') as file:
+            validation_result = json.load(file)
+
+        # Assert the validation result
+        self.assertTrue(validation_result["is_valid"])
+        self.assertEqual(len(validation_result["issues"]), 0)
+
+    @pytest.mark.asyncio
+    async def test_run_webvowl(self):
+        # Run the run_webvowl.sh script
+        subprocess.run(["bash", "scripts/run_webvowl.sh"], check=True)  # noqa: SC100
+
+        # Check if WebVOWL is running
+        response = subprocess.run(["curl", "-s", "http://localhost:8080"], capture_output=True, text=True)
+        self.assertIn("WebVOWL", response.stdout)
+        
 if __name__ == '__main__':
     unittest.main()

@@ -2,7 +2,9 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from pydantic_settings import BaseSettings
+
 from app.config.settings import Settings
 
 class Config(BaseModel):
@@ -33,6 +35,24 @@ CONFIG = get_config()
 LLM_CONFIG = CONFIG.LLM_CONFIG
 API_KEYS = LLM_CONFIG.get('api_keys', {})
 
-# Ensure this function is defined and exported
-def get_settings():
+class Settings(BaseSettings):
+    database_url: str
+    db_username: str
+    db_password: str
+    db_name: str
+    openai_api_key: str
+    replicate_api_key: str
+    groq_api_key: str
+    anthropic_api_key: str
+    google_ai_api_key: str
+    huggingface_api_key: str
+    togetherai_api_key: str
+    helicone_api_key: str
+    deepgram_api_key: str
+    deepgram_audio_url: str
+
+    class Config:
+        env_file = ".env"
+
+def get_settings() -> Settings:
     return Settings()

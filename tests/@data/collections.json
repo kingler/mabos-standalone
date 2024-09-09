@@ -1,0 +1,20 @@
+[
+  {
+    "_key": "collection1",
+    "name": "Summer Vibes",
+    "description": "Artworks inspired by the warmth and energy of summer",
+    "curator": "artist1"
+  },
+  {
+    "_key": "collection2",
+    "name": "Natural Wonders",
+    "description": "A showcase of breathtaking landscapes and natural phenomena",
+    "curator": "artist2"
+  },
+  {
+    "_key": "collection3",
+    "name": "Fantastical Creatures",
+    "description": "Imaginative depictions of mythical and magical beings",
+    "curator": "artist3"
+  }
+]

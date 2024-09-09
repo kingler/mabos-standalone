@@ -1,0 +1,22 @@
+component: exceptions
+description: Contains custom exception classes and error handling utilities for MABOS
+main-technologies:
+  - Python
+  - Pydantic
+conventions:
+  - Define custom exception classes for specific error scenarios
+  - Use Pydantic models for structured error responses
+  - Implement error handling functions for each custom exception
+key-responsibilities:
+  - Defining custom exception classes for specific error scenarios
+  - Providing structured error responses using Pydantic models
+  - Implementing error handling functions for custom exceptions
+usage-example: |
+  from app.exceptions.exceptions import AgentNotFoundError, handle_agent_not_found_error
+
+  try:
+      # Some operation that might raise AgentNotFoundError
+      raise AgentNotFoundError("agent123")
+  except AgentNotFoundError as e:
+      error_response = handle_agent_not_found_error(e.agent_id)
+      # Use error_response in API response

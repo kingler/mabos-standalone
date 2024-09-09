@@ -1,0 +1,25 @@
+component: business_models
+description: Contains data models and structures related to business concepts in MABOS
+main-technologies:
+  - Python
+  - Pydantic
+conventions:
+  - Use Pydantic for data validation and serialization
+  - Align models with business ontology definitions
+  - Implement clear interfaces for model interactions
+key-responsibilities:
+  - Defining data structures for business-related concepts
+  - Ensuring data integrity and validation for business properties
+  - Facilitating serialization and deserialization of business data
+  - Providing a consistent interface for working with business-related information
+  - Aligning data representation with business ontology definitions
+development-guidelines:
+  - Use Pydantic models for data validation and serialization
+  - Align model structures with corresponding concepts in the business ontology
+  - Implement clear methods for model interactions and transformations
+  - Use type hints and docstrings for better code readability
+model-implementation:
+  - Clearly define the model's purpose and its role in business modeling
+  - Consider relationships with other business and system models
+  - Implement appropriate data validation rules
+  - Ensure consistency with business ontology definitions

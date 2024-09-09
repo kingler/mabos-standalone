@@ -1,72 +1,64 @@
-from typing import Any, Dict, List, Optional
-from uuid import UUID
-
+import json
+import logging
+from app.config.settings import get_settings
 from arango import ArangoClient
-from arango.database import Database as ArangoDatabase
 
-from app.core.models.knowledge.question_models import Answer, Question
-
+from app.utils.uuid_encoder import UUIDEncoder  # Update this import
 
 class ArangoDBClient:
-    def __init__(self, host: str, username: str, password: str):
-        self.client = ArangoClient(hosts=host)
+    def __init__(self, url: str, username: str, password: str):
+        self.url = url
         self.username = username
         self.password = password
-        self.db = None
+        self.client = self._connect()  # Initialize the client
+        self.db = None  # Initialize the db attribute
 
-    def connect(self, db_name: str):
-        self.db = self.client.db(db_name, username=self.username, password=self.password)
+    def _connect(self):
+        from arango import ArangoClient
+        return ArangoClient(hosts=self.url)
 
-    def update_connection(self, db: ArangoDatabase):
-        self.db = db
+    def connect(self):
+        try:
+            settings = get_settings()
+            logging.info(f"Connecting to ArangoDB at {self.url} with username {settings.db_username}")
+            self.db = self.client.db(settings.db_name, username=settings.db_username, password=settings.db_password)
+            if self.db:
+                logging.info("ArangoDBClient connected successfully")
+                self.ensure_collections()
+            else:
+                logging.error("Failed to connect to the database.")
+                raise Exception("Failed to connect to the database.")
+        except Exception as e:
+            logging.error(f"Error in ArangoDBClient.connect: {str(e)}")
+            raise
+        
+    def close(self):
+        if self.client:
+            # Replace with actual close logic
+            self.client = None
+            logging.info("ArangoDBClient connection closed")
 
-    async def execute_query(self, query: str, bind_vars: Dict[str, Any] = None) -> List[Dict[str, Any]]:
-        cursor = await self.db.aql.execute(query, bind_vars=bind_vars)
-        return [doc async for doc in cursor]
-    
-    async def create_question(self, question: Question) -> Question:
-        question_dict = question.dict()
-        result = await self.db.collection('questions').insert(question_dict)
-        question_dict['_key'] = result['_key']
-        return Question(**question_dict)
+    def execute_query(self, query: str, bind_vars: dict = None):
+        if self.db is None:
+            logging.error("Database connection is not established.")
+            raise Exception("Database connection is not established.")
+        
+        try:
+            if bind_vars:
+                bind_vars = json.loads(json.dumps(bind_vars, cls=UUIDEncoder))
+            cursor = self.db.aql.execute(query, bind_vars=bind_vars)
+            return list(cursor)
+        except Exception as e:
+            logging.error(f"Error executing query: {str(e)}")
+            raise
 
-async def get_question(self, question_id: UUID) -> Optional[Question]:
-    result = await self.db.collection('questions').get(str(question_id))
-    return Question(**result) if result else None
-
-async def update_question(self, question: Question) -> Question:
-    question_dict = question.dict()
-    await self.db.collection('questions').update(str(question.id), question_dict)
-    return question
-
-async def delete_question(self, question_id: UUID) -> bool:
-    try:
-        await self.db.collection('questions').delete(str(question_id))
-        return True
-    except:
-        return False
-
-async def list_questions(self, framework: Optional[str] = None, category: Optional[str] = None) -> List[Question]:
-    query = "FOR q IN questions"
-    if framework or category:
-        query += " FILTER "
-        conditions = []
-        if framework:
-            conditions.append(f"q.framework == '{framework}'")
-        if category:
-            conditions.append(f"q.category == '{category}'")
-        query += " AND ".join(conditions)
-    query += " RETURN q"
-    cursor = await self.db.aql.execute(query)
-    return [Question(**doc) for doc in await cursor.all()]
-
-async def create_answer(self, answer: Answer) -> Answer:
-    answer_dict = answer.dict()
-    result = await self.db.collection('answers').insert(answer_dict)
-    answer_dict['_key'] = result['_key']
-    return Answer(**answer_dict)
-
-async def get_answers_for_business(self, business_id: UUID) -> List[Answer]:
-    query = f"FOR a IN answers FILTER a.business_id == '{business_id}' RETURN a"
-    cursor = await self.db.aql.execute(query)
-    return [Answer(**doc) for doc in await cursor.all()]
+    def ensure_collections(self):
+        try:
+            if not self.db.has_collection('business_profiles'):
+                self.db.create_collection('business_profiles')
+                logging.info("Created 'business_profiles' collection")
+            else:
+                logging.info("'business_profiles' collection already exists")
+        except Exception as e:
+            logging.error(f"Error in ensure_collections: {str(e)}")
+            raise

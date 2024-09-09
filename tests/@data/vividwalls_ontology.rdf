@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:vw="http://www.vividwalls.com/ontology#">
+
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Artist"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Artwork"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Customer"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Order"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Print"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Category"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#Collection"/>
+  <owl:Class rdf:about="http://www.vividwalls.com/ontology#CustomizationOption"/>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#creates">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Artist"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#Artwork"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#belongsToCategory">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Artwork"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#Category"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#belongsToCollection">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Artwork"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#Collection"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#placesOrder">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Customer"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#Order"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#containsPrint">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Order"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#Print"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#basedOnArtwork">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Print"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#Artwork"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://www.vividwalls.com/ontology#hasCustomizationOption">
+    <rdfs:domain rdf:resource="http://www.vividwalls.com/ontology#Artwork"/>
+    <rdfs:range rdf:resource="http://www.vividwalls.com/ontology#CustomizationOption"/>
+  </owl:ObjectProperty>
+
+</rdf:RDF>

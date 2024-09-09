@@ -1,0 +1,74 @@
+directory_name: app/api/routers
+description: FastAPI routers for the MABOS (Multi-Agent Business Operating System) platform
+purpose: Define API endpoints and handle HTTP requests for various MABOS functionalities
+
+key_components:
+  - agent_management
+  - environment_handling
+  - knowledge_representation
+  - planning_and_goals
+  - business_modeling
+  - mdd_integration
+  - version_control
+
+technologies:
+  - FastAPI
+  - Pydantic
+  - UUID
+
+conventions:
+  - use_dependency_injection
+  - consistent_error_handling
+  - pydantic_models_for_schemas
+
+integration_points:
+  - services_layer: app/services/
+  - models: app/models/
+
+file_descriptions:
+  actions.py: Handles CRUD operations for agent actions
+  agent_roles.py: Manages agent roles and their associated permissions
+  agents.py: Provides endpoints for agent creation, retrieval, and management
+  archimate_service.py: Integrates ArchiMate modeling capabilities
+  beliefs.py: Manages agent beliefs in the BDI architecture
+  business_models.py: Handles business model creation and management
+  business_plan.py: Manages business plan creation and execution
+  communication.py: Facilitates inter-agent communication
+  desires.py: Manages agent desires in the BDI architecture
+  environment.py: Handles environment state and interactions
+  erp_router.py: Provides integration with ERP systems
+  erp.py: Manages ERP-related functionalities
+  goals.py: Handles goal creation, assignment, and tracking
+  intentions.py: Manages agent intentions in the BDI architecture
+  knowledge_bases.py: Provides endpoints for knowledge base operations
+  mabos_routers.py: Central router for MABOS-specific functionalities
+  mas_modeling.py: Handles multi-agent system modeling operations
+  mas.py: Manages overall multi-agent system operations
+  mdd_mas.py: Integrates Model-Driven Development with MAS
+  ontology.py: Manages ontology-related operations
+  organization.py: Handles organizational structure and management
+  planning.py: Provides planning capabilities for agents
+  plans.py: Manages plan creation, execution, and monitoring
+  question_router.py: Handles question-answering functionalities
+  question.py: Manages question creation and retrieval
+  repository.py: Handles repository-related operations
+  rules_engine.py: Integrates rule processing capabilities
+  tasks.py: Manages task creation, assignment, and execution
+  togaf_mdd.py: Integrates TOGAF framework with MDD approach
+  topic_map.py: Manages topic map creation and querying
+  tropos_mdd.py: Integrates Tropos methodology with MDD approach
+  version_control.py: Handles version control operations for the MAS
+  world_model_router.py: Manages world model interactions
+  world_model.py: Provides endpoints for world model operations
+
+best_practices:
+  - Keep routing logic separate from business logic
+  - Use appropriate HTTP methods for different operations
+  - Implement proper input validation using Pydantic models
+  - Handle errors consistently using FastAPI's HTTPException
+  - Use dependency injection for service instantiation
+
+future_considerations:
+  - Implement API versioning
+  - Add authentication and authorization middleware
+  - Explore GraphQL implementation for flexible querying

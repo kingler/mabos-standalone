@@ -1,0 +1,41 @@
+component: ui
+description: Contains user interface components and templates for MABOS
+main-technologies:
+  - Python (FastAPI for backend)
+  - HTML
+  - CSS
+  - JavaScript
+conventions:
+  - Use semantic HTML5 elements
+  - Follow responsive design principles
+  - Implement accessibility best practices
+  - Use modular CSS with clear naming conventions
+key-responsibilities:
+  - Providing a user-friendly interface for interacting with MABOS
+  - Implementing responsive design for various device sizes
+  - Ensuring accessibility for all users
+  - Handling user input and displaying system output
+development-guidelines:
+  - Use semantic HTML5 elements for better structure and accessibility
+  - Implement responsive design using CSS media queries or a responsive framework
+  - Follow accessibility guidelines (WCAG 2.1) to ensure the interface is usable by all
+  - Use modular CSS with clear naming conventions (e.g., BEM methodology)
+  - Minimize the use of inline styles and scripts
+ui-components:
+  - Design with reusability in mind
+  - Ensure consistency with existing UI elements
+  - Test across different browsers and devices
+  - Consider performance implications, especially for complex components
+templates:
+  - Use Jinja2 templating language for dynamic content
+  - Implement template inheritance for consistent layouts
+  - Keep logic in templates to a minimum, preferring to handle complex logic in the backend
+javascript-usage:
+  - Use JavaScript judiciously, preferring progressive enhancement
+  - Consider using a modern JavaScript framework for complex interactivity
+  - Ensure all functionality is accessible even without JavaScript
+accessibility:
+  - Provide alternative text for images
+  - Ensure proper color contrast
+  - Use ARIA attributes where appropriate
+  - Test with screen readers and keyboard navigation

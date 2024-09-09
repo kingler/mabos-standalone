@@ -1,0 +1,29 @@
+[
+  {
+    "_key": "customer1",
+    "name": "Alice Brown",
+    "email": "alice.brown@example.com",
+    "address": "123 Main St, Anytown, USA 12345",
+    "registrationDate": "2023-03-01",
+    "totalOrders": 3,
+    "totalSpent": 550
+  },
+  {
+    "_key": "customer2",
+    "name": "David Lee",
+    "email": "david.lee@example.com",
+    "address": "456 Oak Ave, Somewhere, USA 67890",
+    "registrationDate": "2023-04-15",
+    "totalOrders": 2,
+    "totalSpent": 400
+  },
+  {
+    "_key": "customer3",
+    "name": "Emily Garcia",
+    "email": "emily.garcia@example.com",
+    "address": "789 Pine Rd, Elsewhere, USA 13579",
+    "registrationDate": "2023-05-20",
+    "totalOrders": 1,
+    "totalSpent": 220
+  }
+]

@@ -1,0 +1,27 @@
+component: config
+description: Contains configuration files and settings for the MABOS system
+main-technologies:
+  - Python
+  - JSON
+conventions:
+  - Use environment variables for sensitive information
+  - Keep configuration files version-controlled, but use templates for deployments
+  - Use strongly typed configuration objects
+key-responsibilities:
+  - Loading and managing system-wide configurations
+  - Providing a centralized point for environment-specific settings
+  - Ensuring type safety for configuration values
+  - Managing sensitive information securely
+development-guidelines:
+  - Use Pydantic BaseSettings for type-safe configuration management
+  - Keep sensitive information in environment variables, not in version-controlled files
+  - Use configuration classes to group related settings
+  - Provide clear documentation for each configuration option
+configuration-management:
+  - Consider backwards compatibility when making changes
+  - Update documentation to reflect new or changed options
+  - Ensure proper error handling for missing or invalid configuration values
+security-considerations:
+  - Never commit sensitive information to version control
+  - Use environment variables or secure vaults for managing secrets
+  - Implement proper access controls for configuration files in production environments

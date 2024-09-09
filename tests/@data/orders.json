@@ -1,0 +1,43 @@
+[
+  {
+    "_key": "order1",
+    "customer": "customer1",
+    "orderDate": "2023-07-01",
+    "status": "completed",
+    "items": [
+      {
+        "artwork": "artwork1",
+        "size": "36x48",
+        "frameColor": "black",
+        "quantity": 1,
+        "price": 250
+      }
+    ],
+    "totalAmount": 250,
+    "shippingAddress": "123 Main St, Anytown, USA 12345"
+  },
+  {
+    "_key": "order2",
+    "customer": "customer2",
+    "orderDate": "2023-07-15",
+    "status": "processing",
+    "items": [
+      {
+        "artwork": "artwork2",
+        "size": "24x38",
+        "frameColor": "white",
+        "quantity": 1,
+        "price": 200
+      },
+      {
+        "artwork": "artwork3",
+        "size": "36x48",
+        "frameColor": "black",
+        "quantity": 1,
+        "price": 280
+      }
+    ],
+    "totalAmount": 480,
+    "shippingAddress": "456 Oak Ave, Somewhere, USA 67890"
+  }
+]

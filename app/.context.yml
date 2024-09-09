@@ -1,0 +1,33 @@
+component: repositories
+description: Contains data access layer and repository pattern implementations for MABOS
+main-technologies:
+  - Python
+  - SQLAlchemy
+  - ArangoDB Python driver
+conventions:
+  - Use repository pattern for data access
+  - Implement CRUD operations for each entity
+  - Keep business logic separate from data access logic
+key-responsibilities:
+  - Abstracting data access logic from business logic
+  - Providing CRUD operations for different entities
+  - Implementing complex queries and data manipulations
+  - Managing transactions and ensuring data consistency
+development-guidelines:
+  - Implement a base repository class with common CRUD operations
+  - Use dependency injection to provide database sessions to repositories
+  - Keep repository methods focused on data access, moving business logic to services
+  - Use clear and consistent naming for repository methods
+repository-implementation:
+  - Create a new file for each entity or closely related group of entities
+  - Implement standard CRUD operations (create, read, update, delete)
+  - Add methods for any complex queries or data manipulations specific to the entity
+  - Use type hints and docstrings for better code readability and maintainability
+query-optimization:
+  - Use database-specific features for complex queries when necessary
+  - Implement caching strategies for frequently accessed, rarely changing data
+  - Use lazy loading and eager loading appropriately to optimize database queries
+testing-repositories:
+  - Implement unit tests for each repository method
+  - Use an in-memory database or test database for running repository tests
+  - Test both successful operations and error cases

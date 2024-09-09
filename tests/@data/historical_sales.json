@@ -1,0 +1,72 @@
+[
+  {
+    "year": 2014,
+    "total_sales": 125000,
+    "total_orders": 850,
+    "top_selling_category": "Abstract",
+    "average_order_value": 147.06
+  },
+  {
+    "year": 2015,
+    "total_sales": 180000,
+    "total_orders": 1200,
+    "top_selling_category": "Photography",
+    "average_order_value": 150.00
+  },
+  {
+    "year": 2016,
+    "total_sales": 250000,
+    "total_orders": 1600,
+    "top_selling_category": "Abstract",
+    "average_order_value": 156.25
+  },
+  {
+    "year": 2017,
+    "total_sales": 320000,
+    "total_orders": 2000,
+    "top_selling_category": "Digital Art",
+    "average_order_value": 160.00
+  },
+  {
+    "year": 2018,
+    "total_sales": 400000,
+    "total_orders": 2400,
+    "top_selling_category": "Photography",
+    "average_order_value": 166.67
+  },
+  {
+    "year": 2019,
+    "total_sales": 500000,
+    "total_orders": 2900,
+    "top_selling_category": "Abstract",
+    "average_order_value": 172.41
+  },
+  {
+    "year": 2020,
+    "total_sales": 620000,
+    "total_orders": 3500,
+    "top_selling_category": "Digital Art",
+    "average_order_value": 177.14
+  },
+  {
+    "year": 2021,
+    "total_sales": 750000,
+    "total_orders": 4100,
+    "top_selling_category": "Photography",
+    "average_order_value": 182.93
+  },
+  {
+    "year": 2022,
+    "total_sales": 900000,
+    "total_orders": 4800,
+    "top_selling_category": "Abstract",
+    "average_order_value": 187.50
+  },
+  {
+    "year": 2023,
+    "total_sales": 1100000,
+    "total_orders": 5700,
+    "top_selling_category": "Digital Art",
+    "average_order_value": 192.98
+  }
+]

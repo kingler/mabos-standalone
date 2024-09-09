@@ -1,0 +1,92 @@
+[
+  {
+    "_key": "supplier1",
+    "name": "EastCoast Prints",
+    "region": "Northeast US",
+    "location": "New York, NY",
+    "capacity": 1000,
+    "quality_rating": 4.8,
+    "average_production_time": 2
+  },
+  {
+    "_key": "supplier2",
+    "name": "SunBelt Imagery",
+    "region": "Southeast US",
+    "location": "Atlanta, GA",
+    "capacity": 800,
+    "quality_rating": 4.7,
+    "average_production_time": 2.5
+  },
+  {
+    "_key": "supplier3",
+    "name": "Midwest Art Producers",
+    "region": "Midwest US",
+    "location": "Chicago, IL",
+    "capacity": 1200,
+    "quality_rating": 4.9,
+    "average_production_time": 1.8
+  },
+  {
+    "_key": "supplier4",
+    "name": "Rocky Mountain Prints",
+    "region": "Mountain West US",
+    "location": "Denver, CO",
+    "capacity": 600,
+    "quality_rating": 4.6,
+    "average_production_time": 2.2
+  },
+  {
+    "_key": "supplier5",
+    "name": "Pacific Coast Artistry",
+    "region": "West Coast US",
+    "location": "Los Angeles, CA",
+    "capacity": 1500,
+    "quality_rating": 4.9,
+    "average_production_time": 1.5
+  },
+  {
+    "_key": "supplier6",
+    "name": "Northern Lights Printing",
+    "region": "Canada",
+    "location": "Toronto, ON",
+    "capacity": 700,
+    "quality_rating": 4.8,
+    "average_production_time": 2.3
+  },
+  {
+    "_key": "supplier7",
+    "name": "European Art Hub",
+    "region": "Western Europe",
+    "location": "Berlin, Germany",
+    "capacity": 1000,
+    "quality_rating": 4.7,
+    "average_production_time": 2.1
+  },
+  {
+    "_key": "supplier8",
+    "name": "Asian Print Masters",
+    "region": "East Asia",
+    "location": "Tokyo, Japan",
+    "capacity": 1300,
+    "quality_rating": 4.9,
+    "average_production_time": 1.7
+  },
+  {
+    "_key": "supplier9",
+    "name": "Down Under Designs",
+    "region": "Australia",
+    "location": "Sydney, NSW",
+    "capacity": 500,
+    "quality_rating": 4.6,
+    "average_production_time": 2.5
+  },
+  {
+    "_key": "supplier10",
+    "name": "Latin American Artworks",
+    "region": "South America",
+    "location": "São Paulo, Brazil",
+    "capacity": 800,
+    "quality_rating": 4.7,
+    "average_production_time": 2.4
+  }
+]

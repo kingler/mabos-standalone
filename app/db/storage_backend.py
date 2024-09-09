@@ -1,9 +1,9 @@
 from app.db.arangodb import get_arango_client
-from app.db.togaf_questions import generate_db_name
+from app.tools.togaf_questions import generate_db_name
 from pyArango.collection import Collection
 from pyArango.document import Document
 from typing import Dict, Any, List
-from app.core.agents.core_agents.llm_agent import LLMAgent
+from app.agents.core_agents.llm_agent import LLMAgent
 
 class StorageBackend:
     def __init__(self, business_name: str, llm_agent: LLMAgent):

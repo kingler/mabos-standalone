@@ -1,0 +1,35 @@
+component: core_services
+description: Contains service layer implementations for core MABOS functionalities
+main-technologies:
+  - Python
+  - AsyncIO
+conventions:
+  - Implement services as classes with clear responsibilities
+  - Use dependency injection for service dependencies
+  - Implement asynchronous methods where appropriate
+  - Keep services stateless when possible
+key-responsibilities:
+  - Implementing core business logic of the MABOS system
+  - Orchestrating interactions between different system components
+  - Providing a clean API for the application layer
+  - Managing complex operations and transactions
+  - Ensuring consistency and integrity of system operations
+development-guidelines:
+  - Implement services as classes with clear, single responsibilities
+  - Use dependency injection for service dependencies
+  - Implement asynchronous methods for I/O-bound operations
+  - Keep services stateless when possible to improve scalability
+  - Use type hints and docstrings for better code readability
+service-implementation:
+  - Clearly define the service's purpose and responsibilities
+  - Implement methods for all required operations
+  - Use dependency injection to manage service dependencies
+  - Consider implementing an interface or abstract base class for the service
+error-handling:
+  - Implement proper error handling within services
+  - Use custom exception classes for specific error scenarios
+  - Provide meaningful error messages and context
+testing-services:
+  - Implement unit tests for individual service methods
+  - Create integration tests for services that interact with external systems
+  - Use mocking to isolate service tests from external dependencies

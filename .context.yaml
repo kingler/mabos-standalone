@@ -1,0 +1,60 @@
+project-name: Multi-Agent System (MAS) Framework
+version: 1.0.0
+description: A sophisticated platform for developing complex, goal-oriented, BDI multi-agent systems tailored for business applications
+main-technologies:
+  - Python
+  - PADE
+  - SPADE-BDI
+  - Owlready2
+  - ArangoDB
+conventions:
+  - Use type hints for better code readability and maintainability
+  - Follow PEP 8 style guide for Python code
+  - Implement abstract base classes for key components to ensure consistency
+  - Use dependency injection for better modularity and testability
+ai-prompts:
+  - Optimize agent communication protocols
+  - Suggest improvements for reasoning engine efficiency
+architecture:
+  style: Modular BDI-based
+  main-components:
+    - BDI Agents
+    - Reasoning Engine
+    - Ontology Manager
+    - Rule Engine
+    - Symbolic AI Integrator
+    - Project Graph
+    - Communication Protocol
+    - Reasoning Coordinator
+  data-flow:
+    - User Input -> BDI Agents -> Reasoning Engine -> Rule Engine -> Action Execution
+development:
+  setup-steps:
+    - Install Python 3.11+
+    - Run `poetry install` in the project root
+    - Set up ArangoDB instance
+  build-command: poetry build
+  test-command: poetry run pytest
+business-requirements:
+  key-features:
+    - Complex decision-making processes
+    - Adaptive agent behaviors
+    - Integration with enterprise systems
+  target-audience: Large enterprises and business consultancies
+  success-metrics:
+    - Decision accuracy
+    - System scalability
+    - Integration ease with existing business processes
+quality-assurance:
+  testing-frameworks:
+    - pytest
+    - hypothesis
+  coverage-threshold: 90%
+  performance-benchmarks:
+    - Agent response time < 100ms
+    - Reasoning engine processing time < 500ms
+deployment:
+  platform: docker
+  cicd-pipeline: GitLab CI/CD
+  staging-environment: staging.mas-framework.com
+  production-environment: mas-framework.com

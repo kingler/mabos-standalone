@@ -1,0 +1,22 @@
+component: api
+description: Handles HTTP requests and API routing for MABOS
+main-technologies:
+  - FastAPI
+conventions:
+  - Use RESTful principles for API design
+  - Implement proper request validation and error handling
+  - Use dependency injection for services
+key-responsibilities:
+  - Request handling and validation
+  - Routing requests to appropriate services
+  - Response formatting and error handling
+  - API documentation
+development-guidelines:
+  - Keep route handlers lean, delegating business logic to core services
+  - Use Pydantic models for request/response data validation
+  - Implement proper error handling and return appropriate HTTP status codes
+  - Document all API endpoints using FastAPI's docstring format
+security-considerations:
+  - Implement authentication and authorization for all sensitive endpoints
+  - Validate and sanitize all input data to prevent injection attacks
+  - Use HTTPS for all API communications in production

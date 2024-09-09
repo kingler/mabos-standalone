@@ -1,0 +1,38 @@
+[
+  {
+    "_key": "artwork1",
+    "title": "Sunset Serenity",
+    "artist": "artist1",
+    "description": "A calming abstract representation of a sunset over water",
+    "category": "category1",
+    "collection": "collection1",
+    "dateCreated": "2023-04-01",
+    "availableSizes": ["24x38", "36x48", "53x72"],
+    "basePrice": 150,
+    "totalPrints": 45
+  },
+  {
+    "_key": "artwork2",
+    "title": "Mountain Majesty",
+    "artist": "artist2",
+    "description": "A breathtaking photograph of snow-capped mountains at dawn",
+    "category": "category2",
+    "collection": "collection2",
+    "dateCreated": "2023-05-15",
+    "availableSizes": ["24x38", "36x48"],
+    "basePrice": 200,
+    "totalPrints": 30
+  },
+  {
+    "_key": "artwork3",
+    "title": "Whimsical Wonderland",
+    "artist": "artist3",
+    "description": "A colorful digital illustration featuring fantastical creatures",
+    "category": "category3",
+    "collection": "collection3",
+    "dateCreated": "2023-06-20",
+    "availableSizes": ["24x38", "36x48", "53x72"],
+    "basePrice": 180,
+    "totalPrints": 60
+  }
+]

@@ -1,0 +1,67 @@
+@startuml
+|BusinessAgent|
+start
+:Identify Business Goal;
+|ProactiveAgent|
+:Develop Plan;
+|EnvironmentalAgent|
+:Monitor Environment;
+|ReactiveAgent|
+:Handle Immediate Changes;
+fork
+|BusinessAgent|
+:Execute Financial Actions;
+fork again
+|LLMAgent|
+:Perform NLP Tasks;
+fork again
+|CodeGenerationAgent|
+:Implement New Features;
+fork again
+|MaintenanceAgent|
+:Ensure System Health;
+end fork
+|SecurityAgent|
+:Monitor Security;
+|Broker|
+:Facilitate Communication;
+|MaintenanceAgent|
+:Optimize System;
+stop
+@enduml
+plantuml
+@startuml
+participant BusinessAgent
+participant ProactiveAgent
+participant LLMAgent
+participant EnvironmentalAgent
+participant ReactiveAgent
+participant CodeGenerationAgent
+participant MaintenanceAgent
+participant SecurityAgent
+participant Broker
+BusinessAgent -> ProactiveAgent: Set business goal
+ProactiveAgent -> LLMAgent: Request plan generation
+LLMAgent --> ProactiveAgent: Return generated plan
+ProactiveAgent -> Broker: Broadcast plan
+Broker -> EnvironmentalAgent: Notify of plan
+Broker -> ReactiveAgent: Notify of plan
+Broker -> CodeGenerationAgent: Notify of plan
+Broker -> MaintenanceAgent: Notify of plan
+Broker -> SecurityAgent: Notify of plan
+loop Execution
+EnvironmentalAgent -> Broker: Report environment changes
+Broker -> ReactiveAgent: Notify of changes
+ReactiveAgent -> Broker: Send immediate actions
+Broker -> BusinessAgent: Execute business actions
+BusinessAgent -> LLMAgent: Request analysis
+LLMAgent --> BusinessAgent: Provide insights
+BusinessAgent -> CodeGenerationAgent: Request feature implementation
+CodeGenerationAgent --> BusinessAgent: Confirm implementation
+MaintenanceAgent -> Broker: Report system health
+SecurityAgent -> Broker: Report security status
+end
+ProactiveAgent -> Broker: Request progress update
+Broker --> ProactiveAgent: Provide progress report
+ProactiveAgent -> BusinessAgent: Report goal status
+@enduml

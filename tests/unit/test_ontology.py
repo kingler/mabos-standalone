@@ -1,4 +1,4 @@
-from app.core.models.knowledge.ontology import Ontology
+from app.models.knowledge.ontology import Ontology
 
 
 def test_ontology():

@@ -1,0 +1,17 @@
+[
+  {
+    "_key": "category1",
+    "name": "Abstract",
+    "description": "Non-representational art focusing on color, shape, and form"
+  },
+  {
+    "_key": "category2",
+    "name": "Photography",
+    "description": "Captured images of real-world subjects and scenes"
+  },
+  {
+    "_key": "category3",
+    "name": "Digital Art",
+    "description": "Artwork created or modified using digital technologies"
+  }
+]

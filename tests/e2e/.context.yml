@@ -1,0 +1,36 @@
+component: e2e_tests
+description: Contains end-to-end tests for the MABOS system
+main-technologies:
+  - Python
+  - pytest
+  - FastAPI TestClient
+conventions:
+  - Use pytest for test definitions
+  - Simulate real-world scenarios in tests
+  - Use meaningful test case names
+  - Implement proper setup and teardown procedures
+key-responsibilities:
+  - Testing complete user workflows
+  - Verifying system-wide integration
+  - Ensuring all components work together correctly
+  - Simulating real-world usage scenarios
+  - Catching issues that unit tests might miss
+development-guidelines:
+  - Use pytest for defining and running tests
+  - Implement tests that cover complete user workflows
+  - Use meaningful and descriptive names for test functions
+  - Implement proper setup and teardown procedures to ensure test isolation
+  - Use FastAPI's TestClient for API-related E2E tests
+test-implementation:
+  - Clearly define the scenario being tested
+  - Set up the necessary test data and environment
+  - Simulate user actions and system interactions
+  - Verify the expected outcomes
+  - Clean up any resources created during the test
+test-data-management:
+  - Use fixtures or factory functions to generate test data
+  - Consider using a separate test database for E2E tests
+  - Implement proper data cleanup after each test
+continuous-integration:
+  - Ensure E2E tests are run as part of the CI/CD pipeline
+  - Consider running E2E tests in a staging environment that closely mimics production

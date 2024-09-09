@@ -1,0 +1,33 @@
+component: models
+description: Contains data models, knowledge representation structures, and domain-specific models for MABOS
+main-technologies:
+  - Python
+  - Pydantic
+  - OWL
+conventions:
+  - Use Pydantic for data validation and serialization
+  - Implement clear interfaces for model interactions
+  - Keep models separate from database representations
+key-responsibilities:
+  - Defining data structures and relationships
+  - Implementing data validation and type checking
+  - Providing serialization and deserialization capabilities
+  - Representing domain knowledge and ontologies
+development-guidelines:
+  - Use Pydantic models for data validation and serialization
+  - Implement clear methods for model interactions and transformations
+  - Keep models focused on data representation, moving business logic to services
+  - Use type hints and docstrings for better code readability
+model-implementation:
+  - Clearly define the model's purpose and structure
+  - Implement validation rules using Pydantic field validators
+  - Consider relationships with other models in the system
+  - Implement methods for common operations or transformations on the model
+knowledge-representation:
+  - Use OWL or similar standards for ontology representation
+  - Implement clear interfaces for querying and updating knowledge bases
+  - Consider using reasoning engines for complex knowledge operations
+testing-models:
+  - Create unit tests for model validation and methods
+  - Test edge cases and invalid inputs
+  - Implement serialization/deserialization tests

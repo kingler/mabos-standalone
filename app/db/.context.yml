@@ -1,0 +1,34 @@
+component: db
+description: Manages database interactions, models, and database-related utilities for MABOS
+main-technologies:
+  - Python
+  - ArangoDB
+  - SQLAlchemy
+conventions:
+  - Use SQLAlchemy ORM for relational database interactions
+  - Implement database migrations for schema changes
+  - Use clear naming conventions for database models and queries
+key-responsibilities:
+  - Managing database connections and sessions
+  - Defining database models and schemas
+  - Implementing database migrations and versioning
+  - Providing utility functions for common database operations
+development-guidelines:
+  - Use async database operations where possible for improved performance
+  - Implement proper error handling and retries for database operations
+  - Use database transactions for operations that require atomicity
+  - Keep database models separate from API models to maintain separation of concerns
+database-management:
+  - Implement and test database migrations
+  - Update relevant documentation, including any ER diagrams
+  - Consider the impact on existing data and implement data migration if necessary
+  - Ensure backwards compatibility or provide upgrade paths
+query-optimization:
+  - Use database indexes for frequently queried fields
+  - Optimize complex queries and consider using database-specific features
+  - Implement query logging and monitoring for performance tuning
+security-considerations:
+  - Use parameterized queries to prevent SQL injection
+  - Implement proper access controls and user authentication for database access
+  - Encrypt sensitive data before storing in the database
+  - Regularly backup the database and test restoration procedures

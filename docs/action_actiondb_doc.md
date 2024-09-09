@@ -53,7 +53,7 @@ class Action(BaseModel):
 #### `ActionDB` Class (SQLAlchemy Model)
 ```python:app/core/models/agent/action.py
 from sqlalchemy import Column, String, JSON
-from app.core.services.db.database import Base
+from app.services.db.database import Base
 
 class ActionDB(Base):
     __tablename__ = "actions"

@@ -1,0 +1,29 @@
+component: data
+description: Contains data files, resources, and data management utilities for MABOS
+main-technologies:
+  - Python
+  - CSV
+  - JSON
+conventions:
+  - Use clear and consistent naming for data files
+  - Include data dictionaries or schemas for complex data structures
+  - Implement data versioning where appropriate
+key-responsibilities:
+  - Storing static data used across the system
+  - Providing seed data for database initialization
+  - Housing data processing and transformation scripts
+  - Maintaining data dictionaries and schemas
+development-guidelines:
+  - Keep data files in standard, easily parseable formats (CSV, JSON, etc.)
+  - Document the source and last update date for each data file
+  - Implement data validation checks to ensure data integrity
+  - Use version control for tracking changes in data files
+data-management:
+  - Ensure the data is clean and properly formatted when adding or updating
+  - Update any associated documentation or data dictionaries
+  - Consider the impact on existing system functionality
+  - Implement proper error handling for data loading and processing
+data-privacy-and-security:
+  - Do not store sensitive or personal information in this directory
+  - Implement access controls to restrict data access in production environments
+  - Consider data anonymization techniques for any potentially sensitive information

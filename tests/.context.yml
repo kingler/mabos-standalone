@@ -1,0 +1,36 @@
+component: unit_tests
+description: Contains unit tests for individual components of the MABOS system
+main-technologies:
+  - Python
+  - pytest
+conventions:
+  - Use pytest for test definitions
+  - Focus on testing individual functions and methods
+  - Use mocking for external dependencies
+  - Aim for high test coverage
+key-responsibilities:
+  - Testing individual functions, methods, and classes
+  - Verifying component behavior in isolation
+  - Catching bugs and errors at the component level
+  - Ensuring code correctness and reliability
+  - Facilitating refactoring and code changes
+development-guidelines:
+  - Use pytest for defining and running tests
+  - Focus on testing one thing at a time
+  - Use descriptive names for test functions
+  - Use mocking to isolate the component being tested
+  - Aim for high test coverage, but focus on critical and complex parts
+test-implementation:
+  - Clearly define what aspect of the component is being tested
+  - Set up any necessary test data or mocks
+  - Call the function or method being tested
+  - Assert the expected outcomes
+  - Clean up any resources if necessary
+mocking-and-dependency-injection:
+  - Use pytest's monkeypatch or unittest.mock for mocking
+  - Consider using dependency injection to make components easier to test
+  - Be cautious when mocking to ensure tests remain meaningful
+code-coverage:
+  - Use pytest-cov to measure code coverage
+  - Aim for high coverage, especially in critical parts of the system
+  - Don't pursue 100% coverage at the expense of meaningful tests

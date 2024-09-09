@@ -1,0 +1,37 @@
+component: core_agents
+description: Contains implementations of various agent types for the MABOS system
+main-technologies:
+  - Python
+  - Pydantic
+conventions:
+  - Use Pydantic models for agent definitions
+  - Implement specific agent behaviors in separate classes
+  - Follow naming convention: *Agent (e.g., ProactiveAgent, ReactiveAgent)
+key-responsibilities:
+  - Implement various agent behaviors and decision-making processes
+  - Handle agent communication and interaction
+  - Manage agent beliefs, desires, and intentions
+  - Execute agent-specific tasks and actions
+development-guidelines:
+  - Use Pydantic models for defining agent structures and properties
+  - Implement specific agent behaviors in separate classes, inheriting from the base Agent class
+  - Follow the naming convention of *Agent for all agent classes
+  - Use type hints and docstrings for better code readability and maintainability
+  - Implement unit tests for each agent type to ensure proper functionality
+agent-types:
+  - Agent: Base class for all agents
+  - EnvironmentalAgent: Interacts with and perceives the environment
+  - ProactiveAgent: Goal-oriented agent capable of planning and execution
+  - ReactiveAgent: Responds to stimuli based on predefined rules
+  - BusinessAgent: Specialized agent for business-related tasks
+  - LLMAgent: Leverages Large Language Models for advanced reasoning
+  - SecurityAgent: Responsible for secure communication and monitoring
+file-structure:
+  - agent_types.py: Defines base Agent class and common agent types
+  - broker.py: Implements message broker for agent communication
+  - business_agent.py: Specialized agent for business-related tasks
+  - environmental_agent.py: Agent that interacts with the environment
+  - llm_agent.py: Agent using Large Language Models
+  - proactive_agent.py: Goal-oriented agent with planning capabilities
+  - reactive_agent.py: Stimulus-response based agent
+  - security_agent.py: Agent for secure communication and monitoring

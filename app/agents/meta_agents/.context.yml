@@ -1,0 +1,61 @@
+component: meta_agents
+description: Contains meta-agent implementations for the Multi-Agent Based Operating System (MABOS)
+main-technologies:
+  - Python
+  - Custom agent framework
+  - OpenAI API
+  - NuSMV
+  - psutil
+  - scikit-learn
+conventions:
+  - Use Pydantic for data modeling
+  - Implement BDI (Belief-Desire-Intention) architecture
+  - Use OpenAI's API for natural language processing tasks and advanced reasoning
+  - Use ReasoningEngine and OntologyReasoner for knowledge management and inference
+architecture:
+  main-components:
+    AgentDesignAgent: Designs individual agents for the MAS
+    ArchitectureDesignAgent: Designs overall MAS architecture
+    DatabaseAgent: Manages database operations
+    DeploymentAgent: Handles MAS deployment
+    DomainModelingAgent: Creates and manages ontologies
+    ImplementationAgent: Implements the MAS
+    IntegrationAgent: Integrates subsystems and manages communication
+    MonitoringAgent: Monitors and optimizes the deployed MAS
+    OntologyEngineeringAgent: Develops and manages ontologies
+    OperationalMetaAgent: Manages operational aspects
+    OptimizationAgent: Optimizes MAS performance using ML and reasoning
+    RequirementsAnalysisAgent: Analyzes system requirements
+    StrategicMetaAgent: Handles high-level planning
+    TacticalMetaAgent: Manages tactical execution
+    TestingAndVerificationAgent: Conducts testing and verification
+key-responsibilities:
+  - Designing, implementing, and optimizing the MAS architecture
+  - Managing knowledge through ontology engineering and reasoning
+  - Continuous monitoring, optimization, and performance improvement
+  - Strategic planning, tactical execution, and operational management
+  - Comprehensive testing, verification, and validation of the MAS
+reasoning-and-knowledge-management:
+  - BDI architecture implementation in each agent
+  - Use of ReasoningEngine for advanced decision-making
+  - OntologyReasoner for knowledge inference from ontologies
+  - Continuous update of beliefs, desires, and intentions
+  - Machine learning integration for performance prediction and optimization
+  - Natural language processing for advanced reasoning tasks
+development-guidelines:
+  - Implement each meta-agent as a separate class inheriting from MetaAgent
+  - Use Pydantic for data modeling and validation
+  - Utilize OpenAI's API for NLP tasks and advanced reasoning
+  - Use NuSMV for model checking and formal verification
+  - Implement comprehensive logging for agent actions and decisions
+  - Use type hints and docstrings for better readability
+testing:
+  - Implement unit tests for each meta-agent
+  - Use mock objects for external service interactions
+  - Implement integration tests for inter-agent interactions
+  - Use NuSMV for formal verification of agent models and system properties
+continuous-improvement:
+  - Ongoing monitoring and optimization of system performance
+  - Regular updates to ontologies and knowledge bases
+  - Adaptive strategic and tactical planning
+  - Continuous testing and verification of system components

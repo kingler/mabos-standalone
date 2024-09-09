@@ -349,7 +349,7 @@ Custom inference rules are defined and applied to the ontology to infer new know
 
 ```python
 from owlready2 import World
-from app.core.custom_inference import CustomInference
+from app.custom_inference import CustomInference
 
 world = World()
 custom_inference = CustomInference(world)

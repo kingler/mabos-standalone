@@ -1,0 +1,28 @@
+component: ui_agents
+description: Contains implementations of user interface agents for the MABOS system
+main-technologies:
+  - Python
+  - Pydantic
+  - FastAPI
+conventions:
+  - Use Pydantic models for agent definitions
+  - Implement specific agent behaviors in separate classes
+  - Follow naming convention: *Agent (e.g., OnboardingAgent)
+key-responsibilities:
+  - Implement user interface agents for interacting with the MABOS system
+  - Handle the onboarding process for new businesses
+  - Collect and process business information
+  - Generate business descriptions and ontologies
+  - Initialize MABOS agents for new clients
+development-guidelines:
+  - Use Pydantic models for defining agent structures and properties
+  - Implement specific agent behaviors in separate classes
+  - Follow the naming convention of *Agent for all agent classes
+  - Use type hints and docstrings for better code readability and maintainability
+  - Implement unit tests for each agent type to ensure proper functionality
+  - Utilize asynchronous programming techniques for improved performance
+agent-types:
+  - OnboardingAgent: Responsible for conducting the onboarding process for new businesses
+file-structure:
+  - __init__.py: Initialization file for the ui_agents package
+  - onboarding_agent.py: Implements the OnboardingAgent for business onboarding
