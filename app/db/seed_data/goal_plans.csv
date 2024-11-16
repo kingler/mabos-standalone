@@ -1,0 +1,6 @@
+_from,_to,type
+goals/goal1,plans/plan1,has_plan
+goals/goal2,plans/plan2,has_plan
+goals/goal3,plans/plan3,has_plan
+goals/goal4,plans/plan4,has_plan
+goals/goal5,plans/plan5,has_plan

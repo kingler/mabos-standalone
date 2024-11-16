@@ -1,20 +1,40 @@
-from functools import lru_cache
+"""
+Compatibility module for world model provider.
+Maintains singleton pattern for world model access.
+"""
+import warnings
+from typing import Optional
 
 from .world_model import WorldModel
 
+_world_model_instance: Optional[WorldModel] = None
 
-@lru_cache(maxsize=None)
-def get_world_model() -> WorldModel:
+
+async def get_world_model() -> WorldModel:
     """
-    Returns a singleton instance of WorldModel.
+    Get or create the world model singleton instance.
+    Maintains backward compatibility while using new core model structure.
     
-    The @lru_cache decorator with maxsize=None ensures that this function
-    is only called once, and the same WorldModel instance is returned
-    for subsequent calls.
+    Returns:
+        WorldModel: The singleton world model instance
     """
-    return WorldModel(
-        # You can add any initial configuration here
-        # For example:
-        # initial_state={'time': 0},
-        # ontology_path='path/to/your/ontology.owl'
+    warnings.warn(
+        "Importing get_world_model from app.models.system.world_model_provider is deprecated. "
+        "Use 'from app.models.core import get_world_model' instead.",
+        DeprecationWarning,
+        stacklevel=2
     )
+    
+    global _world_model_instance
+    if _world_model_instance is None:
+        _world_model_instance = await WorldModel.create()
+    return _world_model_instance
+
+
+async def reset_world_model() -> None:
+    """
+    Reset the world model instance.
+    Useful for testing and initialization.
+    """
+    global _world_model_instance
+    _world_model_instance = None

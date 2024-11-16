@@ -1,0 +1,6 @@
+_from,_to,type
+agents/agent1,goals/goal1,pursues
+agents/agent2,goals/goal2,pursues
+agents/agent3,goals/goal5,pursues
+agents/agent4,goals/goal3,pursues
+agents/agent5,goals/goal4,pursues

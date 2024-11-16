@@ -10,28 +10,67 @@ class QuestionService:
     def __init__(self, db_client: ArangoDBClient):
         self.db_client = db_client
 
-    async def create_question(self, question: Question) -> Question:
-        return await self.db_client.create_question(question)
+    def create_question(self, question: Question) -> Question:
+        """Create a new question."""
+        collection = self.db_client.db.collection('questions')
+        result = collection.insert(question.dict())
+        return Question.from_db({'_key': result['_key'], **question.dict()})
 
-    async def get_question(self, question_id: UUID) -> Optional[Question]:
-        return await self.db_client.get_question(question_id)
+    def get_question(self, question_id: UUID) -> Optional[Question]:
+        """Get a question by ID."""
+        collection = self.db_client.db.collection('questions')
+        result = collection.get(str(question_id))
+        return Question.from_db(result) if result else None
 
-    async def update_question(self, question: Question) -> Question:
-        return await self.db_client.update_question(question)
+    def update_question(self, question: Question) -> Question:
+        """Update an existing question."""
+        collection = self.db_client.db.collection('questions')
+        collection.update_match({'_key': str(question.id)}, question.dict())
+        return question
 
-    async def delete_question(self, question_id: UUID) -> bool:
-        return await self.db_client.delete_question(question_id)
+    def delete_question(self, question_id: UUID) -> bool:
+        """Delete a question by ID."""
+        collection = self.db_client.db.collection('questions')
+        try:
+            collection.delete(str(question_id))
+            return True
+        except:
+            return False
 
-    async def list_questions(self, framework: Optional[str] = None, category: Optional[str] = None) -> List[Question]:
-        return await self.db_client.list_questions(framework, category)
+    def list_questions(self, framework: Optional[str] = None, category: Optional[str] = None) -> List[Question]:
+        """List questions with optional filtering."""
+        collection = self.db_client.db.collection('questions')
+        
+        # Build AQL query based on filters
+        aql = "FOR q IN questions"
+        filters = []
+        if framework:
+            filters.append(f"q.framework == '{framework}'")
+        if category:
+            filters.append(f"q.category == '{category}'")
+            
+        if filters:
+            aql += " FILTER " + " AND ".join(filters)
+            
+        aql += " RETURN q"
+        
+        cursor = self.db_client.db.aql.execute(aql)
+        return [Question.from_db(doc) for doc in cursor]
 
-    async def create_answer(self, answer: Answer) -> Answer:
-        return await self.db_client.create_answer(answer)
+    def create_answer(self, answer: Answer) -> Answer:
+        """Create a new answer."""
+        collection = self.db_client.db.collection('answers')
+        result = collection.insert(answer.dict())
+        return Answer.from_db({'_key': result['_key'], **answer.dict()})
 
-    async def get_answers_for_business(self, business_id: UUID) -> List[Answer]:
-        return await self.db_client.get_answers_for_business(business_id)
+    def get_answers_for_business(self, business_id: UUID) -> List[Answer]:
+        """Get all answers for a specific business."""
+        collection = self.db_client.db.collection('answers')
+        cursor = collection.find({'business_id': str(business_id)})
+        return [Answer.from_db(doc) for doc in cursor]
 
-    async def seed_questions(self):
+    def seed_questions(self):
+        """Seed the database with initial questions."""
         # TOGAF questions
         togaf_questions = [
             Question(category="Business Architecture", framework="TOGAF", text="What are the key business goals and objectives?"),
@@ -58,4 +97,4 @@ class QuestionService:
 
         all_questions = togaf_questions + cmmi_questions + bmc_questions
         for question in all_questions:
-            await self.create_question(question)
+            self.create_question(question)

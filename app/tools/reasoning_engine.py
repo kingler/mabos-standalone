@@ -1,19 +1,16 @@
 from typing import Any, Dict, List
-
 import sympy
 from pydantic import BaseModel
 from pyres import *
 from pysmt.shortcuts import *
 from z3 import *
 import asyncio
-from typing import Any, Dict, List
 
 from app.models.knowledge.knowledge_base import KnowledgeBase
 from app.tools.reasoner import Reasoner
 from app.tools.llm_manager import LLMManager
 from app.models.agent.plan import Plan
 from app.models.agent import Goal
-
 
 class SymbolicPlanner:
     def __init__(self, knowledge_base: KnowledgeBase):

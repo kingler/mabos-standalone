@@ -1,0 +1,6 @@
+_from,_to,type
+agents/agent1,knowledge_triples/kt1,knows
+agents/agent2,knowledge_triples/kt2,specializes_in
+agents/agent3,knowledge_triples/kt3,monitors
+agents/agent4,knowledge_triples/kt4,manages
+agents/agent5,knowledge_triples/kt5,implements

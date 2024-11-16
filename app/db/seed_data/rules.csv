@@ -1,0 +1,6 @@
+_key,name,description,condition,action
+rule1,Data Integrity Check,Ensure data integrity before processing,data_quality > 0.9,proceed_with_processing()
+rule2,Business Model Approval,Require approval for new business models,new_model_score > 0.8,submit_for_approval()
+rule3,Environmental Compliance,Check environmental impact of actions,environmental_impact < 0.2,approve_action()
+rule4,Resource Allocation,Allocate resources based on priority,project_priority > 7,allocate_premium_resources()
+rule5,Customer Satisfaction,Trigger actions based on satisfaction scores,customer_satisfaction < 0.6,initiate_improvement_plan()

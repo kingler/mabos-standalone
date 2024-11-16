@@ -190,7 +190,6 @@ Citations:
 [6] https://pypi.org/project/owlready2/
 [7] https://www.datacamp.com/blog/what-is-symbolic-ai
 [8] https://pypi.org/project/symbolicai/
-[9] https://pypi.org/project/owlready2/
 
 ---
 

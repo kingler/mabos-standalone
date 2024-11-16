@@ -28,11 +28,10 @@ onboarding_questions = OnboardingQuestions(
     # ... (other categories of questions)
 )
 
-async def generate_db_name(business_name: str, llm_agent: LLMAgent) -> str:
+def generate_db_name(business_name: str, llm_agent: LLMAgent) -> str:
+    """Generate a database name synchronously."""
     # Generate a shortened version of the business name
-    prompt = f"Generate a short, alphanumeric abbreviation (max 10 characters) for the business name: {business_name}"
-    business_name_shorthand = await llm_agent.generate_response(prompt)
-    business_name_shorthand = ''.join(e for e in business_name_shorthand if e.isalnum())[:10]
+    business_name_shorthand = ''.join(e for e in business_name if e.isalnum())[:10]
     
     # Get current date for onboarding
     onboarding_date = datetime.now().strftime("%Y%m%d")
@@ -45,7 +44,7 @@ async def create_database_and_collections(business_name: str, llm_agent: LLMAgen
     client = ArangoClient(hosts=CONFIG.ARANGO_HOST)
     sys_db = client.db('_system', username=CONFIG.ARANGO_USERNAME, password=CONFIG.ARANGO_PASSWORD)
     
-    db_name = await generate_db_name(business_name, llm_agent)
+    db_name = generate_db_name(business_name, llm_agent)
     if not sys_db.has_database(db_name):
         sys_db.create_database(db_name)
     

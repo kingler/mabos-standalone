@@ -1,31 +1,44 @@
-project-name: Multi-Agent System (MAS) Framework
-version: 1.0.0
-description: A sophisticated platform for developing complex, goal-oriented, BDI multi-agent systems tailored for business applications
+project-name: Multi-Agent Based Organizational System (MABOS)
+version: 2.0.0
+description: An advanced platform for business modeling, strategy development, and optimization using multi-agent systems and model-driven development approaches, integrated with PADE framework
 main-technologies:
-  - Python
-  - PADE
+  - Python 3.11+
+  - PADE (Python Agent DEvelopment framework)
+  - FastAPI
+  - ArangoDB
   - SPADE-BDI
   - Owlready2
-  - ArangoDB
+  - rdflib
+  - networkx
+  - hypergraphx
 conventions:
   - Use type hints for better code readability and maintainability
   - Follow PEP 8 style guide for Python code
   - Implement abstract base classes for key components to ensure consistency
   - Use dependency injection for better modularity and testability
+  - Implement comprehensive unit and integration testing
+  - Maintain clear documentation for each component
 ai-prompts:
   - Optimize agent communication protocols
   - Suggest improvements for reasoning engine efficiency
+  - Optimize knowledge representation and reasoning techniques
 architecture:
-  style: Modular BDI-based
+  style: Layered Architecture with Multi-Agent System
   main-components:
-    - BDI Agents
+    - BDI Agents (PADE-based)
+    - Business Model Generator
     - Reasoning Engine
     - Ontology Manager
     - Rule Engine
     - Symbolic AI Integrator
     - Project Graph
-    - Communication Protocol
+    - Communication Protocol (FIPA-compliant)
     - Reasoning Coordinator
+  layers:
+    - Presentation Layer
+    - Application Layer
+    - Domain Layer
+    - Infrastructure Layer
   data-flow:
     - User Input -> BDI Agents -> Reasoning Engine -> Rule Engine -> Action Execution
 development:
@@ -37,24 +50,105 @@ development:
   test-command: poetry run pytest
 business-requirements:
   key-features:
+    - Multi-agent system for business modeling
+    - Ontology-based knowledge representation
+    - Business plan generation
+    - Model-driven development integration
     - Complex decision-making processes
     - Adaptive agent behaviors
     - Integration with enterprise systems
-  target-audience: Large enterprises and business consultancies
+    - Automated Business Modeling
+    - Intelligent Decision Support
+    - Knowledge-Driven Architecture
+    - Extensible Framework
+  target-audience: Small to Large enterprises and business consultancies
   success-metrics:
+    - Autonomy 
     - Decision accuracy
     - System scalability
     - Integration ease with existing business processes
+    - Improved decision-making accuracy
+    - Reduced time for strategy development
+    - Enhanced business model optimization
 quality-assurance:
   testing-frameworks:
     - pytest
+    - unittest
+    - coverage
     - hypothesis
   coverage-threshold: 90%
   performance-benchmarks:
     - Agent response time < 100ms
     - Reasoning engine processing time < 500ms
+    - Model transformation time < 500ms
 deployment:
-  platform: docker
+  platform: Docker
   cicd-pipeline: GitLab CI/CD
   staging-environment: staging.mas-framework.com
   production-environment: mas-framework.com
+  database: ArangoDB
+  api-framework: FastAPI
+system-architecture:
+  agent-layer:
+    description: PADE-based agents implementing various roles and behaviors
+    components:
+      - Business Agents
+      - Environmental Agents
+      - Meta Agents
+      - UI Agents
+  core-services:
+    description: Business logic and coordination services
+    components:
+      - Agent Service
+      - Knowledge Service
+      - Modeling Service
+      - Integration Service
+  knowledge-management:
+    description: Ontology and knowledge base management
+    components:
+      - Ontology Manager
+      - Knowledge Graph
+      - Semantic Reasoner
+      - Natural Language Interface
+  model-management:
+    description: MDD tools and model transformation services
+    components:
+      - Model Generator
+      - Model Transformer
+      - Code Generator
+      - Validation Service
+  api-layer:
+    description: FastAPI-based endpoints for external interactions
+    components:
+      - REST API
+      - WebSocket API
+      - GraphQL API
+  persistence-layer:
+    description: ArangoDB for efficient data storage and retrieval
+    components:
+      - Graph Database
+      - Document Store
+      - Key-Value Store
+development-guidelines:
+  architecture:
+    - Follow BDI (Belief-Desire-Intention) architecture for agents
+    - Use TOGAF concepts for enterprise architecture
+    - Implement Tropos framework for agent-oriented development
+    - Adopt Model-Driven Development approach
+  practices:
+    - Utilize PADE's agent development patterns
+    - Adhere to FIPA standards for agent communication
+    - Follow best practices in ontology engineering
+    - Implement comprehensive testing strategy
+  documentation:
+    - Maintain clear component documentation
+    - Document agent behaviors and interactions
+    - Keep API documentation up-to-date
+    - Include usage examples and tutorials
+future-directions:
+  - Integration with external AI services
+  - Implementation of federated learning
+  - Development of visual modeling interface
+  - Expansion of MDD frameworks support
+  - Enhanced analytics capabilities
+  - Privacy-preserving knowledge sharing

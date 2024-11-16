@@ -1,0 +1,5 @@
+_from,_to,type
+business_entities/entity1,business_entities/entity3,places
+business_entities/entity2,business_entities/entity3,included_in
+business_entities/entity4,business_entities/entity2,manages
+business_entities/entity5,business_entities/entity2,supplies

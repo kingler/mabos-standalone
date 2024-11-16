@@ -1,0 +1,6 @@
+_key,name,type,description
+entity1,Customer,External,End user of our products or services
+entity2,Product,Internal,Goods or services offered by the company
+entity3,Order,Transaction,Record of a customer purchase
+entity4,Employee,Internal,Person employed by the company
+entity5,Supplier,External,Provider of goods or services to the company

@@ -16,9 +16,47 @@
               "url": "https://api.openai.com/v1/chat/completions",
               "model": "gpt-4o",
               "max_tokens": 8192,
-              "temperature": 0.7,
-              "cost_input": 10.00,
-              "cost_output": 30.00
+              "temperature": 0.7
+            }
+          },
+          {
+            "gpt-4o-2024-05-13": {
+              "url": "https://api.openai.com/v1/chat/completions",
+              "model": "gpt-4o-2024-05-13",
+              "max_tokens": 8192,
+              "temperature": 0.7
+            }
+          },
+          {
+            "gpt-4o-2024-08-06": {
+              "url": "https://api.openai.com/v1/chat/completions",
+              "model": "gpt-4o-2024-08-06",
+              "max_tokens": 16384,
+              "temperature": 0.7
+            }
+          },
+          {
+            "chatgpt-4o-latest": {
+              "url": "https://api.openai.com/v1/chat/completions",
+              "model": "chatgpt-4o-latest",
+              "max_tokens": 16384,
+              "temperature": 0.7
+            }
+          },
+          {
+            "gpt-4o-mini": {
+              "url": "https://api.openai.com/v1/chat/completions",
+              "model": "gpt-4o-mini",
+              "max_tokens": 16384,
+              "temperature": 0.7
+            }
+          },
+          {
+            "gpt-4o-mini-2024-07-18": {
+              "url": "https://api.openai.com/v1/chat/completions",
+              "model": "gpt-4o-mini-2024-07-18",
+              "max_tokens": 16384,
+              "temperature": 0.7
             }
           },
           {

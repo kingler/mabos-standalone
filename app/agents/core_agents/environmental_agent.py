@@ -1,11 +1,15 @@
 import logging
 from typing import Dict, Any
-from app.agents.core_agents.agent_types import EnvironmentalAgent as BaseEnvironmentalAgent
+from app.agents.core_agents.base_pade_bdi_agent import BasePadeBDIAgent
 from app.models.agent.belief import Belief
 
 logger = logging.getLogger(__name__)
 
-class EnvironmentalAgent(BaseEnvironmentalAgent):
+class EnvironmentalAgent(BasePadeBDIAgent):
+    def __init__(self, aid, api_key: str):
+        super().__init__(aid, api_key)
+        self.environment_state: Dict[str, Any] = {}
+
     async def perceive(self) -> None:
         """
         Update the agent's perception of the environment and beliefs.
@@ -15,8 +19,7 @@ class EnvironmentalAgent(BaseEnvironmentalAgent):
             self.environment_state.update(new_perceptions)
             
             for key, value in new_perceptions.items():
-                new_belief = Belief(id=f"env_{key}", content={"key": key, "value": value}, description=f"Environmental state: {key}", certainty=1.0)
-                self.update_beliefs([new_belief])
+                await self.add_belief(f"env_{key}", {"key": key, "value": value})
             
             logger.info(f"Updated environment state: {self.environment_state}")
         except Exception as e:
@@ -39,7 +42,7 @@ class EnvironmentalAgent(BaseEnvironmentalAgent):
         """
         await self.perceive()
         context = self.get_current_state()
-        await self.reason(context)
+        await self.reason("environmental", context)
 
     def get_current_state(self) -> Dict[str, Any]:
         """
@@ -48,3 +51,24 @@ class EnvironmentalAgent(BaseEnvironmentalAgent):
         state = super().get_current_state()
         state["environment_state"] = self.environment_state
         return state
+
+    async def handle_message(self, message: Dict[str, Any]):
+        """
+        Handle incoming messages, potentially updating the environment state.
+        """
+        await super().handle_message(message)
+        # Additional environment-specific message handling can be added here
+
+    async def update_desires(self):
+        """
+        Update desires based on the current environment state.
+        """
+        await super().update_desires()
+        # Additional environment-specific desire updates can be added here
+
+    async def execute_intentions(self):
+        """
+        Execute intentions, potentially affecting the environment state.
+        """
+        await super().execute_intentions()
+        # Additional environment-specific intention execution can be added here

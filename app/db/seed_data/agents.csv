@@ -1,0 +1,6 @@
+_key,name,type
+agent1,Agent 1,Proactive
+agent2,Agent 2,Reactive
+agent3,Agent 3,Environmental
+agent4,Agent 4,Business
+agent5,Agent 5,MDD

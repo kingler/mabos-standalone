@@ -1,0 +1,71 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/ontology#> .
+
+# Classes
+:Business rdf:type owl:Class .
+:Product rdf:type owl:Class .
+:Service rdf:type owl:Class .
+:Customer rdf:type owl:Class .
+:Employee rdf:type owl:Class .
+:Department rdf:type owl:Class .
+:Project rdf:type owl:Class .
+:Goal rdf:type owl:Class .
+:Task rdf:type owl:Class .
+:Resource rdf:type owl:Class .
+
+# Object Properties
+:hasProduct rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Product .
+
+:hasService rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Service .
+
+:hasCustomer rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Customer .
+
+:hasEmployee rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Employee .
+
+:hasDepartment rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Department .
+
+:hasProject rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Project .
+
+:hasGoal rdf:type owl:ObjectProperty ;
+    rdfs:domain :Business ;
+    rdfs:range :Goal .
+
+:hasTask rdf:type owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Task .
+
+:usesResource rdf:type owl:ObjectProperty ;
+    rdfs:domain :Task ;
+    rdfs:range :Resource .
+
+# Data Properties
+:name rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Business ;
+    rdfs:range xsd:string .
+
+:description rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Business ;
+    rdfs:range xsd:string .
+
+:industry rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Business ;
+    rdfs:range xsd:string .
+
+:size rdf:type owl:DatatypeProperty ;
+    rdfs:domain :Business ;
+    rdfs:range xsd:string .

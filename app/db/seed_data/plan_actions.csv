@@ -1,0 +1,6 @@
+_from,_to,type
+plans/plan1,actions/action1,includes
+plans/plan2,actions/action2,includes
+plans/plan3,actions/action3,includes
+plans/plan4,actions/action4,includes
+plans/plan5,actions/action5,includes

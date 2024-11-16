@@ -11,34 +11,34 @@
             "id": "0792636c23bc1fc0",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "knowledge_management.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           },
           {
             "id": "6db10435ed341465",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "knowledge_constructionist.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           },
           {
             "id": "5465a89b04ed683c",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.6.7"
-              }
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
             }
           }
         ],
@@ -62,7 +62,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
             }
           },
           {
@@ -77,7 +79,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "Search"
             }
           },
           {
@@ -85,7 +89,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
             }
           }
         ]
@@ -108,7 +114,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "knowledge_constructionist.md",
+                "file": "README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -116,7 +122,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for README"
             }
           },
           {
@@ -125,10 +133,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "knowledge_constructionist.md",
+                "file": "README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from README"
             }
           },
           {
@@ -139,7 +149,9 @@
               "state": {
                 "sortOrder": "frequency",
                 "useHierarchy": true
-              }
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
             }
           },
           {
@@ -148,8 +160,10 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "knowledge_constructionist.md"
-              }
+                "file": "README.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of README"
             }
           }
         ]
@@ -170,19 +184,20 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "5465a89b04ed683c",
+  "active": "1dc7fc09a4e11971",
   "lastOpenFiles": [
-    "app/core/__pycache__/explanation_generator.cpython-312.pyc",
-    "app/core/__pycache__/conflict_resolution.cpython-312.pyc",
-    "app/core/__pycache__/active_knowledge_acquisition.cpython-312.pyc",
-    "app/core/__pycache__/distributed_knowledge.cpython-312.pyc",
-    "app/core/__pycache__/temporal_reasoning.cpython-312.pyc",
-    "app/services/rule_engine_service.py",
-    "app/routers/world_model_router.py",
-    "app/routers/question_router.py",
-    "app/routers/mas_router.py",
-    "app/routers/erp_router.py",
-    "app/models/reactive_agent.py",
+    "data/ontologies/base_ontology.nt",
+    "data/ontologies/base_ontology.ttl",
+    "data/ontologies/base_ontology.owl",
+    "data/ontologies/cache",
+    "data/ontologies/repo",
+    "data/ontologies",
+    "data",
+    "app/models/__pycache__/repository.cpython-312.pyc",
+    "app/tools/__pycache__/uml_diagram_generator.cpython-312.pyc",
+    "app/tools/__pycache__/mas_version_control.cpython-312.pyc",
+    "app/models/mas/__pycache__/mas_modeling_tool.cpython-312.pyc",
+    "CONTRIBUTING.md",
     "app/main.py.md",
     "requirements_analysis_agent-docs.md",
     "Doc-prompt.md",

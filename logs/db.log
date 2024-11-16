@@ -1,0 +1,48 @@
+2024-09-12 07:21:34,759 ERROR database_manager: Failed to get or create database 'mabos': Can't connect to host(s) within limit (3)
+2024-09-12 07:32:36,168 ERROR database_manager: Error while connecting to PostgreSQL: connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  role "postgres" does not exist
+
+2024-09-12 07:44:07,918 ERROR database_manager: Failed to get or create database 'mabos-dbv01': [HTTP 401][ERR 11] not authorized to execute this request
+2024-09-12 07:45:11,676 ERROR database_manager: Failed to get or create database 'mabos-dbv01': [HTTP 401][ERR 11] not authorized to execute this request
+2024-09-12 07:49:03,473 ERROR database_manager: Failed to get or create database 'mabos-dbv01': [HTTP 401][ERR 11] not authorized to execute this request
+2024-09-12 07:57:29,750 WARNING database_manager: Failed to connect to database 'mabos-dbv01': [HTTP 401][ERR 11] not authorized to execute this request
+2024-09-12 08:11:54,156 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:11:54,156 ERROR database_manager: Unexpected error while connecting to database 'mabos-dbv01': 'ArangoClient' object has no attribute 'has_database'
+2024-09-12 08:13:02,961 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:13:02,961 ERROR database_manager: Unexpected error while connecting to database 'mabos-dbv01': 'ArangoClient' object has no attribute 'has_database'
+2024-09-12 08:19:00,807 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:19:00,815 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:19:01,899 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:19:01,909 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:19:01,909 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:19:01,911 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:19:01,911 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:19:01,913 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:19:01,913 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:19:01,916 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:19:01,920 INFO database_manager: Database connection test successful
+2024-09-12 08:33:57,447 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:33:57,452 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:34:27,657 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:34:27,663 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:34:27,663 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:34:27,666 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:34:27,673 INFO database_manager: Collection 'business_goals' created successfully
+2024-09-12 08:34:27,673 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:34:27,679 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:34:27,679 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 08:34:27,684 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 08:34:27,689 INFO database_manager: Collection 'business_goals' already exists
+2024-09-12 08:34:27,695 INFO database_manager: Database connection test successful
+2024-09-12 09:07:05,707 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 09:07:05,714 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 09:07:06,825 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 09:07:06,830 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 09:07:06,830 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 09:07:06,836 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 09:07:06,839 INFO database_manager: Collection 'business_goals' already exists
+2024-09-12 09:07:06,839 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 09:07:06,841 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 09:07:06,842 INFO database_manager: Successfully connected to ArangoDB (Attempt 1)
+2024-09-12 09:07:06,844 INFO database_manager: Connected to existing database: mabos-dbv01
+2024-09-12 09:07:06,845 INFO database_manager: Collection 'business_goals' already exists
+2024-09-12 09:07:07,063 INFO database_manager: Database connection test successful

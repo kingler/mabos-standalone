@@ -1,0 +1,6 @@
+_from,_to,type
+rules/rule1,agents/agent2,applies_to
+rules/rule2,business_processes/process2,governs
+rules/rule3,business_processes/process4,regulates
+rules/rule4,agents/agent4,guides
+rules/rule5,business_entities/entity1,affects

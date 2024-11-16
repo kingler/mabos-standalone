@@ -8,6 +8,7 @@
         "deinit",
         "dotenv",
         "Ecommerce",
+        "fastapi",
         "fnrl",
         "influencers",
         "mabos",

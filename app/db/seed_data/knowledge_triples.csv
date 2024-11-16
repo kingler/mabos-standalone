@@ -1,0 +1,6 @@
+_key,subject,predicate,object
+kt1,Agent 1,knows,Python
+kt2,Agent 2,specializes in,Data Analysis
+kt3,Agent 3,monitors,Environment
+kt4,Agent 4,manages,Business Models
+kt5,Agent 5,implements,MDD Processes

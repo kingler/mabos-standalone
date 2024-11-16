@@ -1,0 +1,6 @@
+_from,_to,type
+business_processes/process1,business_entities/entity3,manages
+business_processes/process2,business_entities/entity2,creates
+business_processes/process3,business_entities/entity1,supports
+business_processes/process4,business_entities/entity5,interacts_with
+business_processes/process5,business_entities/entity4,manages

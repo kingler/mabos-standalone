@@ -41,8 +41,11 @@ class OntologyReasoner:
         }}
         """
 
-        selected_model = self.llm_manager.select_model("Ontology reasoning", required_capabilities=["multilingual"])
-        response = await self.llm_manager.get_text_completion_async(prompt, model=selected_model)
+        selected_model = self.llm_manager.select_best_model(
+            task="Ontology reasoning and knowledge inference",
+            max_tokens=4096
+        )
+        response = await self.llm_manager.generate_text(prompt, model=selected_model)
         return json.loads(response)
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
@@ -59,5 +62,42 @@ class OntologyReasoner:
         Provide a detailed explanation of your reasoning process.
         """
 
-        selected_model = self.llm_manager.select_model("Ontology query answering", required_capabilities=["multilingual"])
-        return await self.llm_manager.get_text_completion_async(prompt, model=selected_model)
+        selected_model = self.llm_manager.select_best_model(
+            task="Ontology query answering",
+            max_tokens=2048
+        )
+        return await self.llm_manager.generate_text(prompt, model=selected_model)
+
+    async def validate_ontology(self, ontology: Ontology) -> Dict[str, Any]:
+        """
+        Validates an ontology for consistency and completeness.
+        """
+        prompt = f"""
+        Validate the following ontology for consistency and completeness:
+
+        {ontology.to_json()}
+
+        Provide the validation results in JSON format with the following structure:
+        {{
+            "is_valid": true/false,
+            "issues": [
+                {{
+                    "type": "consistency/completeness",
+                    "description": "issue description"
+                }},
+                ...
+            ],
+            "suggestions": [
+                "suggestion 1",
+                "suggestion 2",
+                ...
+            ]
+        }}
+        """
+
+        selected_model = self.llm_manager.select_best_model(
+            task="Ontology validation",
+            max_tokens=2048
+        )
+        response = await self.llm_manager.generate_text(prompt, model=selected_model)
+        return json.loads(response)

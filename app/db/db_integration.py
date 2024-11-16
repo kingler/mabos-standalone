@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import numpy as np
 from sentence_transformers import SentenceTransformer
+import logging
 
 load_dotenv()
 
@@ -25,139 +26,124 @@ class SearchResult(BaseModel):
 
 class DatabaseIntegration:
     def __init__(self):
-        self.client = self._get_arango_client()
-        self.db = self._get_arango_db(self.client)
+        self.url = os.getenv("ARANGO_URL", "http://localhost:8529")
+        self.username = os.getenv("ARANGO_USERNAME", "root")
+        self.password = os.getenv("ARANGO_PASSWORD", "yourpassword")
+        self.database = os.getenv("ARANGO_DATABASE", "mabos-dbv01")
+        self.client = None
+        self.sys_db = None
+        self.db = None
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        self.connect()
 
-    def _get_arango_client(self):
-        arango_url = os.getenv("ARANGO_URL", "http://localhost:8529")
-        arango_username = os.getenv("ARANGO_USERNAME", "root")
-        arango_password = os.getenv("ARANGO_PASSWORD", "difyai123456")
-        return ArangoClient(hosts=arango_url).db(arango_username, arango_password)
+    def connect(self):
+        try:
+            # Create a client connection
+            self.client = ArangoClient(hosts=self.url)
+            
+            # Connect to _system database first
+            self.sys_db = self.client.db('_system', username=self.username, password=self.password)
+            
+            # Create target database if it doesn't exist
+            if not self.sys_db.has_database(self.database):
+                self.sys_db.create_database(self.database)
+                logging.info(f"Created database: {self.database}")
+            
+            # Connect to the target database
+            self.db = self.client.db(self.database, username=self.username, password=self.password)
+            
+            # Ensure required collections exist
+            self.ensure_collections()
+            logging.info(f"Connected to database: {self.database}")
+            
+        except Exception as e:
+            logging.error(f"Error connecting to database: {str(e)}")
+            raise
 
-    def _get_arango_db(self, client, db_name="dify"):
-        if not client.has_database(db_name):
-            client.create_database(db_name)
-        return client.database(db_name)
+    def close(self):
+        if self.client:
+            self.client = None
+            self.sys_db = None
+            self.db = None
+            logging.info("DatabaseIntegration connection closed")
 
-    async def create_question(self, question: Question) -> Question:
-        collection = self.db.collection('questions')
-        result = collection.insert(question.dict())
-        question.id = result['_key']
-        return question
+    def execute_query(self, query: str, bind_vars: dict = None):
+        if self.db is None:
+            self.connect()  # Try to reconnect if connection is lost
+            
+        try:
+            cursor = self.db.aql.execute(query, bind_vars=bind_vars)
+            return list(cursor)
+        except Exception as e:
+            logging.error(f"Error executing query: {str(e)}")
+            raise
 
-    async def create_answer(self, answer: Answer) -> Answer:
-        collection = self.db.collection('answers')
-        result = collection.insert(answer.dict())
-        answer.id = result['_key']
-        return answer
+    def ensure_collections(self):
+        try:
+            required_collections = [
+                'business_profiles',
+                'business_goals',
+                'agents',
+                'models',
+                'ontologies',
+                'questions',
+                'answers',
+                'knowledge_nodes',
+                'knowledge_edges'
+            ]
+            
+            for collection_name in required_collections:
+                if not self.db.has_collection(collection_name):
+                    self.db.create_collection(collection_name)
+                    logging.info(f"Created '{collection_name}' collection")
+                else:
+                    logging.info(f"'{collection_name}' collection already exists")
+                    
+            # Create graph if it doesn't exist
+            if not self.db.has_graph('knowledge_graph'):
+                graph = self.db.create_graph('knowledge_graph')
+                # Create edge definition
+                if not graph.has_edge_definition('knowledge_edges'):
+                    graph.create_edge_definition(
+                        edge_collection='knowledge_edges',
+                        from_vertex_collections=['knowledge_nodes'],
+                        to_vertex_collections=['knowledge_nodes']
+                    )
+                    logging.info("Created 'knowledge_edges' edge definition")
+                    
+        except Exception as e:
+            logging.error(f"Error in ensure_collections: {str(e)}")
+            raise
 
-    async def get_answers_for_business(self, business_id: UUID) -> List[Answer]:
-        query = f"FOR a IN answers FILTER a.business_id == '{business_id}' RETURN a"
-        cursor = self.db.aql.execute(query)
-        return [Answer(**doc) for doc in cursor]
+    def get_collection(self, collection_name: str):
+        """Get a collection by name."""
+        if not self.db:
+            self.connect()
+        return self.db.collection(collection_name)
 
-    async def create_movie_embeddings(self, movies_df):
-        batch_size = 32
-        all_embs = []
+    def create_document(self, collection_name: str, document: dict):
+        """Create a document in a collection."""
+        collection = self.get_collection(collection_name)
+        return collection.insert(document)
 
-        for i in range(0, len(movies_df), batch_size):
-            descr_batch = movies_df.iloc[i:i+batch_size].description.tolist()
-            embs = self.model.encode(descr_batch)
-            all_embs.append(embs)
+    def get_document(self, collection_name: str, document_key: str):
+        """Get a document by key from a collection."""
+        collection = self.get_collection(collection_name)
+        return collection.get(document_key)
 
-        all_embs = np.concatenate(all_embs)
-        movies_df.loc[:, "word_emb"] = np.vsplit(all_embs, len(all_embs))
-        movies_df["word_emb"] = movies_df["word_emb"].apply(lambda x: x.squeeze().tolist())
+    def update_document(self, collection_name: str, document_key: str, update_data: dict):
+        """Update a document in a collection."""
+        collection = self.get_collection(collection_name)
+        return collection.update_match({'_key': document_key}, update_data)
 
-        movie_collection = self.db.collection("imdb_vertices")
-        for i in range(0, len(movies_df), batch_size):
-            update_batch = movies_df.loc[i:i+batch_size, ["_id", "word_emb"]].to_dict("records")
-            movie_collection.import_bulk(update_batch, on_duplicate="update")
+    def delete_document(self, collection_name: str, document_key: str):
+        """Delete a document from a collection."""
+        collection = self.get_collection(collection_name)
+        return collection.delete(document_key)
 
-    async def search_similar_movies(self, movie_id: str, limit: int = 50) -> List[SearchResult]:
-        query = f"""
-        LET descr_emb = (
-          FOR m in imdb_vertices
-            FILTER m._id == "{movie_id}"
-            FOR j in RANGE(0, 767)
-              RETURN TO_NUMBER(NTH(m.word_emb,j))
-        )
-
-        LET descr_mag = (
-          SQRT(SUM(
-            FOR i IN RANGE(0, 767)
-              RETURN POW(TO_NUMBER(NTH(descr_emb, i)), 2)
-          ))
-        )
-
-        LET dau = (
-            FOR v in imdb_vertices
-            FILTER HAS(v, "word_emb")
-
-            LET v_mag = (SQRT(SUM(
-              FOR k IN RANGE(0, 767)
-                RETURN POW(TO_NUMBER(NTH(v.word_emb, k)), 2)
-            )))
-
-            LET numerator = (SUM(
-              FOR i in RANGE(0,767)
-                  RETURN TO_NUMBER(NTH(descr_emb, i)) * TO_NUMBER(NTH(v.word_emb, i))
-            ))
-
-            LET cos_sim = (numerator)/(descr_mag * v_mag)
-
-            RETURN {{"movie": v.title, "cos_sim": cos_sim}}
-        )
-
-        FOR du in dau
-            SORT du.cos_sim DESC
-            LIMIT {limit}
-            RETURN du
-        """
-        cursor = self.db.aql.execute(query)
-        return [SearchResult(**doc) for doc in cursor]
-
-    async def search_movies_by_query(self, search_term: str, limit: int = 50) -> List[SearchResult]:
-        search_emb = self.model.encode(search_term).tolist()
-        query = f"""
-        LET descr_emb = {search_emb}
-
-        LET descr_size = (
-          SQRT(SUM(
-            FOR i IN RANGE(0, 767)
-              RETURN POW(TO_NUMBER(NTH(descr_emb, i)), 2)
-          ))
-        )
-
-        LET dau = (
-            FOR v in imdb_vertices
-            FILTER HAS(v, "word_emb")
-
-            LET v_size = (SQRT(SUM(
-              FOR k IN RANGE(0, 767)
-                RETURN POW(TO_NUMBER(NTH(v.word_emb, k)), 2)
-            )))
-
-            LET numerator = (SUM(
-              FOR i in RANGE(0,767)
-                  RETURN TO_NUMBER(NTH(descr_emb, i)) * TO_NUMBER(NTH(v.word_emb, i))
-            ))
-
-            LET cos_sim = (numerator)/(descr_size * v_size)
-
-            RETURN {{"movie": v.title, "cos_sim": cos_sim}}
-        )
-
-        FOR du in dau
-            SORT du.cos_sim DESC
-            LIMIT {limit}
-            RETURN du
-        """
-        cursor = self.db.aql.execute(query)
-        return [SearchResult(**doc) for doc in cursor]
-
-# Usage example:
-# db = DatabaseIntegration()
-# similar_movies = await db.search_similar_movies("imdb_vertices/28685")
-# query_results = await db.search_movies_by_query("jedi stars fighting")
+    def list_documents(self, collection_name: str, filter_query: dict = None):
+        """List documents in a collection with optional filtering."""
+        collection = self.get_collection(collection_name)
+        if filter_query:
+            return list(collection.find(filter_query))
+        return list(collection.all())

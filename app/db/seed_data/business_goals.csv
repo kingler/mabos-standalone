@@ -1,0 +1,6 @@
+id,name,description,priority,status,parent_goal_id
+goal1,Increase Market Share,Expand market share by 10% in the next quarter,High,Not Started,
+goal2,Improve Customer Satisfaction,Achieve a 95% customer satisfaction rate,High,Not Started,
+goal3,Optimize Operational Efficiency,Reduce operational costs by 15%,Medium,Not Started,
+goal4,Develop New Product Line,Launch a new product line for emerging markets,Medium,Not Started,
+goal5,Enhance Sustainability Practices,Reduce carbon footprint by 20% within the year,Low,Not Started,

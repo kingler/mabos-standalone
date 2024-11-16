@@ -1,0 +1,14 @@
+database:
+  name: mdd_knowledge_base
+  collections:
+    - knowledge_nodes
+    - knowledge_edges
+    - business_goals
+    - model_artifacts
+    - ontologies
+  graph:
+    name: knowledge_graph
+    edge_definitions:
+      - collection: knowledge_edges
+        from: [knowledge_nodes]
+        to: [knowledge_nodes]

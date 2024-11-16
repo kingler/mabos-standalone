@@ -1,0 +1,65 @@
+<http://example.org/ontology#Business> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Business> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"description\": \"string\", \"industry\": \"string\", \"size\": \"string\"}" .
+
+<http://example.org/ontology#Product> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Product> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"description\": \"string\", \"price\": \"decimal\"}" .
+
+<http://example.org/ontology#Service> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Service> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"description\": \"string\", \"rate\": \"decimal\"}" .
+
+<http://example.org/ontology#Customer> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Customer> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"email\": \"string\", \"phone\": \"string\"}" .
+
+<http://example.org/ontology#Employee> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Employee> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"position\": \"string\", \"department\": \"string\"}" .
+
+<http://example.org/ontology#Department> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Department> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"manager\": \"string\", \"budget\": \"decimal\"}" .
+
+<http://example.org/ontology#Project> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Project> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"description\": \"string\", \"status\": \"string\"}" .
+
+<http://example.org/ontology#Goal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Goal> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"description\": \"string\", \"deadline\": \"date\"}" .
+
+<http://example.org/ontology#Task> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Task> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"description\": \"string\", \"status\": \"string\"}" .
+
+<http://example.org/ontology#Resource> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/ontology#Resource> <http://example.org/ontology#attributes> "{\"name\": \"string\", \"type\": \"string\", \"availability\": \"boolean\"}" .
+
+<http://example.org/ontology#hasProduct> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasProduct> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasProduct> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Product> .
+
+<http://example.org/ontology#hasService> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasService> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasService> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Service> .
+
+<http://example.org/ontology#hasCustomer> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasCustomer> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasCustomer> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Customer> .
+
+<http://example.org/ontology#hasEmployee> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasEmployee> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasEmployee> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Employee> .
+
+<http://example.org/ontology#hasDepartment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasDepartment> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasDepartment> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Department> .
+
+<http://example.org/ontology#hasProject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasProject> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasProject> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Project> .
+
+<http://example.org/ontology#hasGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Business> .
+<http://example.org/ontology#hasGoal> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Goal> .
+
+<http://example.org/ontology#hasTask> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#hasTask> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Project> .
+<http://example.org/ontology#hasTask> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Task> .
+
+<http://example.org/ontology#usesResource> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/ontology#usesResource> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/ontology#Task> .
+<http://example.org/ontology#usesResource> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/ontology#Resource> .

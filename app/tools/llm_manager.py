@@ -2,14 +2,19 @@ import asyncio
 import logging
 import os
 import tiktoken
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
+import json
+import uuid
+import time
 
 import httpx
 import openai
 import yaml
 from anthropic import Anthropic
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from tenacity import retry, stop_after_attempt, wait_exponential
+from openai.types.chat import ChatCompletion
+from openai.types.chat.chat_completion import Choice
 
 from app.config.config import LLM_CONFIG, API_KEYS
 
@@ -239,6 +244,82 @@ class LLMManager(BaseModel):
             return response.json()['results']['channels'][0]['alternatives'][0]['transcript']
         else:
             raise Exception(f"Error transcribing speech: {response.text}")
+
+    async def generate_with_tools(
+        self,
+        prompt: str,
+        tools: List[Dict],
+        tool_choice: Dict[str, Any],
+        model: Optional[str] = None,
+        **kwargs
+    ) -> ChatCompletion:
+        model = model or self.default_model
+        model_config = self.get_model_config(model)
+
+        if 'claude' in model:
+            return await self._anthropic_tool_completion(prompt, tools, tool_choice, model, model_config)
+        elif 'gpt' in model:
+            return await self._openai_tool_completion(prompt, tools, tool_choice, model, model_config)
+        else:
+            raise ValueError(f"Tool calling not supported for model: {model}")
+
+    async def _openai_tool_completion(
+        self,
+        prompt: str,
+        tools: List[Dict],
+        tool_choice: Dict[str, Any],
+        model: str,
+        model_config: Dict[str, Any]
+    ) -> ChatCompletion:
+        client = OpenAI(api_key=self.api_keys['openai'])
+        
+        try:
+            response = await client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                tools=tools,
+                tool_choice=tool_choice,
+                **model_config
+            )
+            return response
+        except Exception as e:
+            raise ValueError(f"OpenAI API error: {str(e)}")
+
+    async def _anthropic_tool_completion(
+        self,
+        prompt: str,
+        tools: List[Dict],
+        tool_choice: Dict[str, Any],
+        model: str,
+        model_config: Dict[str, Any]
+    ) -> ChatCompletion:
+        # Format the tool schema as part of the prompt
+        schema_prompt = f"\nPlease provide output in the following JSON schema:\n{json.dumps(tools[0]['function']['parameters'], indent=2)}"
+        
+        try:
+            response = await self._anthropic_completion(prompt + schema_prompt, model, model_config)
+            
+            # Create a ChatCompletion-like response
+            return ChatCompletion(
+                id="anthropic_" + str(uuid.uuid4()),
+                choices=[Choice(
+                    index=0,
+                    message={
+                        "role": "assistant",
+                        "tool_calls": [{
+                            "id": "call_" + str(uuid.uuid4()),
+                            "type": "function",
+                            "function": {
+                                "name": tools[0]["function"]["name"],
+                                "arguments": response
+                            }
+                        }]
+                    }
+                )],
+                created=int(time.time())
+            )
+        except Exception as e:
+            raise ValueError(f"Anthropic API error: {str(e)}")
 
 # Usage example
 async def main():
